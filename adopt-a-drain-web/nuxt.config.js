@@ -2,7 +2,14 @@
 import pkg from './package'
 if (process.env.NODE_ENV !== 'production') {
   process.env.DEPLOY_ENV=''
+  console.log('Init dotenv')
   require('dotenv').config()
+  
+  console.log('GOOGLE_MAPS_JAVASCRIPT_API_KEY: ' + process.env.GOOGLE_MAPS_JAVASCRIPT_API_KEY)
+  console.log('DW_USER: process.env.DW_USER: ' + process.env.DW_USER)
+  console.log('DW_DRAIN_URL: process.env.DW_DRAIN_URL ' + process.env.DW_DRAIN_URL)
+  console.log('DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN ' + process.env.DW_AUTH_TOKEN)
+
 } else {
    // switch to
    process.env.DEPLOY_ENV='GH_PAGES'
@@ -16,6 +23,12 @@ const routerBase = process.env.DEPLOY_ENV === 'GH_PAGES' ? {
 export default {
   ...routerBase,
   mode: 'spa',
+  env: {
+    GOOGLE_MAPS_JAVASCRIPT_API_KEY: process.env.GOOGLE_MAPS_JAVASCRIPT_API_KEY,
+    DW_USER: process.env.DB_USER || citizenlabs,
+    DW_DRAIN_URL: process.env.DW_DRAIN_URL || 'https://api.data.world/v0/sql/citizenlabs/grb-storm-drains',
+    DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN
+  },
   /*
   ** Headers of the page
   */
@@ -43,6 +56,7 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/vue2-google-maps.js' }
   ],
   /*
   ** Nuxt.js dev-modules
@@ -54,7 +68,7 @@ export default {
   /*
   ** Nuxt.js modules
   */
-modules: [
+  modules: [
     '@nuxtjs/dotenv',
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios'
@@ -73,6 +87,22 @@ modules: [
     ** You can extend webpack config here
     */
     extend (config, ctx) {
+      transpile: [/^vue2-google-maps($|\/)/]
+      /*
+      if (!ctx.isClient) {
+        // This instructs Webpack to include `vue2-google-maps`'s Vue files
+        // for server-side rendering
+        config.externals = [
+          function(context, request, callback){
+            if (/^vue2-google-maps($|\/)/.test(request)) {
+              callback(null, false)
+            } else {
+              callback()
+            }
+          }
+        ]
+      }
+      */
     }
   }
 }

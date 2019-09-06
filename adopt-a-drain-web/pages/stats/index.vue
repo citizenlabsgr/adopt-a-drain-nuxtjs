@@ -1,15 +1,13 @@
 <template>
   <section class="container">
-    <Home />
+    <Stats />
   </section>
 </template>
-
 <script>
-import Home from '~/components/Home.vue'
-
+import Stats from '@/components/Stats.vue'
 export default {
   components: {
-    Home
+    Stats
   }
 }
 </script>

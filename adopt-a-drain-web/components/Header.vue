@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="band">
     <div>
       <img src="~assets/banner.png" class="img_banner">
     </div>
@@ -28,6 +28,13 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.band {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  text-align: center;
 }
 .img_banner {
   max-width: 100%;

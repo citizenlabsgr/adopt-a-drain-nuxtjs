@@ -1,29 +1,46 @@
 <template>
-  <h1>...</h1>
-  <!--nav>
-      <ul>
-        <li><nuxt-link to="/opportunities">Opportunities</nuxt-link></li>
-        <li><nuxt-link to="/sponsors">Sponsors</nuxt-link></li>
-        <li><nuxt-link to="/stats">Stats</nuxt-link></li>
-        <li><nuxt-link to="/about">About</nuxt-link></li>
-      </ul>
-      <ul>
-        <li v-for="item in footer.list"><a v-bind:href="item.href" target="_blank">{{ item.title }}</a></li>
-      </ul>
-  </nav-->
+  <nav>
+    <ul>
+      <li>
+        <nuxt-link to="/opportunities">
+          Opportunities
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link to="/sponsors">
+          Sponsors
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link to="/stats">
+          Stats
+        </nuxt-link>
+      </li>
+      <li>
+        <nuxt-link to="/about">
+          About
+        </nuxt-link>
+      </li>
+    </ul>
+    <ul>
+      <li v-for="item in footer.list" :key="item.id">
+        <a :href="item.href" target="_blank">
+          {{ item.title }}
+        </a>
+      </li>
+    </ul>
+  </nav>
 </template>
 <script>
-
 export default {
   data () {
     return {
-      /* footer: {
+      footer: {
         list: [
-          {title: 'Github', href: 'https://github.com/citizenlabsgr'},
-          {title: 'Slack', href: 'https://slack.com'}
+          { id: 1, title: 'Github', href: 'https://github.com/citizenlabsgr' },
+          { id: 2, title: 'Slack', href: 'https://slack.com' }
         ]
       }
-      */
     }
   }
 }

@@ -1,8 +1,25 @@
 <template>
   <div>
+    <Header />
+    <Nav />
     <nuxt />
+    <Footer />
   </div>
 </template>
+
+<script>
+import Header from '@/components/Header'
+import Nav from '@/components/Nav'
+
+import Footer from '@/components/Footer'
+export default {
+  components: {
+    Header,
+    Nav,
+    Footer
+  }
+}
+</script>
 
 <style>
 html {

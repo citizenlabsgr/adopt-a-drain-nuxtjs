@@ -83,6 +83,13 @@ html {
   word-spacing: 5px;
   padding-bottom: 15px;
 }
+.feedback {
+  font-weight: 300;
+  font-size: 21px;
+  color: #526488;
+  word-spacing: 5px;
+  padding-bottom: 15px;
+}
 .error {
   font-weight: 200 ;
   font-size: 12px;

@@ -19,45 +19,12 @@ export default {
   },
   data () {
     return {
-
       submitStatus: 'PENDING',
       page: {
         title: 'Adopt a Drain',
         subtitle: 'Type a word!'
       }
     }
-  },
-  computed: {
-  /*
-    awsHandlers () {
-      return new AWSHandlers(this)
-    },
-    awsGuestHeader () {
-      return {
-        'Content-Type': 'application/json'
-      }
-    },
-    awsGuestBody () {
-      return process.env.GUEST
-    },
-    awsGatewayHeader () {
-      return {
-        'Content-Type': 'application/json',
-        'Authorization': this.session.authorizationToken
-      }
-    },
-    awsGatewayBody () {
-      return this.form
-    },
-    awsGatewayURL () {
-      // no keywords
-      return process.env.INDEX
-    }
-    */
-  },
-  mounted () {
-    // at this point we want to make a connection a guest connection to our services
-    // connect to aws here awsHandlers
   },
   methods: {
     log (msg) {
@@ -76,5 +43,4 @@ export default {
 .band {
   width: 100%;
 }
-
 </style>

@@ -15,7 +15,7 @@ export default {
       submitStatus: 'PENDING',
       page: {
         title: 'Adopt a Drain',
-        subtitle: 'Volunteer to keep street drain clear and clean.'
+        subtitle: 'Volunteer to keep street drains clean and clear'
       }
     }
   }

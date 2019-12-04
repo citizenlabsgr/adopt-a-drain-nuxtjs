@@ -1,0 +1,7 @@
+--\c api_db
+--select 'create.type A';
+--DROP TYPE IF EXISTS api_schema.jwt_claims CASCADE;
+--select 'create.type B';
+--CREATE TYPE api_schema.jwt_claims AS (role TEXT, email TEXT);
+--select 'create.type C';
+--select 'create.type OUT';

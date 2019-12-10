@@ -2,16 +2,16 @@
 
 set -e
 
-DB_HOST="pgjwt-test-db"
-DB_NAME="postgres"
+DB_HOST_TEST="pgjwt-test-db"
+DB_NAME_TEST="postgres"
 SU="postgres"
-EXEC="docker exec $DB_HOST"
+EXEC="docker exec $DB_HOST_TEST"
 
 echo building test image
 docker build . --force-rm -t pgjwt/test
 
 echo running test container
-docker run -d --name "$DB_HOST" pgjwt/test 
+docker run -d --name "$DB_HOST_TEST" pgjwt/test
 
 echo waiting for database to accept connections
 until
@@ -26,5 +26,5 @@ echo running tests
 $EXEC pg_prove -U "$SU" /pgjwt/test.sql
 
 echo destroying test container and image
-docker rm --force "$DB_HOST"
+docker rm --force "$DB_HOST_TEST"
 docker rmi pgjwt/test

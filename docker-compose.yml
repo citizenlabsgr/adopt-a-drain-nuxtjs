@@ -47,7 +47,7 @@ services:
   ##########
   # POSTGRREST
   #####
-  server:
+  api:
     container_name: postgrest
     image: postgrest/postgrest:latest
     ports:
@@ -58,9 +58,7 @@ services:
       PGRST_DB_URI: postgres://postgres:mysecretpassword@db:5432/aad_db
       PGRST_DB_SCHEMA: aad_schema
       PGRST_DB_ANON_ROLE: guest
-      #PGRST_JWT_SECRET: PASSWORD.must.BE.AT.LEAST.32.CHARS.LONG
-    #command: ["postgrest", "-c", "'custom.some_string=${JWT_SECRET}'"]
-    #command: ["postgrest"]
+
     depends_on:
       - db
     links:

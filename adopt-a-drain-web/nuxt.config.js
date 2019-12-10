@@ -8,7 +8,7 @@ if (process.env.NODE_ENV !== 'production') {
   /* eslint-enable no-console */
   require('dotenv').config()
   /* eslint-disable no-console */
-  // console.log('GOOGLE_MAPS_JAVASCRIPT_API_KEY: ' + process.env.GOOGLE_MAPS_JAVASCRIPT_API_KEY)
+  // console.log('GOOGLE_MAPS_API_KEY: ' + process.env.GOOGLE_MAPS_API_KEY)
   // console.log('DW_USER: process.env.DW_USER: ' + process.env.DW_USER)
   // console.log('DW_DRAIN_URL: process.env.DW_DRAIN_URL ' + process.env.DW_DRAIN_URL)
   // console.log('DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN ' + process.env.DW_AUTH_TOKEN)
@@ -27,8 +27,8 @@ export default {
   ...routerBase,
   mode: 'spa',
   env: {
-    GOOGLE_MAPS_JAVASCRIPT_API_KEY: process.env.GOOGLE_MAPS_JAVASCRIPT_API_KEY,
-    DW_USER: process.env.DB_USER || 'citizenlabs',
+    GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
+    DW_USER: process.env.DW_USER || 'citizenlabs',
     DW_DRAIN_URL: process.env.DW_DRAIN_URL || 'https://api.data.world/v0/sql/citizenlabs/grb-storm-drains',
     DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN
   },

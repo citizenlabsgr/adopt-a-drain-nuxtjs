@@ -39,7 +39,7 @@ test('Environment Variables', async t => {
   t.not(process.env.DW_USER, undefined)
   t.not(process.env.DW_AUTH_TOKEN, undefined)
   t.not(process.env.DW_DRAIN_URL, undefined)
-  t.not(process.env.GOOGLE_MAPS_JAVASCRIPT_API_KEY, undefined)
+  t.not(process.env.GOOGLE_MAPS_API_KEY, undefined)
   console.log('ev.ok')
 })
 

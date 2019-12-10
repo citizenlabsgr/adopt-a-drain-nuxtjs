@@ -121,10 +121,11 @@ The AAD API is a collection of APIs implemented in different ways.  To keep the 
 | --- | -------------- | ------
 | **Map API**  | [Google Map API](https://developers.google.com/maps/documentation/javascript/tutorial)  |
 | **Orphan API** | [Data.World API](https://apidocs.data.world)  | https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
-| **Adopter API** | [Postgrest](https://github.com/PostgREST/postgrest)  | http://localhost:3000/rpc/
+| **Adopter API** | [Postgrest](https://github.com/PostgREST/postgrest)  | rpc/adopter
 | **Adoptee API** | [Postgrest](https://github.com/PostgREST/postgrest)   | rpc/adoptee
 | **AAD Credential API**  | [Postgrest](https://github.com/PostgREST/postgrest)   | rpc/credential
 
+* development endpoint prefix: http://localhost:3100/
 
 ### Data
 AAD has no direct access to the data storage system. APIs handle all the transactions.  Therefore, the storage implementation isn't locked into Postgres nor into a relational model.  

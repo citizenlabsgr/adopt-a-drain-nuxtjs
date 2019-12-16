@@ -5,7 +5,7 @@ create table if not exists
 api_schema.users (
   usr_id SERIAL PRIMARY KEY,
   usr_email text check ( usr_email ~* '^.+@.+\..+$' ),
-  usr_pass text not null check (length(usr_pass) < 512),
+  usr_password text not null check (length(usr_password) < 512),
   usr_first_name character varying,
 	usr_last_name character varying,
   usr_role text not null check (length(usr_role) < 512),

@@ -22,7 +22,7 @@ services:
   db:
     #build: ./mockups/postgres-jwt-db
     #build: ./pg-database
-    build: ./adopt-a-drain-db/mockups/pg-database
+    build: ./aad-db/pg-database
     ports:
       - "5433:5432"
     environment:
@@ -38,7 +38,7 @@ services:
     volumes:
       # anything in initdb directory is created in the database
       # see "How to extend this image" section at https://hub.docker.com/r/_/postgres/
-      - "./adopt-a-drain-db/mockups/pg-database/db-scripts/compiled-scripts:/docker-entrypoint-initdb.d"
+      - "./aad-db/pg-database/db-scripts/compiled-scripts:/docker-entrypoint-initdb.d"
       # Uncomment this if you want to persist the data.
       - "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
     networks:

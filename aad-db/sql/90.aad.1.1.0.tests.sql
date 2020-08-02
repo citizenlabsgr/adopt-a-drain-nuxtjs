@@ -16,14 +16,14 @@ BEGIN;
       "owner_id": "me@someplace.com"}'::JSON
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'app - insert test'::TEXT
+    'app - insert test 1_1_0'::TEXT
   );
 
   -- TEST: Test app Select
   SELECT matches(
     aad_schema_1_1_0.app('my_app@1.0.0'::TEXT)::TEXT,
     '[a-zA-Z\.0-9_]+',
-    'app - select from adopt_a_drain by id and check token'::TEXT
+    'app - select from adopt_a_drain by id and check token 1_1_0'::TEXT
   );
 
   SELECT * FROM finish();
@@ -45,7 +45,7 @@ BEGIN;
       }'::JSON
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'owner - insert test'::TEXT
+    'owner - insert test 1_1_0'::TEXT
   );
 
   SELECT * FROM finish();
@@ -68,7 +68,7 @@ BEGIN;
       }'::JSONB
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'process_logger - insert test'::TEXT
+    'process_logger - insert test 1_1_0'::TEXT
   );
 
   SELECT * FROM finish();
@@ -92,7 +92,7 @@ BEGIN;
       }'::JSON
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'owner - insert test'::TEXT
+    'owner - insert test 1_1_0'::TEXT
   );
   -- TEST: Test(b) signin Insert
 SELECT ok (
@@ -100,7 +100,7 @@ SELECT ok (
     "name":  "me@someplace.com",
     "password": "a1A!aaaa"
     }'
-  )::JSON ->> 'status' = '200','signin - insert'
+  )::JSON ->> 'status' = '200','signin - insert 1_1_0'
 );
 
   SELECT * FROM finish();

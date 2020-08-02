@@ -5,7 +5,7 @@
 \c aad_db;
 
 SET search_path TO aad_schema_1_1_1, public;
-
+/*
 BEGIN;
 
   SELECT plan(2);
@@ -16,41 +16,23 @@ BEGIN;
       "owner_id": "me@someplace.com"}'::JSON
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'app - insert test'::TEXT
+    'app - insert test  1_1_1'::TEXT
   );
 
   -- TEST: Test app Select
   SELECT matches(
     aad_schema_1_1_1.app('my_app@1.0.0'::TEXT)::TEXT,
     '[a-zA-Z\.0-9_]+',
-    'app - select from adopt_a_drain by id and check token'::TEXT
+    'app - select from adopt_a_drain by id and check token  1_1_1'::TEXT
   );
 
   SELECT * FROM finish();
 
 ROLLBACK;
-
+*/
 -------------------
--- OWNER TESTs
+-- adopter TESTs
 -------------------
-
-BEGIN;
-
-  SELECT plan(3);
-  -- TEST: Test owner Insert
-  SELECT is (
-    aad_schema_1_1_1.owner('{
-      "name":  "me@someplace.com",
-      "password": "a1A!aaaa"
-      }'::JSON
-    ),
-    '{"msg": "OK", "status": "200"}'::JSONB,
-    'owner - insert test'::TEXT
-  );
-
-  SELECT * FROM finish();
-
-ROLLBACK;
 
 --------------------
 -- PROCESS_LOGGER Tests
@@ -68,7 +50,7 @@ BEGIN;
       }'::JSONB
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'process_logger - insert test'::TEXT
+    'process_logger - insert test  1_1_1'::TEXT
   );
 
   SELECT * FROM finish();
@@ -84,37 +66,7 @@ ROLLBACK;
 BEGIN;
 
   SELECT plan(3);
-  -- TEST: Test(a) owner Insert
-  SELECT is (
-    aad_schema_1_1_1.owner('{
-      "name":  "me@someplace.com",
-      "password": "a1A!aaaa"
-      }'::JSON
-    ),
-    '{"msg": "OK", "status": "200"}'::JSONB,
-    'owner - insert test'::TEXT
-  );
-  -- TEST: Test(b) signin Insert
-SELECT ok (
-  aad_schema_1_1_1.signin('{
-    "name":  "me@someplace.com",
-    "password": "a1A!aaaa"
-    }'
-  )::JSON ->> 'status' = '200','signin - insert'
-);
-
-  SELECT * FROM finish();
-
-ROLLBACK;
-
--------------------
--- Adopter TESTs
--------------------
-
-BEGIN;
-
-  SELECT plan(3);
-  -- TEST: Test adopter Insert
+  -- TEST: Test(a) adopter Insert
   SELECT is (
     aad_schema_1_1_1.adopter('{
       "name":  "me@someplace.com",
@@ -122,9 +74,43 @@ BEGIN;
       }'::JSON
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'adopter - insert test'::TEXT
+    'adopter - insert test 1_1_1'::TEXT
+  );
+
+  -- TEST: Test(b) signin Insert
+
+SELECT ok (
+  aad_schema_1_1_1.signin('{
+    "name":  "me@someplace.com",
+    "password": "a1A!aaaa"
+    }'
+  )::JSON ->> 'status' = '200','signin - insert 1_1_1'
+);
+
+
+SELECT * FROM finish();
+
+ROLLBACK;
+
+-------------------
+-- Adopter TESTs
+-------------------
+/*
+BEGIN;
+
+  SELECT plan(3);
+  -- TEST Test adopter Insert
+  SELECT is (
+    aad_schema_1_1_1.adopter('{
+      "name":  "me@someplace.com",
+      "password": "a1A!aaaa"
+      }'::JSON
+    ),
+    '{"msg": "OK", "status": "200"}'::JSONB,
+    'adopter - insert test 1_1_1'::TEXT
   );
 
   SELECT * FROM finish();
 
 ROLLBACK;
+*/

@@ -3,7 +3,13 @@
 
 | file | type | detail |
 | ---- | ------- | ------ |
+| 05.aad.1.1.1.sql | TODO 1.1.1 | Change adopter {id | } to {key:} in trigger... less confusing |
+| 05.aad.1.1.1.sql | TODO 1.1.1 | Add active to adopter, default is TRUE. |
+| 05.aad.1.1.1.sql | TODO 1.1.1 | When adopter is deactivated then deactivate all adoptions by that adopter |
+| 05.aad.1.1.1.sql | TODO 1.1.1 | test for active adopter record during signin. When active is false then adopter is the same as deleted. |
 | 05.aad.1.1.1.sql | TODO 1.1.1 | Develop Strategy to signin under a new name without changing the ID |
+| 05.aad.1.1.1.sql | TODO 1.1.1 | Add index for user name search ... CREATE INDEX adopter_idx ON aad_schema_1_1_1.adopt_a_drain USING gin (reg_form) where reg_type = 'adopter'; |
+| 05.aad.1.1.1.sql | TODO 1.1.1: |
 | 05.aad.1.1.1.sql | DONE 1.1.1 | Add "org" to LB_WODEN in enviroment variables (.env). LB_WODEN={"org":"CitizenLabs","name":"woden@citizenlabs.org","password":"a1A!aaaa"} |
 | 05.aad.1.1.1.sql | DONE 1.1.1 | Add "app" to LB_WODEN in enviroment variables (.env). LB_WODEN={"app":"Adopt-A-Drain","org":"CitizenLabs","name":"woden@citizenlabs.org","password":"a1A!aaaa"} |
 | 05.aad.1.1.1.sql | DONE 1.1.1 | signin converts user name to lowercase |
@@ -91,16 +97,10 @@
 | 05.aad.1.1.1.sql | FUNCTION | Create app(id TEXT) |
 | 05.aad.1.1.1.sql | GRANT | Grant Execute |
 | 05.aad.1.1.1.sql | GRANT | Grant authenticator more permissions |
-| 05.aad.1.1.1.sql | FUNCTION | Create owner(form JSON) |
-| 05.aad.1.1.1.sql | GRANT | Grant Execute |
-| 05.aad.1.1.1.sql | FUNCTION | Create owner_validate(form JSONB) |
-| 05.aad.1.1.1.sql | GRANT | Grant Execute |
-| 05.aad.1.1.1.sql | FUNCTION | Create owner(id TEXT) |
-| 05.aad.1.1.1.sql | GRANT | Grant Execute |
 | 05.aad.1.1.1.sql | FUNCTION | Create signin_validate(form JSONB) |
 | 05.aad.1.1.1.sql | GRANT | Grant Execute |
 | 05.aad.1.1.1.sql | FUNCTION | Create aad_schema_1_1_1.signin(form JSON) |
-| 05.aad.1.1.1.sql | GRANT | Grant Execute |
+| 05.aad.1.1.1.sql | $$ LANGUAGE plpgsql;GRANT | Grant Execute |
 | 05.aad.1.1.1.sql | FUNCTION | Create adopter(form JSON) |
 | 05.aad.1.1.1.sql | GRANT | Grant Execute |
 | 05.aad.1.1.1.sql | FUNCTION | Create adopter_validate(form JSONB) |
@@ -115,11 +115,10 @@
 | 90.aad.1.1.0.tests.sql | TEST | Test(b) signin Insert |
 | 90.aad.1.1.1.tests.sql | TEST | Test app Insert |
 | 90.aad.1.1.1.tests.sql | TEST | Test app Select |
-| 90.aad.1.1.1.tests.sql | TEST | Test owner Insert |
-| 90.aad.1.1.1.tests.sql | TEST | Test process_logger Insert |
-| 90.aad.1.1.1.tests.sql | TEST | Test(a) owner Insert |
-| 90.aad.1.1.1.tests.sql | TEST | Test(b) signin Insert |
 | 90.aad.1.1.1.tests.sql | TEST | Test adopter Insert |
+| 90.aad.1.1.1.tests.sql | TEST | Test process_logger Insert |
+| 90.aad.1.1.1.tests.sql | TEST | Test(a) adopter Insert |
+| 90.aad.1.1.1.tests.sql | TEST | Test(b) signin Insert |
 # Functions
 
 
@@ -146,11 +145,8 @@
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | app_validate(form JSONB)  |  JSONB |
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | app(form JSON)  |  JSONB |
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | app(id TEXT)  |  JSONB |
-| 05.aad.1.1.1.sql |  aad_schema_1_1_1 | owner(form JSON)  |  JSONB |
-| 05.aad.1.1.1.sql |  aad_schema_1_1_1 | owner_validate(form JSONB)  |  JSONB |
-| 05.aad.1.1.1.sql |  aad_schema_1_1_1 | owner(id TEXT)  |  JSONB |
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | signin_validate(form JSONB)  |  JSONB |
-| 05.aad.1.1.1.sql |  aad_schema_1_1_1 | signin(form JSON)  |  JSON |
+| 05.aad.1.1.1.sql |  aad_schema_1_1_1 | signin(form JSON)  |  JSONB |
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | adopter(form JSON)  |  JSONB |
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | adopter_validate(form JSONB)  |  JSONB |
 | 05.aad.1.1.1.sql |  aad_schema_1_1_1 | adopter(id TEXT)  |  JSONB |

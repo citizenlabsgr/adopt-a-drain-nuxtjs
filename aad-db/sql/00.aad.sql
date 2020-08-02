@@ -1,13 +1,5 @@
 \c postgres
 
--- create db object
--- create role
--- create role permissions
--- create user
--- assign user to role
--- do something
--- drop db object
-
 
 ---------------
 -- ISSUES: Common Issues and Solutions

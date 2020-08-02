@@ -2,7 +2,15 @@
 --------------
 -- Environment
 --------------
--- TODO 1.1.1: Develop Strategy to signin under a new name without changing the ID
+
+-- TODO 1.1.1: When adopter is deactivated then deactivate all adoptions by that adopter
+-- TODO 1.1.1: test for active adopter record during signin. When active is false then adopter is the same as deleted.
+-- DONE 1.1.1: on signin, put id (jti) and form.key (key) into token. {"iss": "CitizenLabs","sub": "Adopt-A-Drain","jti": "johndoe@citizenlabs.org","key": "55900b9c-385c-46e8-9403-d7b57b6eb149","role": "editor_aad","exp": 1596403055}
+-- DONE 1.1.1: Add {id:} to adopter form
+-- DONE 1.1.1: Change adopter {id: } to {key:} in trigger... less confusing
+-- DONE 1.1.1: Add active to adopter, default is TRUE.... active already in main record
+-- DONE 1.1.1: Develop Strategy to signin under a new name without changing the ID
+-- DONE 1.1.1: Add index for user name search ... CREATE INDEX adopter_idx ON aad_schema_1_1_1.adopt_a_drain USING gin (reg_form) where reg_type = 'adopter';
 -- DONE 1.1.1: Add "org" to LB_WODEN in enviroment variables (.env). LB_WODEN={"org":"CitizenLabs","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
 -- DONE 1.1.1: Add "app" to LB_WODEN in enviroment variables (.env). LB_WODEN={"app":"Adopt-A-Drain","org":"CitizenLabs","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
 -- DONE 1.1.1: signin converts user name to lowercase
@@ -10,7 +18,11 @@
 -- DONE 1.1.1: adopter-token payload is now {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
 -- DONE 1.1.1: adopter-token expires in 5 minutes
 
-
+/*
+when a user's name changes, make new adopter, preserve the form's id value, deactivate the old adopter
+when signin occurs
+when
+*/
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
 \set lb_woden `echo "'$LB_WODEN'"`
@@ -109,7 +121,10 @@ create table if not exists
 -- INDEX: Create Index
 -- * index automatically go in the parent table's schema
 ----------------
-CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_reg_id_pkey ON aad_schema_1_1_1.adopt_a_drain(reg_id);
+--CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_reg_id_pkey ON aad_schema_1_1_1.adopt_a_drain(reg_id);
+--CREATE INDEX adopter_idx ON aad_schema_1_1_1.adopt_a_drain USING gin ((reg_form ->> 'name')) where reg_form->>'type'='adopter';
+CREATE INDEX adopter_partial_idx ON aad_schema_1_1_1.adopt_a_drain USING gin (reg_form) where reg_type = 'adopter';
+
 
 -- GRANT: Grant Table Permissions
 grant insert on aad_schema_1_1_1.adopt_a_drain to guest_aad; -- C
@@ -141,9 +156,11 @@ BEGIN
     IF (TG_OP = 'INSERT') THEN
       IF (NEW.reg_form ->> 'type' = 'adopter' or NEW.reg_form ->> 'type' = 'owner' or NEW.reg_form ->> 'type' = 'woden') then
         -- covert id to lowercase
-        NEW.reg_id := LOWER(NEW.reg_form ->> 'name');
+        --NEW.reg_name := LOWER(NEW.reg_form ->> 'name');
         -- encrypt password
-        _form := format('{"id":"%s", "password":"%s"}'::TEXT, NEW.reg_form ->> 'name', crypt(NEW.reg_form ->> 'password', gen_salt('bf')) )::JSONB;
+        --_form := format('{"id":"%s", "password":"%s"}'::TEXT, NEW.reg_form ->> 'name', crypt(NEW.reg_form ->> 'password', gen_salt('bf')) )::JSONB;
+        _form := format('{"id":"%s","key":"%s","name":"%s","password":"%s"}'::TEXT,LOWER(NEW.reg_form ->> 'name'), NEW.reg_id, NEW.reg_form ->> 'name', crypt(NEW.reg_form ->> 'password', gen_salt('bf')) )::JSONB;
+        NEW.reg_id := LOWER(NEW.reg_form ->> 'name');
         NEW.reg_form := NEW.reg_form  || _form;
       ELSEIF (NEW.reg_form ->> 'type' = 'app') then
         -- create guest token for use by new app, similar to woden
@@ -165,7 +182,6 @@ BEGIN
         NEW.reg_form := NEW.reg_form || _form;
         -- encrypt password
 
-      --ELSEIF (NEW.reg_form ->> 'type' = 'owner') then
 
       END IF;
 
@@ -200,7 +216,7 @@ grant TRIGGER on aad_schema_1_1_1.adopt_a_drain to editor_aad;
 CREATE OR REPLACE FUNCTION aad_schema_1_1_1.process_logger(_form JSONB) RETURNS JSONB
 AS $$
   Declare rc jsonb;
-  Declare _model_owner JSONB;
+  Declare _model_user JSONB;
   --Declare _form JSONB;
   Declare _jwt_role TEXT;
   Declare _validation JSONB;
@@ -457,129 +473,6 @@ grant EXECUTE on FUNCTION aad_schema_1_1_1.app(TEXT) to editor_aad; -- C
 -- GRANT: Grant authenticator more permissions
 grant guest_aad to authenticator;
 grant editor_aad to authenticator;
------------------
--- FUNCTION: Create owner(form JSON)
------------------
-
-CREATE OR REPLACE FUNCTION aad_schema_1_1_1.owner(form JSON) RETURNS JSONB
-AS $$
-  Declare rc jsonb;
-  Declare _model_owner JSONB;
-  Declare _form JSONB;
-  Declare _jwt_role TEXT;
-  Declare _validation JSONB;
-  Declare _password TEXT;
-
-  BEGIN
-    -- claims check
-    _jwt_role := current_setting('request.jwt.claim.role','t');
-    if _jwt_role is NULL then
-      -- assume insert
-      -- runs during tests only
-      _jwt_role := 'guest_aad';
-      if form::JSONB ? 'id' then
-        _jwt_role := 'editor_aad';
-      end if;
-
-    end if;
-
-    -- handle multiple tokens
-    BEGIN
-      _model_owner := current_setting(format('app.lb_%s',_jwt_role))::jsonb;
-    EXCEPTION
-      WHEN others then
-        -- PERFORM aad_schema_1_1_1.process_logger(format('{"status":"500", "msg":"Unknown ", "SQLSTATE":"%s", "role":"%s"}',SQLSTATE, _jwt_role)::JSONB);
-        return format('{"status":"500", "msg":"Unknown ", "SQLSTATE":"%s", "role":"%s"}',SQLSTATE, _jwt_role)::JSONB;
-    END;
-    -- in acceptable roles
-
-    -- type stamp and convert to JSONB
-    _form := form::JSONB || '{"type":"owner"}'::JSONB;
-    -- confirm all required attributes are in form
-    -- validate attribute values
-    _validation := owner_validate(_form);
-    if _validation ->> 'status' != '200' then
-        -- PERFORM aad_schema_1_1_1.process_logger(_validation);
-        return _validation;
-    end if;
-
-    if _form ? 'id' then
-      -- editor
-        return '{"status": "400", "msg": "Update not YET supported"}'::JSONB;
-    else
-      -- guest role
-      BEGIN
-              INSERT INTO aad_schema_1_1_1.adopt_a_drain
-                  (reg_type, reg_form)
-              VALUES
-                  ('owner', _form);
-      EXCEPTION
-          WHEN unique_violation THEN
-              -- PERFORM aad_schema_1_1_1.process_logger(_form || '{"status":"400", "msg":"Bad Request, duplicate owner"}'::JSONB);
-              return '{"status":"400", "msg":"Bad App Request, duplicate owner"}'::JSONB;
-          WHEN check_violation then
-              ---- PERFORM process_logger();
-              return '{"status":"400", "msg":"Bad Owner Request, validation error"}'::JSONB;
-          WHEN others then
-              ---- PERFORM process_logger();
-              return format('{"status":"500", "msg":"Unknown Owner insertion error", "SQLSTATE":"%s", "form":%s}',SQLSTATE, _form)::JSONB;
-      END;
-    end if;
-
-    rc := '{"msg": "OK", "status": "200"}'::JSONB;
-    return rc;
-  END;
-$$ LANGUAGE plpgsql;
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_schema_1_1_1.owner(JSON) to guest_aad; -- upsert
-grant EXECUTE on FUNCTION aad_schema_1_1_1.owner(JSON) to editor_aad; -- upsert
-
------------------
--- FUNCTION: Create owner_validate(form JSONB)
------------------
-CREATE OR REPLACE FUNCTION aad_schema_1_1_1.owner_validate(form JSONB) RETURNS JSONB
-AS $$
-
-  BEGIN
-    -- name, type, "group, owner, password
-    -- name, type, app_id, password
-    -- confirm all required attributes are in form
-    if not(form ? 'type' and form ? 'name' and form ? 'password') then
-       return '{"status":"400","msg":"Bad Request, owner is missing one or more form attributes"}'::JSONB;
-    end if;
-    -- validate attribute values
-    if not(form ->> 'type' = 'owner') then
-       return '{"status":"400", "msg":"Bad Request type value."}'::JSONB;
-    end if;
-
-    -- proper password
-    if not (exists(select regexp_matches(form ->> 'password', '^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$') )) then
-       return '{"status":"400", "msg":"Bad Request password value."}'::JSONB;
-    end if;
-    -- proper name ... name
-    if not( exists( select regexp_matches(form ->> 'name', '[a-z\-_0-9]+@[a-z]+\.[a-z]+') ) ) then
-       return format('{"status":"400", "msg":"Bad Request name value."}')::JSONB;
-    end if;
-
-    return '{"status": "200", "msg":"OK"}'::JSONB;
-  END;
-$$ LANGUAGE plpgsql;
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_schema_1_1_1.owner_validate(JSONB) to guest_aad; -- upsert
-grant EXECUTE on FUNCTION aad_schema_1_1_1.owner_validate(JSONB) to editor_aad; -- upsert
-
------------------
--- FUNCTION: Create owner(id TEXT)
------------------
-
-CREATE OR REPLACE FUNCTION aad_schema_1_1_1.owner(id TEXT) RETURNS JSONB
-AS $$
-  Select reg_form-'password' as owner from aad_schema_1_1_1.adopt_a_drain where reg_id=id and reg_type='owner';
-$$ LANGUAGE sql;
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_schema_1_1_1.owner(JSON) to editor_aad; -- select
-
-
 
 -----------------
 -- FUNCTION: Create signin_validate(form JSONB)
@@ -610,10 +503,13 @@ AS $$
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_schema_1_1_1.signin_validate(JSONB) to guest_aad; -- upsert
+
+
 ------------
 -- FUNCTION: Create aad_schema_1_1_1.signin(form JSON)
 ------------
-CREATE OR REPLACE FUNCTION aad_schema_1_1_1.signin(form JSON) RETURNS JSON
+
+CREATE OR REPLACE FUNCTION aad_schema_1_1_1.signin(form JSON) RETURNS JSONB
 AS $$
   -- make token to execute app(JSON)
   declare rc JSONB;
@@ -621,18 +517,19 @@ AS $$
   declare process_error JSONB;
   declare _form JSONB;
   Declare _jwt_role TEXT;
-  Declare _model_owner JSONB;
+  Declare _model_user JSONB;
   Declare _validation JSONB;
   Declare _pw TEXT;
+  DECLARE _fr JSONB;
   BEGIN
-  -- claims check
+    -- claims check
     _jwt_role := current_setting('request.jwt.claim.role','t');
     if _jwt_role is NULL then
       -- needed for tapps testing only
       _jwt_role := 'guest_aad';
     end if;
     if not(_jwt_role = 'guest_aad') then
-      _validation := '{"status":"401", "msg":"Unauthorized"}'::JSONB;
+      _validation := '{"status":"401", "msg":"UnAuthorized"}'::JSONB;
       PERFORM aad_schema_1_1_1.process_logger(_validation);
       return _validation;
     end if;
@@ -641,11 +538,11 @@ AS $$
     -- force a type
     _form := _form || '{"type":"signin"}'::JSONB;
     -- name to lowercase
-    _form := _form || format('{"name":"%s"}', LOWER(_form ->> 'name'))::JSONB;
+    --_form := _form || format('{"name":"%s"}', LOWER(_form ->> 'name'))::JSONB;
     -- evaluate the token
-    _model_owner := current_setting('app.lb_guest_aad')::jsonb;
-    if not(_model_owner ->> 'role' = _jwt_role) then
-        _validation := http_response('401','Unauthorized');
+    _model_user := current_setting('app.lb_guest_aad')::jsonb;
+    if not(_model_user ->> 'role' = _jwt_role) then
+        _validation := http_response('401','UnauthorizeD');
         PERFORM aad_schema_1_1_1.process_logger(_validation);
         return _validation;
     end if;
@@ -658,16 +555,24 @@ AS $$
         PERFORM aad_schema_1_1_1.process_logger(_validation);
         return _validation;
     end if;
+
     -- remove password
-    _pw = _form ->> 'password';
+    _pw := _form ->> 'password';
     _form := _form - 'password';
     -- validate name and password
 
-    if not(exists(select reg_form from aad_schema_1_1_1.adopt_a_drain where reg_id = _form ->> 'name' and reg_form ->> 'password' = crypt(_pw, reg_form ->> 'password'))) then
+    select reg_form - 'password' as form into _fr
+    from aad_schema_1_1_1.adopt_a_drain
+    where
+      reg_type IN ('adopter','woden')
+      and reg_id = LOWER(_form ->> 'name')
+      and reg_form ->> 'password' = crypt(_pw, reg_form ->> 'password');
+
+    IF _fr is NULL THEN
       -- login failure
       _form := _form || '{"status":"404", "msg":"Not Found"}'::JSONB;
       PERFORM aad_schema_1_1_1.process_logger(_form);
-      return http_response('401','Unauthenticated');
+      return http_response('401',format('Unauthenticated (%s)', _form ->> 'name'));
     end if;
 
     -- make signin_token
@@ -678,7 +583,8 @@ AS $$
       SELECT
         current_setting('app.lb_woden')::JSONB ->> 'org' as iss,
         current_setting('app.lb_woden')::JSONB ->> 'app' as sub,
-        LOWER(_form ->> 'name') as jti,
+        _fr ->> 'id' as jti,
+        _fr ->> 'key' as key,
         'editor_aad'::text as role,
         extract(epoch from now() + '5 minutes'::interval) :: integer as exp
     ) r;
@@ -698,8 +604,7 @@ AS $$
     );
 
   END;
-$$ LANGUAGE plpgsql;
--- GRANT: Grant Execute
+$$ LANGUAGE plpgsql;-- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_schema_1_1_1.signin(JSON) to guest_aad; -- upsert
 
 
@@ -763,10 +668,10 @@ grant EXECUTE on FUNCTION aad_schema_1_1_1.signin(JSON) to guest_aad; -- upsert
         EXCEPTION
             WHEN unique_violation THEN
                 -- PERFORM aad_schema_1_1_1.process_logger(_form || '{"status":"400", "msg":"Bad Request, duplicate adopter"}'::JSONB);
-                return '{"status":"400", "msg":"Bad App Request, duplicate adopter"}'::JSONB;
+                return '{"status":"409", "msg":"Conflict, duplicate adopter"}'::JSONB;
             WHEN check_violation then
                 ---- PERFORM process_logger();
-                return '{"status":"400", "msg":"Bad adopter Request, validation error"}'::JSONB;
+                return '{"status":"406", "msg":"Bad adopter Request, validation error"}'::JSONB;
             WHEN others then
                 ---- PERFORM process_logger();
                 return format('{"status":"500", "msg":"Unknown adopter insertion error", "SQLSTATE":"%s", "form":%s}',SQLSTATE, _form)::JSONB;

@@ -1,21 +1,22 @@
+# TODO aad-web: Activate webservice in docker-compose.yml
+
 version: '3'
 # AAD
 # docker-compose up
 # ref: http://postgrest.org/en/v6.0/install.html#docker
 # ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
-
 services:
-  #web:
-  #  container_name: adopt-a-drain
-  #  image: wilfongjt/adopt-a-drain
-  #  build:
-  #    context: ./adopt-a-drain-web/
-  #  command: >
-  #    bash -c "npm install && npm run dev"
-  #  volumes:
-  #    - ./aad-web:/usr/src
-  #  ports:
-  #    - "3000:3000"
+  web:
+    #container_name: adopt-a-drain
+    image: wilfongjt/adopt-a-drain
+    build:
+      context: ./aad-web/
+    command: >
+      bash -c "npm install && npm run dev"
+    volumes:
+      - ./aad-web:/usr/src
+    ports:
+      - "3000:3000"
 
   #############
   # POSTGRES
@@ -50,7 +51,7 @@ services:
       - "./aad-db/sql:/docker-entrypoint-initdb.d"
 
       # Uncomment this if you want to persist the data.
-      #- "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
+      - "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
     networks:
       - postgrest-backend
     restart: always

@@ -2,6 +2,16 @@
 --------------
 -- Environment
 --------------
+-- DONE 1.1.0: Create Table (adoopt_a_drain)
+-- DONE 1.1.0: Create Token types
+-- DONE 1.1.0: Design and develope table trigger
+-- DONE 1.1.0: Design and develope logging functions
+-- DONE 1.1.0: Design and develope a responce formatting function
+-- DONE 1.1.0: Design and develope a test for a valid token
+-- DONE 1.1.0: add an application administrator
+-- DONE 1.1.0: Design and develope an application identity
+-- DONE 1.1.0: Design and develope an applcation owner user
+-- DONE 1.1.0: Design and develope a login
 
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
@@ -284,6 +294,7 @@ grant EXECUTE on FUNCTION aad_schema_1_1_0.http_response(TEXT, TEXT) to editor_a
 -- FUNCTION: Create is_valid_token(_token TEXT, expected_role TEXT)
 -----------------
 
+
 CREATE OR REPLACE FUNCTION aad_schema_1_1_0.is_valid_token(_token TEXT, expected_role TEXT) RETURNS Boolean
 AS $$
 
@@ -312,6 +323,8 @@ grant EXECUTE on FUNCTION aad_schema_1_1_0.is_valid_token(TEXT, TEXT) to editor_
 ----------------
 -- USER: Setup woden user
 ----------------
+
+
 --insert into aad_schema_1_1_0.adopt_a_drain (reg_type, reg_form) values ('woden', (:lb_woden::JSONB || '{"type":"woden", "roles":"woden,admin"}'::JSONB) );
 insert into aad_schema_1_1_0.adopt_a_drain (reg_type, reg_form) values ('woden', (:lb_woden::JSONB || '{"type":"woden", "roles":"woden,admin"}'::JSONB) );
 --insert into aad_schema_1_1_0.adopt_a_drain (reg_type, reg_form) values ('app', (format('{"name":"aad@1.0.0", "owners":"%s"}', :lb_woden::JSONB ->> 'name')::JSONB) );
@@ -445,6 +458,7 @@ grant editor_aad to authenticator;
 -- FUNCTION: Create owner(form JSON)
 -----------------
 
+
 CREATE OR REPLACE FUNCTION aad_schema_1_1_0.owner(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
@@ -568,6 +582,7 @@ grant EXECUTE on FUNCTION aad_schema_1_1_0.owner(JSON) to editor_aad; -- select
 -----------------
 -- FUNCTION: Create signin_validate(form JSONB)
 -----------------
+
 
 CREATE OR REPLACE FUNCTION aad_schema_1_1_0.signin_validate(form JSONB) RETURNS JSONB
 AS $$

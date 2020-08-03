@@ -1,6 +1,9 @@
 \c postgres
 
-
+-- DONE 0.0.0: Setup environment variables
+-- DONE 0.0.0: Create Database
+-- DONE 0.0.0: Create Extensions
+-- DONE 0.0.0: Create Roles
 ---------------
 -- ISSUES: Common Issues and Solutions
 /*
@@ -14,7 +17,7 @@
   Try: makeing an new starter-token
   Try: check jwt.io and remove any trailing eol in encoded
   something is missing, look in aad.1.0.0 runs with aad.1.0.0 added to startup
-  Try: add grant guest_aad to authenticator; ... that's it... this time
+  Try: add granting guest_aad to authenticator; ... that's it... this time
 
 * issue: AUTHORIZED_USER is {"hint":null,"details":null,"code":"42501","message":"permission denied to set role \"guest_aad\""}
   ???? added insert privileges to editor_aad but now gives "Not valid base64url"
@@ -102,6 +105,7 @@ extra code
 -- DATABASE
 --------------
 -- DATABASE: Drop Database
+
 DROP DATABASE IF EXISTS aad_db;
 -- DATABASE: Create Database
 CREATE DATABASE aad_db;
@@ -126,5 +130,3 @@ CREATE ROLE authenticator noinherit login password :lb_guest_password ;
 CREATE ROLE guest_aad nologin noinherit; -- permissions to execute app() and insert type=owner into aad_schema_1_0_0.adopt_a_drain
 CREATE ROLE editor_aad nologin noinherit; -- permissions to execute app() and insert type=app into aad_schema_1_0_0.adopt_a_drain
 CREATE ROLE process_logger_role nologin;
-
--- grant guest_aad to postgres;

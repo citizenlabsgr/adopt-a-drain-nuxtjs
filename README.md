@@ -63,7 +63,7 @@ PGRST_DB_SCHEMA=aad_version_1_2_0
 PGRST_DB_ANON_ROLE=guest_aad
 ```
 
-### Docker Compose
+### System Startup
 ```
 # build once, fresh clones should be built
 cd adopt-a-drain/aad-web/

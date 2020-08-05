@@ -9,7 +9,6 @@ Adopt a drain
 | G2  | **Clarify**, the codebase  |
 | G3  | **Simplify**, AAD's development and deployment  |
 | G4  | **Decouple**, the application from the data and services  |
-| G5  | **Mobile**, All  |
 
 ### Strategies   
 | Strategy | Goal IDs

@@ -9,7 +9,7 @@ pgtap extension to run.
 
 ## Install
 
-You will require sudo privledges and the postgres development
+You will require sudo privileges and the postgres development
 libraries for your operating system in most cases.  For ubuntu on
 postgres 9.5 for example, you can install them with:
 

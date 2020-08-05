@@ -1,14 +1,15 @@
 # Adopt a Drain (AAD)
 Adopt a drain
 
-## Why Change AAD?
+## Why Change Adopt-a-Drain?
 ### Goals
 | ID | Goal
 | :------ | --------
-| G1  | **Grow** the AAD developer pool  |
-| G2  | **Clarify** the codebase  |
-| G3  | **Simplify** AAD's development and deployment  |
-| G4  | **Decouple** the application from the data and services  |
+| G1  | **Grow**, the AAD developer pool  |
+| G2  | **Clarify**, the codebase  |
+| G3  | **Simplify**, AAD's development and deployment  |
+| G4  | **Decouple**, the application from the data and services  |
+| G5  | **Mobile**, All  |
 
 ### Strategies   
 | Strategy | Goal IDs
@@ -23,11 +24,8 @@ Adopt a drain
 * **Abandon** is the process making an adoptee an orphan.  
 * **Adopter** is an AAD registered user
 * **Adoptee** is an adopted storm drain
-* **Credential** is a user name and password or a service token
 * **Document** is the result of merging a template with data
 * **Orphan** is an unadopted storm drain
-* **Template** is Markdown plain text embedded with data references.
-
 
 # Get Started
 ## Prerequisites
@@ -37,22 +35,33 @@ Adopt a drain
 | **[Data.World API Token](https://data.world)**  | DW_AUTH_TOKEN | Look in Data.World's advanced settings.  |
 | **[Docker](https://www.docker.com)** | N/A | Docker will get you up and going faster.  |
 
-
 ### Environment Variables
-Environment variables are stored in .env
+Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
 ```
 # aad-web/.env
 
-# Google Map API
+# Google Map API (aad-web)
 GOOGLE_MAPS_API_KEY=<get a key from google>
 
-# Data.World API
+# Data.World API (aad-web)
 DW_USER=citizenlabs
 DW_AUTH_TOKEN=<get a personal token from data.world's advanced settings>
 DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
 
-```
+# Adopt-a-Drain (aad-web)
+LB_GUEST_PASSWORD=mysecretclientpassword
+LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
 
+# Postgres (aad-db)
+POSTGRES_DB=aad_db
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=mysecretdatabasepassword
+POSTGRES_JWT_SECRET=PASSWORDmustBEATLEAST32CHARSLONGLONG
+
+# Postgrest (aad-db)
+PGRST_DB_SCHEMA=aad_version_1_2_0
+PGRST_DB_ANON_ROLE=guest_aad
+```
 
 ### Docker Compose
 ```

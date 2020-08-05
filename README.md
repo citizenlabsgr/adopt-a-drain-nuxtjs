@@ -16,7 +16,7 @@ Adopt a drain
 | Replace Ruby with Nuxtjs (nodejs) | G1, G2         
 | Use Postgrest APIs to decoupled the application and data storage | G1, G2 |
 | Replace the current application's user interface with a Single page design | G3,G4 |
-| --Static Website, should run on github or aws S3--  | G1,G3  |
+| ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 
 ### Definitions
 * **AAD** is Adopt-A-Drain

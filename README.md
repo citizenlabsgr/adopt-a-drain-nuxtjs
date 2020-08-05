@@ -168,7 +168,6 @@ Again to keep the writing simple, data is framed in terms of forms and documents
 
 ### Endpoints
 
-
 | Endpoint | Description | Returns  |  
 | -------- | ------ | ------ |
 | adopter  | Create an adopter (aka, Sign up) | status |
@@ -180,7 +179,6 @@ Again to keep the writing simple, data is framed in terms of forms and documents
 | signin   | Create an Authorization Token | adopter-token |
 | forgot   | Create a forgot password token  | status |
 | document | Create a document | status |
-| Read     | Read a document by id | document |
+|          | Read a document by id | document |
 |          | Update a document | status  |
-|          | Read | document by id | document |
 |          | Delete  | status  |

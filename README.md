@@ -64,7 +64,7 @@ PGRST_DB_ANON_ROLE=guest_aad
 
 ### System Startup
 ```
-# build once, fresh clones should be built
+# build the docker containers
 cd adopt-a-drain/aad-web/
 docker-comopose build
 
@@ -76,17 +76,12 @@ docker-compose up
 docker-compose down
 
 ```
+* Always use docker-compose down to avoid corrupting the Postgres database (add_db).
 
 ### Tests
 Tests are run automatically when docker-compose is run.
 * aad-web: https://jestjs.io
 * aad-db: https://pgtap.org
-
-```
-open command window
-cd adopt-a-drain/aad-web/
-npm run test
-```
 
 ### Open Adopt-a-Drain
 * open browser
@@ -115,13 +110,9 @@ Some technical details
 | Send Reset Password Email | Notify adopter of request to change password | ???? |
 | Reset Password    | Initiate the change of an adopter's password | ???? |
 
-## Architecture
 
-API Generalization
+AAD API Generalization
 ```
-API Mappings
-
-
                                     Map API (aka, Google Map API)
                                    /     Orphan API (Data World API)
                                   /    /     

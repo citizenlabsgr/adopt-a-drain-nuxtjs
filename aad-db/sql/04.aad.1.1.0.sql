@@ -12,7 +12,7 @@
 -- DONE 1.1.0: Design and develope an application identity
 -- DONE 1.1.0: Design and develope an applcation owner user
 -- DONE 1.1.0: Design and develope a login
-
+/*
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
 \set lb_woden `echo "'$LB_WODEN'"`
@@ -698,3 +698,4 @@ AS $$
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_schema_1_1_0.signin(JSON) to guest_aad; -- upsert
+*/

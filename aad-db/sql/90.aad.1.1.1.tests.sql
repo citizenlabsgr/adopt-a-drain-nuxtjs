@@ -1,10 +1,11 @@
-
+/*
 ------------------------
 -- TESTs
 ------------------------
 \c aad_db;
 
 SET search_path TO aad_schema_1_1_1, public;
+*/
 /*
 BEGIN;
 
@@ -37,7 +38,7 @@ ROLLBACK;
 --------------------
 -- PROCESS_LOGGER Tests
 --------------------
-
+/*
 BEGIN;
 
   SELECT plan(3);
@@ -91,7 +92,7 @@ SELECT ok (
 SELECT * FROM finish();
 
 ROLLBACK;
-
+*/
 -------------------
 -- Adopter TESTs
 -------------------

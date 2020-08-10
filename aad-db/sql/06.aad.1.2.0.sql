@@ -9,7 +9,7 @@
 -- DONE 1.2.0: Add Adpotee
 -- DONE 1.2.0: Rename schema from aad_schema_1_2_0 to aad_version_1_2_0
 
-
+/*
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
 \set lb_woden `echo "'$LB_WODEN'"`
@@ -836,3 +836,4 @@ $$ LANGUAGE sql;
 
 -- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_version_1_2_0.adoptee(TEXT) to editor_aad; -- C
+*/

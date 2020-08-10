@@ -1,10 +1,11 @@
-
+/*
 ------------------------
 -- TESTs
 ------------------------
 \c aad_db;
 
 SET search_path TO aad_version_1_2_0, public;
+*/
 /*
 BEGIN;
 
@@ -37,7 +38,7 @@ ROLLBACK;
 --------------------
 -- PROCESS_LOGGER Tests
 --------------------
-
+/*
 BEGIN;
 
   SELECT plan(3);
@@ -123,7 +124,7 @@ SELECT ok (
 SELECT is (
   aad_version_1_2_0.adoptee( '{
     "type":"adoptee",
-    "adoptee_id":"adopteeid12345667",
+    "drain_id":"adopteeid12345667",
     "lat":42.01,
     "lon":-84.01}'::JSON
   ),
@@ -133,3 +134,4 @@ SELECT is (
 SELECT * FROM finish();
 
 ROLLBACK;
+*/

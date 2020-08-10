@@ -88,7 +88,7 @@ for f in files:
         readme.append('## Permissions')
         readme.append('\n')
         readme.append('| file | action | permission | on | to |')
-        readme.append('| ---- | ------ | ---------- | -- | -- |')
+        readme.append('| ---- | ------ | ---------- | ---- | ---- |')
         for ln in lines:
             ln = '| {} | {} |'.format(f,
                                       ln.strip()

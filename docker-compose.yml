@@ -6,25 +6,23 @@ version: '3'
 # ref: http://postgrest.org/en/v6.0/install.html#docker
 # ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
 services:
-  web:
-    #container_name: adopt-a-drain
-    image: wilfongjt/adopt-a-drain
-    build:
-      context: ./aad-web/
-    command: >
-      bash -c "npm install && npm run dev"
-    volumes:
-      - ./aad-web:/usr/src
-    ports:
-      - "3000:3000"
+  #web:
+  #  #container_name: adopt-a-drain
+  #  image: wilfongjt/adopt-a-drain
+  #  build:
+  #    context: ./aad-web/
+  #  command: >
+  #    bash -c "npm install && npm run dev"
+  #  volumes:
+  #    - ./aad-web:/usr/src
+  #  ports:
+  #    - "3000:3000"
 
   #############
   # POSTGRES
   #########
   db:
-    #build: ./mockups/postgres-jwt-db
-    #build: ./pg-database
-    #build: ./aad-db/pg-database
+
     build:
         context: ./aad-db
         dockerfile: dockerfile-db
@@ -37,14 +35,6 @@ services:
       - POSTGRES_JWT_SECRET=${POSTGRES_JWT_SECRET}
       - LB_GUEST_PASSWORD=${LB_GUEST_PASSWORD}
       - LB_WODEN=${LB_WODEN}
-      #- POSTGRES_USER=postgres
-      #- POSTGRES_PASSWORD=mysecretpassword
-      #- POSTGRES_DB=aad_db
-      #- DB_ANON_ROLE=guest
-      #- DB_SCHEMA=aad_schema
-      #- DB_NAME=postgres
-      #- DB_USER=postgres
-      #- DB_PASS=PASSWORD.must.BE.AT.LEAST.32.CHARS.LONG
 
     volumes:
       # anything in initdb directory is created in the database
@@ -69,9 +59,6 @@ services:
     environment:
       # The standard connection URI format, documented at
       # https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING
-      #PGRST_DB_URI: postgres://postgres:mysecretpassword@db:5432/aad_db
-      #PGRST_DB_SCHEMA: aad_schema
-      #PGRST_DB_ANON_ROLE: guest
     - PGRST_DB_URI=postgres://authenticator:${LB_GUEST_PASSWORD}@db:5432/${POSTGRES_DB}
     - PGRST_DB_SCHEMA=${PGRST_DB_SCHEMA}
     - PGRST_DB_ANON_ROLE=${PGRST_DB_ANON_ROLE}

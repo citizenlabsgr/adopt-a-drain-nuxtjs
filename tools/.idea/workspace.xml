@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="45d331f6-7617-4b7f-a9ae-9cb7c3500464" name="Default Changelist" comment="" />
+    <list default="true" id="45d331f6-7617-4b7f-a9ae-9cb7c3500464" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/00.aad.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/00.aad.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/04.aad.1.1.0.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/04.aad.1.1.0.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/05.aad.1.1.1.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/05.aad.1.1.1.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/06.aad.1.2.0.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/06.aad.1.2.0.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/90.aad.1.1.0.tests.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/90.aad.1.1.0.tests.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/90.aad.1.1.1.tests.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/90.aad.1.1.1.tests.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/90.aad.1.2.0.tests.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/90.aad.1.2.0.tests.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-db/sql/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-db/sql/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../aad-web/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../aad-web/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
   <component name="ProjectId" id="1fSXSvcIHMUsqsvENBX4fZUhhzA" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="/usr/local/bin/python3.6" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
@@ -65,5 +83,16 @@
       <updated>1596212470513</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

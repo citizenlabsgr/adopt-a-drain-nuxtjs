@@ -23,6 +23,7 @@ when a user's name changes, make new adopter, preserve the form's id value, deac
 when signin occurs
 when
 */
+/*
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
 \set lb_woden `echo "'$LB_WODEN'"`
@@ -731,3 +732,4 @@ grant EXECUTE on FUNCTION aad_schema_1_1_1.signin(JSON) to guest_aad; -- upsert
   $$ LANGUAGE sql;
   -- GRANT: Grant Execute
   grant EXECUTE on FUNCTION aad_schema_1_1_1.adopter(JSON) to editor_aad; -- select
+*/

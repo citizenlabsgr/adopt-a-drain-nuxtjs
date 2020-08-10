@@ -30,6 +30,96 @@
 | 00.aad.sql | DATABASE | Create Database |
 | 00.aad.sql | DATABASE | Create Extensions |
 | 00.aad.sql | ROLE | Create Roles |
+| 00.aad.sql | GRANT | Grant authenticator more permissions |
+
+
+## Permissions
+
+
+| file | action | permission | on | to |
+| ---- | ------ | ---------- | ---- | ---- |
+| 00.aad.sql | grant | guest_aad | authenticator |
+| 00.aad.sql | grant | editor_aad | authenticator |
+# 01.aad.sql
+
+
+## Changes
+
+
+| status | version | detail |
+| ------ | ------- | ------ |
+| Done | 1.2.1 | changed reg_id to reg_pk |
+| Done | 1.2.1 | Change "process" type to "event" type |
+| Done | 1.2.1 | Change Process_logger to event_logger |
+| Done | 1.2.1 | Change 1_2_0 to 1_2_1 |
+| Done | 1.2.1 | Dont allow drain to be adopted more than once ... uses index |
+| Done | 1.2.0 | Add Adpotee |
+| Done | 1.2.0 | Rename schema from aad_schema_1_2_1 to aad_version_1_2_1 |
+
+
+## Functions
+
+
+| version | name | returns |
+| ------- | ------- | ------ |
+|  aad_base | adopt_a_drain_upsert_trigger_func()  |  TRIGGER |
+|  aad_base | adopt_a_drain_upsert_trigger_func()  |  TRIGGER |
+|  aad_base | event_logger(form JSONB)  |  JSONB |
+|  aad_base | event_logger_validate(form JSONB)  |  JSONB |
+|  aad_base | http_response(_status text, _msg text)  |  JSON |
+|  aad_base | is_valid_token(_token TEXT, expected_role TEXT)  |  Boolean |
+
+
+## Script Pattern
+
+
+| file | type | detail |
+| ---- | ------- | ------ |
+| 01.aad.sql | SCHEMA | Create Schema |
+| 01.aad.sql | TABLE | Create Table |
+| 01.aad.sql | INDEX | Create Index |
+| 01.aad.sql | GRANT | Grant Table Permissions |
+| 01.aad.sql | FUNCTION | Table Trigger |
+| 01.aad.sql | GRANT | Grant Execute |
+| 01.aad.sql | TRIGGER | Create Table Trigger |
+| 01.aad.sql | USER | Setup woden user |
+| 01.aad.sql | FUNCTION | Create event_logger(_form JSONB) |
+| 01.aad.sql | GRANT | Grant Execute |
+| 01.aad.sql | FUNCTION | Create event_logger_validate(form JSONB) |
+| 01.aad.sql | GRANT | Grant Execute |
+| 01.aad.sql | GRANT | GRANT Schema permissions |
+| 01.aad.sql | GRANT | Grant Table permissions to event_logger_role |
+| 01.aad.sql | GRANT | Grant Trigger Permissions to event_logger_role |
+| 01.aad.sql | FUNCTION | Create http_response(_status text, _msg text) |
+| 01.aad.sql | GRANT | Grant Function Permissions |
+| 01.aad.sql | FUNCTION | Create is_valid_token(_token TEXT, expected_role TEXT) |
+| 01.aad.sql | GRANT | Grant Function Permissions |
+
+
+## Permissions
+
+
+| file | action | permission | on | to |
+| ---- | ------ | ---------- | ---- | ---- |
+| 01.aad.sql | grant | insert | aad_base.adopt_a_drain  | guest_aad -- C |
+| 01.aad.sql | grant | select | aad_base.adopt_a_drain  | guest_aad -- R, signin |
+| 01.aad.sql | grant | insert | aad_base.adopt_a_drain  | editor_aad -- C |
+| 01.aad.sql | grant | update | aad_base.adopt_a_drain  | editor_aad -- U |
+| 01.aad.sql | grant | select | aad_base.adopt_a_drain  | editor_aad -- R |
+| 01.aad.sql | grant | insert | aad_base.adopt_a_drain  | event_logger_role -- C |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.adopt_a_drain_upsert_trigger_func  | guest_aad |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.adopt_a_drain_upsert_trigger_func  | editor_aad |
+| 01.aad.sql | grant | TRIGGER | aad_base.adopt_a_drain  | guest_aad |
+| 01.aad.sql | grant | TRIGGER | aad_base.adopt_a_drain  | editor_aad |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.event_logger(JSONB) | event_logger_role -- upsert |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.event_logger_validate(JSONB) | event_logger_role -- upsert |
+| 01.aad.sql | grant | insert | aad_base.adopt_a_drain  | event_logger_role -- C ... 'app' only |
+| 01.aad.sql | grant | select | aad_base.adopt_a_drain  | event_logger_role -- R ... 'owner', 'app' |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.adopt_a_drain_upsert_trigger_func  | event_logger_role |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.http_response(TEXT, TEXT) | guest_aad -- C |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.http_response(TEXT, TEXT) | editor_aad -- C |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.is_valid_token(TEXT, TEXT) | guest_aad -- C |
+| 01.aad.sql | grant | EXECUTE | FUNCTION aad_base.is_valid_token(TEXT, TEXT) | editor_aad -- C |
 # 04.aad.1.1.0.sql
 
 
@@ -121,7 +211,7 @@
 
 
 | file | action | permission | on | to |
-| ---- | ------ | ---------- | -- | -- |
+| ---- | ------ | ---------- | ---- | ---- |
 | 04.aad.1.1.0.sql | grant | usage | schema aad_schema_1_1_0 | guest_aad |
 | 04.aad.1.1.0.sql | grant | usage | schema aad_schema_1_1_0 | editor_aad |
 | 04.aad.1.1.0.sql | grant | usage | schema aad_schema_1_1_0 | process_logger_role |
@@ -252,7 +342,7 @@
 
 
 | file | action | permission | on | to |
-| ---- | ------ | ---------- | -- | -- |
+| ---- | ------ | ---------- | ---- | ---- |
 | 05.aad.1.1.1.sql | grant | usage | schema aad_schema_1_1_1 | guest_aad |
 | 05.aad.1.1.1.sql | grant | usage | schema aad_schema_1_1_1 | editor_aad |
 | 05.aad.1.1.1.sql | grant | usage | schema aad_schema_1_1_1 | process_logger_role |
@@ -380,7 +470,7 @@
 
 
 | file | action | permission | on | to |
-| ---- | ------ | ---------- | -- | -- |
+| ---- | ------ | ---------- | ---- | ---- |
 | 06.aad.1.2.0.sql | grant | usage | schema aad_version_1_2_0 | guest_aad |
 | 06.aad.1.2.0.sql | grant | usage | schema aad_version_1_2_0 | editor_aad |
 | 06.aad.1.2.0.sql | grant | usage | schema aad_version_1_2_0 | process_logger_role |
@@ -419,6 +509,92 @@
 | 06.aad.1.2.0.sql | grant | EXECUTE | FUNCTION aad_version_1_2_0.adoptee_validate(JSONB) | editor_aad |
 | 06.aad.1.2.0.sql | grant | EXECUTE | FUNCTION aad_version_1_2_0.adoptee(JSON) | editor_aad -- C |
 | 06.aad.1.2.0.sql | grant | EXECUTE | FUNCTION aad_version_1_2_0.adoptee(TEXT) | editor_aad -- C |
+# 07.aad.1.2.1.sql
+
+
+## Changes
+
+
+| status | version | detail |
+| ------ | ------- | ------ |
+| __PAUSE__ | 1.2.1 | Change "process" type to "event" type |
+| __PAUSE__ | 1.2.1 | Change Process_logger to event_logger |
+| __PAUSE__ | 1.2.1 | Change 1_2_0 to 1_2_1 |
+| __PAUSE__ | 1.2.1 | Create add_base schema |
+| __PAUSE__ | 1.2.1 | Move adopt_a_drain table to aad_base schema |
+| __PAUSE__ | 1.2.1 | stop insert of duplicate adoptee |
+| __PAUSE__ | 1.2.1 | add reg_data to adopter insert |
+| __PAUSE__ | 1.2.1 | add reg_data to adoptee insert |
+| __PAUSE__ | 1.2.1 | add reg_ata to signin |
+
+
+## Functions
+
+
+| version | name | returns |
+| ------- | ------- | ------ |
+|  aad_version_1_2_1 | signin_validate(form JSONB)  |  JSONB |
+|  aad_version_1_2_1 | signin(form JSON)  |  JSONB |
+|  aad_version_1_2_1 | signin(form JSON)  |  JSONB |
+|  aad_version_1_2_1 | adopter(form JSON)  |  JSONB |
+|  aad_version_1_2_1 | adopter_validate(form JSONB)  |  JSONB |
+|  aad_version_1_2_1 | adopter(id TEXT)  |  JSONB |
+|  aad_version_1_2_1 | adoptee_validate(form JSONB)  |  JSONB |
+|  aad_version_1_2_1 | adoptee(form JSON)  |  JSONB |
+|  aad_version_1_2_1 | adoptee(id TEXT)  |  JSONB |
+
+
+## Script Pattern
+
+
+| file | type | detail |
+| ---- | ------- | ------ |
+| 07.aad.1.2.1.sql | SCHEMA | Create Schema |
+| 07.aad.1.2.1.sql | DATABASE | Alter app.settings |
+| 07.aad.1.2.1.sql | GRANT | Grant Schema Permissions |
+| 07.aad.1.2.1.sql | SCHEMA | Set Schema Path |
+| 07.aad.1.2.1.sql | TYPE | Create Types |
+| 07.aad.1.2.1.sql | FUNCTION | Create signin_validate(form JSONB) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | FUNCTION | Create aad_version_1_2_1.signin(form JSON) |
+| 07.aad.1.2.1.sql | $$ LANGUAGE plpgsql;GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | $$ LANGUAGE plpgsql;GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | FUNCTION | Create adopter(form JSON) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | FUNCTION | Create adopter_validate(form JSONB) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | FUNCTION | Create adopter(id TEXT) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | FUNCTION | Create adoptee_validate(form JSONB) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute |
+| 07.aad.1.2.1.sql | FUNCTION | Create adoptee(form JSON) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute adoptee |
+| 07.aad.1.2.1.sql | FUNCTION | Create adoptee(id TEXT) |
+| 07.aad.1.2.1.sql | GRANT | Grant Execute |
+
+
+## Permissions
+
+
+| file | action | permission | on | to |
+| ---- | ------ | ---------- | ---- | ---- |
+| 07.aad.1.2.1.sql | grant | usage | schema aad_base | guest_aad |
+| 07.aad.1.2.1.sql | grant | usage | schema aad_base | editor_aad |
+| 07.aad.1.2.1.sql | grant | usage | schema aad_base | event_logger_role |
+| 07.aad.1.2.1.sql | grant | usage | schema aad_version_1_2_1 | guest_aad |
+| 07.aad.1.2.1.sql | grant | usage | schema aad_version_1_2_1 | editor_aad |
+| 07.aad.1.2.1.sql | grant | usage | schema aad_version_1_2_1 | event_logger_role |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.signin_validate(JSONB) | guest_aad |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.signin(JSON) | guest_aad |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.signin(JSON) | guest_aad |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adopter(JSON) | guest_aad -- upsert |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adopter(JSON) | editor_aad -- upsert |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adopter_validate(JSONB) | guest_aad -- upsert |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adopter_validate(JSONB) | editor_aad -- upsert |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adopter(JSON) | editor_aad -- select |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adoptee_validate(JSONB) | editor_aad |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adoptee(JSON) | editor_aad -- C |
+| 07.aad.1.2.1.sql | grant | EXECUTE | FUNCTION aad_version_1_2_1.adoptee(TEXT) | editor_aad -- C |
 # 90.aad.1.1.0.tests.sql
 
 
@@ -504,3 +680,29 @@
 | 90.aad.1.2.0.tests.sql | TEST | Test(a) adopter Insert |
 | 90.aad.1.2.0.tests.sql | TEST | Test(b) signin Insert |
 | 90.aad.1.2.0.tests.sql | TEST | Test(a) adopter Insert |
+# 90.aad.1.2.1.tests.sql
+
+
+## Changes
+
+
+| status | version | detail |
+| ------ | ------- | ------ |
+
+
+## Functions
+
+
+| version | name | returns |
+| ------- | ------- | ------ |
+
+
+## Script Pattern
+
+
+| file | type | detail |
+| ---- | ------- | ------ |
+| 90.aad.1.2.1.tests.sql | TEST | Test event_logger Insert |
+| 90.aad.1.2.1.tests.sql | TEST | Test(a) adopter Insert |
+| 90.aad.1.2.1.tests.sql | TEST | Test(b) signin Insert |
+| 90.aad.1.2.1.tests.sql | TEST | Test(a) adopter Insert |

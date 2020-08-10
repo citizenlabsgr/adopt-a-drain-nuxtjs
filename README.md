@@ -98,15 +98,19 @@ Tests are run automatically when docker-compose is run.
 # Understanding AAD
 Some technical details
 
-## Processes
+## Core Processes
 | Process | Description |  Method |
 | :------ | -------- | ------ |
 | Signup            | Collect an adopter's personal identity information | adopter |
 | Signin            | Authenticate an adopter with AAD | signin |
 | Update Adopter    | Update an adopter's personal identity information | adopter |
 | Adoption    | Adopt an orphaned drain | adoptee |
-| Send Adoption Email | Notify adopter of the adoption responsibilities | ???? |
 | Abandon     | Orphan a previously adopted drain | ???? |
+
+## Helper Processes
+| Process | Description |  Method |
+| :------ | -------- | ------ |
+| Send Adoption Email | Notify adopter of the adoption responsibilities | ???? |
 | Send Reset Password Email | Notify adopter of request to change password | ???? |
 | Reset Password    | Initiate the change of an adopter's password | ???? |
 

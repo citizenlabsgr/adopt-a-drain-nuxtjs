@@ -11,13 +11,18 @@
 * todo: use two functions (overload) for update and insert instead of single function
   ???? app(JSON) and app(TEXT, JSON)
 
-* issue: permission denied to set role
-  try: granting guest_aad to postgres ... didnt work
-  try: checking that environmen vars are not empty ... not empty
-  Try: makeing an new starter-token
-  Try: check jwt.io and remove any trailing eol in encoded
-  something is missing, look in aad.1.0.0 runs with aad.1.0.0 added to startup
-  Try: add granting guest_aad to authenticator; ... that's it... this time
+* issue: permission denied to set role... {"hint":null,"details":null,"code":"42501","message":"permission denied to set role \"guest_aad\""}
+  check: is schema correct in .env PGRST_DB_SCHEMA=aad_version_?_?_?
+  check: is role correct in .env PGRST_DB_ANON_ROLE=guest_aad
+  check: has role been granted usage on schema
+  check: are environment vars empty ... not empty
+  check: has role been granted to authenticator
+  Try: make a new starter-token
+  Try: does token have trailing or extra eol, check jwt.io and remove any trailing eol in encoded
+  check: have permissions on dependent functions been set
+  check: does the schema path include all needed schemas
+  check: has schema path changed...
+
 
 * issue: AUTHORIZED_USER is {"hint":null,"details":null,"code":"42501","message":"permission denied to set role \"guest_aad\""}
   ???? added insert privileges to editor_aad but now gives "Not valid base64url"
@@ -129,4 +134,9 @@ CREATE ROLE authenticator noinherit login password :lb_guest_password ;
 
 CREATE ROLE guest_aad nologin noinherit; -- permissions to execute app() and insert type=owner into aad_schema_1_0_0.adopt_a_drain
 CREATE ROLE editor_aad nologin noinherit; -- permissions to execute app() and insert type=app into aad_schema_1_0_0.adopt_a_drain
-CREATE ROLE process_logger_role nologin;
+CREATE ROLE process_logger_role nologin; -- remove when 1.2.1 is removed
+CREATE ROLE event_logger_role nologin; -- as 1.2.1, replaces process_logger_role
+
+-- GRANT: Grant authenticator more permissions
+grant guest_aad to authenticator;
+grant editor_aad to authenticator;

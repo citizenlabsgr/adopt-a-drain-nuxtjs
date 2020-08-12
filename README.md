@@ -33,6 +33,10 @@ Adopt a drain
 | **[Google map key](https://developers.google.com/maps/documentation/javascript/get-api-key)** | GOOGLE_MAPS_API_KEY | yes, they ask for a credit card but wont bill you. |
 | **[Data.World API Token](https://data.world)**  | DW_AUTH_TOKEN | Look in Data.World's advanced settings.  |
 | **[Docker](https://www.docker.com)** | N/A | Docker will get you up and going faster.  |
+| **[AAD API Token(https://jwt.io)]**  | AAD_AUTH_TOKEN | use aad-payload, password is same as POSTGRES_JWT_SECRET  |
+
+* aad-payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
+
 
 ### Environment Variables
 Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
@@ -50,6 +54,7 @@ DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
 # Adopt-a-Drain (aad-web)
 LB_GUEST_PASSWORD=mysecretclientpassword
 LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
+AAD_AUTH_TOKEN=<sample-aad-auth-token>
 
 # Postgres (aad-db)
 POSTGRES_DB=aad_db
@@ -61,6 +66,8 @@ POSTGRES_JWT_SECRET=PASSWORDmustBEATLEAST32CHARSLONGLONG
 PGRST_DB_SCHEMA=aad_version_1_2_0
 PGRST_DB_ANON_ROLE=guest_aad
 ```
+* <sample-aad-auth-token> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
+
 
 ### System Startup
 ```

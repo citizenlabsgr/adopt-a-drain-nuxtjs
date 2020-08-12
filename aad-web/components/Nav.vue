@@ -9,10 +9,15 @@
       <!-- li><nuxt-link to="/adopt">Adopt</nuxt-link></li -->
       <li>
         <nuxt-link to="/login">
-          Login
+          SignIn
         </nuxt-link>
       </li>
       <!-- li v-if="authorized"><button @click="$store.commit('set_authenticated',false)">Sign Out</button></li -->
+      <li>
+        <nuxt-link to="/signup">
+          SignUp
+        </nuxt-link>
+      </li>
     </ul>
   </nav>
 </template>

@@ -1,6 +1,6 @@
 
 // import pkg from './package'
-
+// TODO: add AAD_API_VERSION to environment
 if (process.env.NODE_ENV !== 'production') {
   process.env.DEPLOY_ENV = ''
   /* eslint-disable no-console */
@@ -30,7 +30,10 @@ export default {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     DW_USER: process.env.DW_USER || 'citizenlabs',
     DW_DRAIN_URL: process.env.DW_DRAIN_URL || 'https://api.data.world/v0/sql/citizenlabs/grb-storm-drains',
-    DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN
+    DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN,
+    AAD_API_TOKEN: process.env.AAD_API_TOKEN,
+    AAD_API_URL: process.env.AAD_API_URL,
+    AAD_API_VERSION: process.env.AAD_API_VERSION
   },
   /*
   ** Headers of the page

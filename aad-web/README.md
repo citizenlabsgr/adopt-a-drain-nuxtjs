@@ -18,3 +18,8 @@ $ npm run generate
 ```
 
 For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+
+## Changes
+* TODO: Setup authentication (tests, components)
+* TODO: Setup authorization (tests, components)
+* TODO: Setup application token (tests, token)

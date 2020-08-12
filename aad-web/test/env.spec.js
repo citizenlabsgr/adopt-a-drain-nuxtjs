@@ -15,6 +15,7 @@ if (process.env.NODE_ENV !== 'production') {
 describe('Environment Vars', () => {
 
   test('Environment Variables', () => {
+    expect(process.env.AAD_API_VERSION).not.toBeUndefined();
     expect(process.env.AAD_API_URL).not.toBeUndefined();
     expect(process.env.AAD_API_TOKEN).not.toBeUndefined();
     expect(process.env.DW_USER).not.toBeUndefined();

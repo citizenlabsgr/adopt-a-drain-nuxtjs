@@ -31,6 +31,7 @@ services:
       - DW_DRAIN_URL=${DW_DRAIN_URL}
       - AAD_API_TOKEN=${AAD_API_TOKEN}
       - AAD_API_URL=${AAD_API_URL}
+      - AAD_API_VERSION=${AAD_API_VERSION}
 
   #############
   # POSTGRES

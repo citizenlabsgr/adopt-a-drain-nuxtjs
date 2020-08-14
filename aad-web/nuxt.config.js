@@ -1,4 +1,3 @@
-
 // import pkg from './package'
 // TODO: add AAD_API_VERSION to environment
 if (process.env.NODE_ENV !== 'production') {

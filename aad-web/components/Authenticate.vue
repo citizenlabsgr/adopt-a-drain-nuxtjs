@@ -1,10 +1,10 @@
 <template>
   <div class="band">
     <h1 class="title">
-      {{ authenticate.title }}
+      {{ page.title }}
     </h1>
     <h2 class="subtitle">
-      {{ authenticate.subtitle }}
+      {{ page.subtitle }}
     </h2>
     <div v-if="authenticated">
       Authorize
@@ -14,8 +14,8 @@
     </div>
     <div v-else>
       <h1>Temporary sign in </h1>
-      <input v-model="adopter_name" placeholder="email">
-      <input v-model="adopter_password" placeholder="password">
+      <!-- input v-model="adopter_name" placeholder="email" -->
+      <!--input v-model="adopter_password" placeholder="password" -->
 
       <button @click="$store.commit('set_authenticated',true)">
         Sign In
@@ -37,7 +37,7 @@
 export default {
   data () {
     return {
-      authenticate: {
+      page: {
         title: 'Authenticate',
         subtitle: 'Because.'
       }

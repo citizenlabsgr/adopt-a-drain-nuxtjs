@@ -87,8 +87,13 @@ docker-compose down
 
 ### Tests
 Tests are run automatically when docker-compose is run.
-* aad-web: https://jestjs.io
-* aad-db: https://pgtap.org
+* aad-db: https://pgtap.org , run automatically when docker creates database  
+* aad-web: https://jestjs.io, run manually from command line
+### Run aad-web tests   
+```
+cd adopt-a-drain/
+docker-compose run web npm run test
+```
 
 ### Open Adopt-a-Drain
 * open browser

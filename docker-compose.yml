@@ -12,6 +12,7 @@ version: '3'
 # docker-compose up
 # ref: http://postgrest.org/en/v6.0/install.html#docker
 # ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
+# bash -c "npm install && npm run dev"
 services:
   web:
     #container_name: adopt-a-drain

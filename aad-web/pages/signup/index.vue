@@ -1,14 +1,14 @@
 <template>
   <section class="container">
     <!-- Authenticate v-if="!authorized" / -->
-    <Authenticate />
+    <Authorize />
   </section>
 </template>
 <script>
-import Authenticate from '@/components/Authenticate.vue'
+import Authorize from '@/components/Authorize.vue'
 export default {
   components: {
-    Authenticate
+    Authorize
   },
   computed: {
     authorized () {

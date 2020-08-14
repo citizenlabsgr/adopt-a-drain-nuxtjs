@@ -1,22 +1,38 @@
-# TODO aad-web: Activate webservice in docker-compose.yml
+# TODO: adopt-a-drain/aad-web/.env add AAD_AUTH_TOKEN
+# TODO: add AAD_AUTH_TOKEN to adopt-a-drain/aad-web/.env
+# TODO: generate a AAD_AUTH_TOKEN at https://jwt.io with {} and POSTGRES_JWT_SECRET
+# TODO: add DW_USER to adopt-a-drain/aad-web/.env
+# TODO: add DW_AUTH_TOKEN to adopt-a-drain/aad-web/.env
+# TODO: add DW_DRAIN_URL to adopt-a-drain/aad-web/.env
+# TODO: add GOOGLE_MAPS_API_KEY to adopt-a-drain/aad-web/.env
+# TODO: aad-web: Activate webservice in docker-compose.yml
 
 version: '3'
 # AAD
 # docker-compose up
 # ref: http://postgrest.org/en/v6.0/install.html#docker
 # ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
+# bash -c "npm install && npm run dev"
 services:
-  #web:
-  #  #container_name: adopt-a-drain
-  #  image: wilfongjt/adopt-a-drain
-  #  build:
-  #    context: ./aad-web/
-  #  command: >
-  #    bash -c "npm install && npm run dev"
-  #  volumes:
-  #    - ./aad-web:/usr/src
-  #  ports:
-  #    - "3000:3000"
+  web:
+    #container_name: adopt-a-drain
+    image: wilfongjt/adopt-a-drain
+    build:
+      context: ./aad-web/
+    command: >
+      bash -c "npm install && npm run dev"
+    volumes:
+      - ./aad-web:/usr/src
+    ports:
+      - "3000:3000"
+    environment:
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - DW_USER=${DW_USER}
+      - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
+      - DW_DRAIN_URL=${DW_DRAIN_URL}
+      - AAD_API_TOKEN=${AAD_API_TOKEN}
+      - AAD_API_URL=${AAD_API_URL}
+      - AAD_API_VERSION=${AAD_API_VERSION}
 
   #############
   # POSTGRES

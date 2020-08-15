@@ -17,7 +17,7 @@
         <input v-model="form.displayname" placeholder="display name">
       </p>
       <div v-if="error_displayname" class="error">
-        Letters and numbers only.
+        Letters and numbers only. Minimum 4 characters.
       </div>
       <p>
         <input v-model="form.name" placeholder="email">
@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     error_displayname () { // true when not compliant
-      return !/^[a-z0-9]{4,}$/.test(this.form.displayname.trim())
+      return !/^[a-z0-9 ]{4,}$/.test(this.form.displayname.trim())
     },
     error_email () { // true when not compliant
       return !/\S+@\S+\.\S+/.test(this.form.name.trim())

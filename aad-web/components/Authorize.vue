@@ -98,7 +98,8 @@ export default {
       }
     },
     aadUrl () {
-      return process.env.AAD_API_URL + '/adopter'
+      return process.env.AAD_API_URL + '/just_fail'
+      // return process.env.AAD_API_URL + '/adopter'
     },
     aadBody () {
       return JSON.stringify(this.form)

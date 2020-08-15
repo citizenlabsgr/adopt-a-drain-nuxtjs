@@ -10,10 +10,9 @@
 ------------------------
 -- TESTs
 ------------------------
-
 \c aad_db;
 
-SET search_path TO aad_version_1_2_1, public;
+SET search_path TO aad_version_1_3_0, public;
 
 --------------------
 -- EVENT_LOGGER Tests
@@ -26,7 +25,7 @@ SET search_path TO aad_version_1_2_1, public;
 | Show terms of use | guest or <request.jwt.claim.jti> | event#<guid>	| tou |
 | Initiate forgot password | <request.jwt.claim.jti> | event#<guid>	| forgot |
 */
-/*
+
 BEGIN;
 
   SELECT plan(1);
@@ -39,13 +38,13 @@ BEGIN;
       }'::JSONB
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'event_logger - insert test  1_2_1'::TEXT
+    'event_logger - insert test  1_3_0'::TEXT
   );
 
   SELECT * FROM finish();
 
 ROLLBACK;
-*/
+
 
 -------------------
 -- Adopter TESTs
@@ -53,82 +52,86 @@ ROLLBACK;
 /*
 | add adopter  | <request.jwt.claim.jti> | 'profile#<request.jwt.claim.jti>' | <type> | <adopter-form> |
 */
-/*
 BEGIN;
 
   SELECT plan(2);
   -- TEST: Test(a) adopter Insert
-  SELECT is (
-    aad_version_1_2_1.adopter('{
-      "name":  "me@someplace.com",
-      "password": "a1A!aaaa"
-      }'::JSON
-    ),
-    '{"msg": "OK", "status": "200"}'::JSONB,
-    'adopter - insert test 1_2_1'::TEXT
-  );
-  -- duplicate adopter
+
   SELECT ok (
-    aad_version_1_2_1.adopter('{
+    aad_version_1_3_0.adopter('{
       "name":  "me@someplace.com",
       "password": "a1A!aaaa"
       }'::JSON
-    )::JSONB ->> 'status' = '409','adopter - 409 duplicate 1_2_1'
+    )::JSONB ->> 'status' = '200','adopter - new adopter 1_3_0'
   );
 
+  -- duplicate adopter
+-- PREPARE duplicate_adopter AS aad_version_1_3_0.adopter('{"name":  "me@someplace.com", "password": "a1A!aaaa"}'::JSON);
+PREPARE new_adopter as select aad_version_1_3_0.adopter('{"name":  "me@someplace.com", "password": "a1A!aaaa"}'::JSON);
 
+SELECT throws_ok(
+    'new_adopter',
+    'PT409',
+    'Conflict',
+    'We should get a unique violation for a duplicate PK'
+);
+/*
+  SELECT ok (
+    aad_version_1_3_0.adopter('{
+      "name":  "me@someplace.com",
+      "password": "a1A!aaaa"
+      }'::JSON
+    )::JSONB ->> 'status' = '409','adopter - 409 duplicate 1_3_0'
+  );
+*/
 SELECT * FROM finish();
 
 ROLLBACK;
-*/
+
 -------------------
 -- SIGNIN Tests
 -------------------
-/*
 
-*/
-/*
 BEGIN;
 
   SELECT plan(2);
   -- Add an adopter to test the signin
   SELECT is (
-    aad_version_1_2_1.adopter('{
+    aad_version_1_3_0.adopter('{
       "name":  "me@someplace.com",
       "password": "a1A!aaaa"
       }'::JSON
     ),
-    '{"msg": "OK", "status": "200"}'::JSONB,
-    'adopter - insert 200 1_2_1'::TEXT
+    '{"msg": "OK", "status": 200}'::JSONB,
+    'adopter - insert 200 1_3_0'::TEXT
   );
-*/
+
 -- TEST: Test(b) signin Insert
 /*
 | signin sucess | <guest> | 'event#<guid>' | 'signin' | <signin-form> |
 */
-/*
 SELECT ok (
-  aad_version_1_2_1.signin('{
+  aad_version_1_3_0.signin('{
     "name":  "me@someplace.com",
     "password": "a1A!aaaa"
     }'
-  )::JSON ->> 'status' = '200','signin - 200 insert 1_2_1'
+  )::JSONB ? 'token','signin - 200 insert 1_3_0'
 );
 
 
 SELECT * FROM finish();
 
 ROLLBACK;
-*/
+
 
 -------------------
 -- Adoptee TESTs
 -------------------
-/*
+
 BEGIN;
 
   SELECT plan(2);
-*/
+
 -- TEST: Test(a) adopter Insert
 /*drain is {
  "dr_asset_id":"",
@@ -146,30 +149,41 @@ BEGIN;
 /*
 | adoptee success | <request.jwt.claim.jti> | 'adoptee#<dr-asset-id>' | 'adoptee' | <adoptee-form> |
 */
-/*
 SELECT is (
-  aad_version_1_2_1.adoptee( '{
+  aad_version_1_3_0.adoptee( '{
     "type":"adoptee",
     "drain_id":"GR12345",
     "lat":42.01,
     "lon":-84.01}'::JSON
   ),
-  '{"msg": "OK", "status": "200"}'::JSONB,
-  'adoptee - insert test 1_2_1'::TEXT
+  '{"msg": "OK", "status": 200}'::JSONB,
+  'adoptee - insert test 1_3_0'::TEXT
 );
+/*
 SELECT is (
-  aad_version_1_2_1.adoptee( '{
+  aad_version_1_3_0.adoptee( '{
     "type":"adoptee",
     "drain_id":"GR12345",
     "lat":42.01,
     "lon":-84.01}'::JSON
   ),
   '{"msg": "Conflict duplicate adoptee.", "type": "adoptee", "status": "409"}'::JSONB,
-  'adoptee - insert test 1_2_1'::TEXT
+  'adoptee - insert test 1_3_0'::TEXT
 );
-
+*/
+PREPARE new_adoptee AS select aad_version_1_3_0.adoptee( '{
+  "type":"adoptee",
+  "drain_id":"GR12345",
+  "lat":42.01,
+  "lon":-84.01}'::JSON
+);
+SELECT throws_ok(
+    'new_adoptee',
+    'PT409',
+    'Conflict',
+    'We should get a unique violation for a duplicate PK'
+);
 
 SELECT * FROM finish();
 
 ROLLBACK;
-*/

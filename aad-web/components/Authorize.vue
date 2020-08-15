@@ -17,7 +17,7 @@
         <input v-model="form.displayname" placeholder="display name">
       </p>
       <div v-if="error_displayname" class="error">
-        Your screen name. Letters and numbers
+        Letters and numbers only.
       </div>
       <p>
         <input v-model="form.name" placeholder="email">

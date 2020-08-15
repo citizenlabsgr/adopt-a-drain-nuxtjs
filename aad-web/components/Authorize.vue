@@ -17,7 +17,7 @@
         <input v-model="form.displayname" placeholder="display name">
       </p>
       <div v-if="error_displayname" class="error">
-        Display name should have letters and numbers only.
+        Letters and numbers only.
       </div>
       <p>
         <input v-model="form.name" placeholder="email">

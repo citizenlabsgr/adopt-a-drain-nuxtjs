@@ -14,19 +14,19 @@
     </div>
     <div v-else>
       <p>
-        <input v-model="page.aadform.displayname" placeholder="display name">
+        <input v-model="aadform.displayname" placeholder="display name">
       </p>
       <div v-if="error_displayname" class="error">
         Letters and numbers only. Minimum 4 characters.
       </div>
       <p>
-        <input v-model="page.aadform.name" placeholder="email">
+        <input v-model="aadform.name" placeholder="email">
       </p>
       <div v-if="error_email" class="error">
         Please provide a valid email.
       </div>
       <p>
-        <input v-model="page.aadform.password" type="password" placeholder="password">
+        <input v-model="aadform.password" type="password" placeholder="password">
       </p>
       <div v-if="error_password" class="error">
         <dl>
@@ -35,7 +35,6 @@
           <dt>minimum of 8 characters</dt>
         </dl>
       </div>
-      <!-- button @click="$store.commit('set_authenticated',true)" -->
       <button @click="onSubmit ()" :disabled="isDisabled">
         Sign Up
       </button>
@@ -43,14 +42,13 @@
   </div>
 </template>
 <script>
-// TODO: add AAD_
+
 // TODO: add authentication (test, code, doc)
-// TODO: add authorization (tests, code, doc)
+// DONE: add authorization (tests, code, doc)
 // DONE: Fix Failed to load plugin 'nuxt'... moved form to page.form and renamed to aadform
 // DONE: add AAD_API_TOKEN to environment (test, code, doc)
 // DONE: add AAD_API_URL to environment (test, code, doc)
 // DONE: add AAD_API_VERSION to environment (test, code, doc)
-
 import { AADHandlers } from './mixins/AADHandlers.js'
 
 export default {
@@ -58,24 +56,24 @@ export default {
     return {
       page: {
         title: 'Sign Up',
-        subtitle: 'Because.',
-        aadform: {
-          displayname: '',
-          name: '',
-          password: ''
-        }
+        subtitle: 'Because.'
+      },
+      aadform: {
+        displayname: '',
+        name: '',
+        password: ''
       }
     }
   },
   computed: {
     error_displayname () { // true when not compliant
-      return !/^[a-z0-9 ]{4,}$/.test(this.page.aadform.displayname.trim())
+      return !/^[a-z0-9 ]{4,}$/.test(this.aadform.displayname.trim())
     },
     error_email () { // true when not compliant
-      return !/\S+@\S+\.\S+/.test(this.page.aadform.name.trim())
+      return !/\S+@\S+\.\S+/.test(this.aadform.name.trim())
     },
     error_password () { // true when not compliant
-      return !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(this.page.aadform.password.trim())
+      return !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(this.aadform.password.trim())
     },
     isDisabled () {
       return this.error_password || this.error_email || this.error_displayname
@@ -113,7 +111,7 @@ export default {
       this.page.subtitle = msg
     },
     isValidForm () {
-      if (this.page.aadform.displayname.length === 0) {
+      if (this.aadform.displayname.length === 0) {
         return false
       }
       return true

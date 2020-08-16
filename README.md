@@ -41,7 +41,7 @@ Adopt a drain
 ### Environment Variables
 Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
 ```
-# aad-web/.env
+# adopt-a-drain/.env
 
 # Google Map API (aad-web)
 GOOGLE_MAPS_API_KEY=<get a key from google>
@@ -52,21 +52,23 @@ DW_AUTH_TOKEN=<get a personal token from data.world's advanced settings>
 DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
 
 # Adopt-a-Drain (aad-web)
-LB_GUEST_PASSWORD=mysecretclientpassword
+LB_GUEST_PASSWORD=<provide-guest-password-for-client>
 LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
-AAD_AUTH_TOKEN=<sample-aad-auth-token>
+AAD_API_TOKEN=<sample-aad-api-token>
+AAD_API_URL=http://localhost:3100/rpc
+AAD_API_VERSION=aad_version_1_3_0
 
 # Postgres (aad-db)
 POSTGRES_DB=aad_db
 POSTGRES_USER=postgres
-POSTGRES_PASSWORD=mysecretdatabasepassword
-POSTGRES_JWT_SECRET=PASSWORDmustBEATLEAST32CHARSLONGLONG
+POSTGRES_PASSWORD=<provide-database-password>
+POSTGRES_JWT_SECRET=<provde-32-char-password>
 
 # Postgrest (aad-db)
-PGRST_DB_SCHEMA=aad_version_1_2_0
+PGRST_DB_SCHEMA=aad_version_1_3_0
 PGRST_DB_ANON_ROLE=guest_aad
 ```
-* <sample-aad-auth-token> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
+* \<sample-aad-api-token\> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
 
 
 ### System Startup
@@ -108,7 +110,7 @@ docker-compose run web npm run test
 
 
 # Understanding AAD
-Some technical details
+Some details
 
 ## Core Processes
 | Process | Description |  Method |

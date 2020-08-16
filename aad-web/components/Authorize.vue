@@ -14,19 +14,19 @@
     </div>
     <div v-else>
       <p>
-        <input v-model="form.displayname" placeholder="display name">
+        <input v-model="page.aadform.displayname" placeholder="display name">
       </p>
       <div v-if="error_displayname" class="error">
         Letters and numbers only. Minimum 4 characters.
       </div>
       <p>
-        <input v-model="form.name" placeholder="email">
+        <input v-model="page.aadform.name" placeholder="email">
       </p>
       <div v-if="error_email" class="error">
         Please provide a valid email.
       </div>
       <p>
-        <input v-model="form.password" type="password" placeholder="password">
+        <input v-model="page.aadform.password" type="password" placeholder="password">
       </p>
       <div v-if="error_password" class="error">
         <dl>
@@ -46,6 +46,7 @@
 // TODO: add AAD_
 // TODO: add authentication (test, code, doc)
 // TODO: add authorization (tests, code, doc)
+// DONE: Fix Failed to load plugin 'nuxt'... moved form to page.form and renamed to aadform
 // DONE: add AAD_API_TOKEN to environment (test, code, doc)
 // DONE: add AAD_API_URL to environment (test, code, doc)
 // DONE: add AAD_API_VERSION to environment (test, code, doc)
@@ -57,24 +58,24 @@ export default {
     return {
       page: {
         title: 'Sign Up',
-        subtitle: 'Because.'
-      },
-      form: {
-        displayname: '',
-        name: '',
-        password: ''
+        subtitle: 'Because.',
+        aadform: {
+          displayname: '',
+          name: '',
+          password: ''
+        }
       }
     }
   },
   computed: {
     error_displayname () { // true when not compliant
-      return !/^[a-z0-9 ]{4,}$/.test(this.form.displayname.trim())
+      return !/^[a-z0-9 ]{4,}$/.test(this.page.aadform.displayname.trim())
     },
     error_email () { // true when not compliant
-      return !/\S+@\S+\.\S+/.test(this.form.name.trim())
+      return !/\S+@\S+\.\S+/.test(this.page.aadform.name.trim())
     },
     error_password () { // true when not compliant
-      return !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(this.form.password.trim())
+      return !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(this.page.aadform.password.trim())
     },
     isDisabled () {
       return this.error_password || this.error_email || this.error_displayname
@@ -99,7 +100,7 @@ export default {
       return process.env.AAD_API_URL + '/adopter'
     },
     aadBody () {
-      return JSON.stringify(this.form)
+      return JSON.stringify(this.page.aadform)
     }
   },
   methods: {
@@ -112,7 +113,7 @@ export default {
       this.page.subtitle = msg
     },
     isValidForm () {
-      if (this.form.displayname.length === 0) {
+      if (this.page.aadform.displayname.length === 0) {
         return false
       }
       return true

@@ -39,7 +39,12 @@ export default {
     return {
       page: {
         title: 'Authenticate',
-        subtitle: 'Because.'
+        subtitle: 'Because.',
+        aadform: {
+          displayname: '',
+          name: '',
+          password: ''
+        }
       }
     }
   },

@@ -14,28 +14,27 @@
     </div>
     <div v-else>
       <p>
-        <input v-model="form.displayname" placeholder="display name">
+        <input v-model="aadform.displayname" placeholder="display name">
       </p>
       <div v-if="error_displayname" class="error">
-        Your screen name.
+        Letters and numbers only. Minimum 4 characters.
       </div>
       <p>
-        <input v-model="form.name" placeholder="email">
+        <input v-model="aadform.name" placeholder="email">
       </p>
       <div v-if="error_email" class="error">
         Please provide a valid email.
       </div>
       <p>
-        <input v-model="form.password" type="password" placeholder="password">
+        <input v-model="aadform.password" type="password" placeholder="password">
       </p>
       <div v-if="error_password" class="error">
         <dl>
-          <dt>letters (uppercase and lowercase)</dt>
+          <dt>Letters (uppercase and lowercase)</dt>
           <dt>numbers and symbols</dt>
           <dt>minimum of 8 characters</dt>
         </dl>
       </div>
-      <!-- button @click="$store.commit('set_authenticated',true)" -->
       <button @click="onSubmit ()" :disabled="isDisabled">
         Sign Up
       </button>
@@ -43,13 +42,13 @@
   </div>
 </template>
 <script>
-// TODO: add AAD_
-// TODO: add authentication (test, code, doc)
-// TODO: add authorization (tests, code, doc)
-// TODO: add AAD_API_TOKEN to environment (test, code, doc)
-// TODO: add AAD_API_URL to environment (test, code, doc)
-// DONE: add AAD_API_VERSION to environment (test, code, doc)
 
+// TODO: add authentication (test, code, doc)
+// DONE: add authorization (tests, code, doc)
+// DONE: Fix Failed to load plugin 'nuxt'... moved form to page.form and renamed to aadform
+// DONE: add AAD_API_TOKEN to environment (test, code, doc)
+// DONE: add AAD_API_URL to environment (test, code, doc)
+// DONE: add AAD_API_VERSION to environment (test, code, doc)
 import { AADHandlers } from './mixins/AADHandlers.js'
 
 export default {
@@ -59,7 +58,7 @@ export default {
         title: 'Sign Up',
         subtitle: 'Because.'
       },
-      form: {
+      aadform: {
         displayname: '',
         name: '',
         password: ''
@@ -68,18 +67,15 @@ export default {
   },
   computed: {
     error_displayname () { // true when not compliant
-      return this.form.displayname.trim().length < 4
+      return !/^[a-z0-9 ]{4,}$/.test(this.aadform.displayname.trim())
     },
     error_email () { // true when not compliant
-      return !/\S+@\S+\.\S+/.test(this.form.name.trim())
+      return !/\S+@\S+\.\S+/.test(this.aadform.name.trim())
     },
     error_password () { // true when not compliant
-      return !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(this.form.password.trim())
+      return !/^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/.test(this.aadform.password.trim())
     },
     isDisabled () {
-      // return (this.error_displayname && this.error_email && this.error_password)
-      // return this.error_displayname
-      // return this.error_email
       return this.error_password || this.error_email || this.error_displayname
     },
     authenticated () {
@@ -98,11 +94,11 @@ export default {
       }
     },
     aadUrl () {
-      return process.env.AAD_API_URL + '/just_fail'
-      // return process.env.AAD_API_URL + '/adopter'
+      // remove just_fail in signup
+      return process.env.AAD_API_URL + '/adopter'
     },
     aadBody () {
-      return JSON.stringify(this.form)
+      return JSON.stringify(this.page.aadform)
     }
   },
   methods: {
@@ -114,13 +110,8 @@ export default {
     feedBack (msg) {
       this.page.subtitle = msg
     },
-    /*
-    adopter () {
-      return JSON.stringify(this.form)
-    },
-    */
     isValidForm () {
-      if (this.form.displayname.length === 0) {
+      if (this.aadform.displayname.length === 0) {
         return false
       }
       return true
@@ -130,13 +121,11 @@ export default {
         this.feedBack('display name, email and password, please!')
         return undefined
       }
-      // aadAdopter (aadURL, aadHeader, aadBody)
       this.aadHandlers.aadAdopter(this.aadUrl, this.aadHeader, this.aadBody)
         .then((response) => {
 
           if (response.status === 200) {
             this.feedBack('Welcome')
-            this.feedBack(response)
           } else {
             this.feedBack('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
             this.log('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))

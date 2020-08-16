@@ -30,7 +30,7 @@
       </p>
       <div v-if="error_password" class="error">
         <dl>
-          <dt>letters (uppercase and lowercase)</dt>
+          <dt>Letters (uppercase and lowercase)</dt>
           <dt>numbers and symbols</dt>
           <dt>minimum of 8 characters</dt>
         </dl>

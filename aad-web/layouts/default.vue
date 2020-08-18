@@ -69,6 +69,9 @@ html {
   color: #fff;
   background-color: #35495e;
 }
+.button {
+  font-size: 20px;
+}
 .container {
   /*min-height: 10vh;*/
   min-height: 300px;

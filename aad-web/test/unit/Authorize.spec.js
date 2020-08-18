@@ -14,7 +14,7 @@ describe('Authorize', () => {
     expect(wrapper.vm.name).toBeFalsy()
   })
   it('is good password ', async () => {
-    wrapper.setData({ aadform: {displayname: 'abc1', name: 'a@a.com', password: 'aaaa'} })
+    wrapper.setData({ aadform: {displayname: 'abc1', name: 'a@a.com', password: 'a1A!aaaa'} })
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.password).toBeFalsy()
   })
@@ -28,5 +28,4 @@ describe('Authorize', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.isDisabled).toBeFalsy()
   })
-
 })

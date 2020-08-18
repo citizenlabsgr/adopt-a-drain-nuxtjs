@@ -6,38 +6,25 @@
     <p>
       <label class="subtitle">{{ page.subtitle }}</label>
     </p>
-    <div v-if="authenticated">
-      Authorize
-      <button @click="$store.commit('set_authenticated', false)">
-        {{ $store.state.authenticated }}
-      </button>
-    </div>
-    <div v-else>
+    <p>&nbsp;</p>
+    <div v-if="!isAuthenticated">
       <p>
         <input v-model="aadform.displayname" placeholder="display name">
       </p>
-      <div v-if="error_displayname" class="error">
-        Letters and numbers only. Minimum 4 characters.
-      </div>
       <p>
         <input v-model="aadform.name" placeholder="email">
       </p>
-      <div v-if="error_email" class="error">
-        Please provide a valid email.
-      </div>
       <p>
         <input v-model="aadform.password" type="password" placeholder="password">
       </p>
-      <div v-if="error_password" class="error">
-        <dl>
-          <dt>Letters (uppercase and lowercase)</dt>
-          <dt>numbers and symbols</dt>
-          <dt>minimum of 8 characters</dt>
-        </dl>
-      </div>
-      <button @click="onSubmit ()" :disabled="isDisabled">
+      <p>&nbsp;</p>
+      <button class="button" @click="onSubmit ()" :disabled="isDisabled">
         Sign Up
       </button>
+    </div>
+    <div v-else>
+      Authorize
+
     </div>
   </div>
 </template>
@@ -66,8 +53,12 @@ export default {
     }
   },
   computed: {
-    error_displayname () { // true when not compliant
-      return !/^[a-z0-9 ]{4,}$/.test(this.aadform.displayname.trim())
+
+    isAuthenticated () {
+      if ( this.$store.state.adopter.expires_at < new Date().getTime() ) {
+        this.$store.commit('adopter/detoken')
+      }
+      return this.$store.state.adopter.authenticated
     },
     error_email () { // true when not compliant
       return !/\S+@\S+\.\S+/.test(this.aadform.name.trim())
@@ -77,10 +68,6 @@ export default {
     },
     isDisabled () {
       return this.error_password || this.error_email || this.error_displayname
-    },
-    authenticated () {
-      // if ( !this.$store.state.authenticated ){ return false }
-      return false
     },
     aadHandlers () {
       return new AADHandlers(this)

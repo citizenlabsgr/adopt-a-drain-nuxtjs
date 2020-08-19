@@ -75,7 +75,7 @@ PGRST_DB_ANON_ROLE=guest_aad
 * \<sample-aad-api-token\> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
 
 
-### System Startup
+### System Startup, Docker-Compose
 ```
 # build the docker containers
 cd adopt-a-drain/aad-web/
@@ -89,7 +89,7 @@ docker-compose up
 docker-compose down
 
 ```
-* Always use docker-compose down to avoid corrupting the Postgres database (add_db).
+* Always use docker-compose down to avoid corrupting the Postgres database (aad_db).
 
 ### Tests
 Tests are run automatically when docker-compose is run.
@@ -126,7 +126,7 @@ Common nouns include: API, Component, Database, Process, Table
 Common verbs include: Create, Change, Cleanup, Document, Delete, Integrate, Migrate, Update, Refactor, Remove, and Rename. 
 
 ## How to Name an Issue
- * __Review the Story issues__ Filter by story number, e.g., #45", to get list of a Story's issues  
+ * __Review the Story issues__, Filter by story number, e.g., #45", to get list of a Story's issues  
 * __Name Pattern__, #<story-number>.<title>
 * __Story-number__, Filtering by "As a" will give a list of all story issues, find the story-number there.
 * __Title__, start with verb or noun, followed by short description

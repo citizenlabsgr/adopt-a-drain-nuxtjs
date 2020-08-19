@@ -31,6 +31,7 @@
 <script>
 
 // TODO: add authentication (test, code, doc)
+// TODO: throwing 404 when adding new user...?
 // DONE: add authorization (tests, code, doc)
 // DONE: Fix Failed to load plugin 'nuxt'... moved form to page.form and renamed to aadform
 // DONE: add AAD_API_TOKEN to environment (test, code, doc)
@@ -85,7 +86,7 @@ export default {
       return process.env.AAD_API_URL + '/adopter'
     },
     aadBody () {
-      return JSON.stringify(this.page.aadform)
+      return JSON.stringify(this.aadform)
     }
   },
   methods: {
@@ -108,9 +109,11 @@ export default {
         this.feedBack('display name, email and password, please!')
         return undefined
       }
+      this.log(this.aadUrl)
+      this.log(this.aadHeader)
+      this.log(this.aadBody)
       this.aadHandlers.aadAdopter(this.aadUrl, this.aadHeader, this.aadBody)
         .then((response) => {
-
           if (response.status === 200) {
             this.feedBack('Welcome')
           } else {

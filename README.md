@@ -17,14 +17,18 @@ Adopt a drain
 | Use Postgrest APIs to decoupled the application and data storage | G1, G2 |
 | Replace the current application's user interface with a Single page design | G3,G4 |
 | ~~Static Website, should run on github or aws S3~~  | G1,G3  |
+| Establish Test Driven Development | G2 |
 
 ### Definitions
 * **AAD** is Adopt-A-Drain
 * **Abandon** is the process making an adoptee an orphan.  
 * **Adopter** is an AAD registered user
+* **Adoption** is the process adopting an orphan storm drain
 * **Adoptee** is an adopted storm drain
-* **Document** is the result of merging a template with data
+* **Document** is a block of text, formatted with Markdown, and accessible to the application 
 * **Orphan** is an unadopted storm drain
+
+Document is a block of text, formatted with Markdown, and accessible to the application 
 
 # Get Started
 ## Prerequisites
@@ -71,7 +75,7 @@ PGRST_DB_ANON_ROLE=guest_aad
 * \<sample-aad-api-token\> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
 
 
-### System Startup
+### System Startup, Docker-Compose
 ```
 # build the docker containers
 cd adopt-a-drain/aad-web/
@@ -85,7 +89,7 @@ docker-compose up
 docker-compose down
 
 ```
-* Always use docker-compose down to avoid corrupting the Postgres database (add_db).
+* Always use docker-compose down to avoid corrupting the Postgres database (aad_db).
 
 ### Tests
 Tests are run automatically when docker-compose is run.
@@ -108,6 +112,24 @@ docker-compose run web npm run test
 * Database: Postgres https://www.postgresql.org
 * API: Postgrest http://postgrest.org/en/v7.0.0/
 
+
+# Issues
+We use three kinds of issues
+1. __Stories__, Stories describe the need and wants of the business Owner and/or the Team Leader
+2. __Things__, Things need to be designed, tested, and developed. 
+3. __Actions__, Verbs describe actions to be taken. 
+  
+You should almost never need to write a story.  All things are logical constructs of stories, and all actions are the activities necessary to construct things.
+  
+Use __nouns__ to designate things and __verbs__ to designate actions.
+Common nouns include: API, Component, Database, Process, Table
+Common verbs include: Create, Change, Cleanup, Document, Delete, Integrate, Migrate, Update, Refactor, Remove, and Rename. 
+
+## How to Name an Issue
+ * __Review the Story issues__, Filter by story number, e.g., #45", to get list of a Story's issues  
+* __Name Pattern__, #<story-number>.<title>
+* __Story-number__, Filtering by "As a" will give a list of all story issues, find the story-number there.
+* __Title__, start with verb or noun, followed by short description
 
 # Understanding AAD
 Some details

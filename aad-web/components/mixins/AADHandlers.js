@@ -16,6 +16,14 @@ class AADHandlers {
       data: aadBody })
     return response
   }
+  async aadSignin (aadURL, aadHeader, aadBody) {
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'post',
+      headers: aadHeader,
+      data: aadBody })
+    return response
+  }
 }
 
 export { AADHandlers }

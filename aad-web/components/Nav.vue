@@ -6,13 +6,16 @@
           Home
         </nuxt-link>
       </li>
-      <!-- li><nuxt-link to="/adopt">Adopt</nuxt-link></li -->
-      <li>
+      <li v-if="!isAuthenticated">
         <nuxt-link to="/login">
           SignIn
         </nuxt-link>
       </li>
-      <!-- li v-if="authorized"><button @click="$store.commit('set_authenticated',false)">Sign Out</button></li -->
+      <li v-else>
+        <nuxt-link to="/login">
+          SignOut
+        </nuxt-link>
+      </li>
       <li>
         <nuxt-link to="/signup">
           SignUp
@@ -38,10 +41,12 @@ export default {
       }
       return ''
     },
-    authorized () {
-      // if ( !this.$store.state.authenticated ){ return false }
-      return true
-    }
+    isAuthenticated () {
+      if (this.$store.state.adopter.expires_at < new Date().getTime()) {
+        this.$store.commit('adopter/detoken')
+      }
+      return this.$store.state.adopter.authenticated
+    },
   }
 }
 </script>

@@ -24,7 +24,6 @@
     </div>
   </div>
 </template>
-
 <script>
 /*
   DrainAdoption is an interactive map for showing and selecting drain markers.

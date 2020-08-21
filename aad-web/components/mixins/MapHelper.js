@@ -2,6 +2,7 @@ class MapHelper {
   constructor (component) {
     // component is the nuxt component
     this.component = component
+    this.dropAnimation = component.google.maps.Animation.DROP
   }
 
   set(key, value) {
@@ -20,22 +21,31 @@ class MapHelper {
     return this.component.settings[key]
   }
 
+  log( msg ) {
+     this.component.log(msg)
+  }
+
+  google() {
+    return this.component.google
+  }
+
   boxify ( pnt ) {
+    // screen handling
     // generate a box from a point
     const dx = 0.006319284439086914
     const dy = 0.0021590927669254967
     const centerBox = {
-      west: center.lng() - (dx / 2.0),
-      east: center.lng() + (dx / 2.0),
-      north: center.lat() + (dy / 2.0),
-      south: center.lat() - (dy / 2.0)
+      west: pnt.lng() - (dx / 2.0),
+      east: pnt.lng() + (dx / 2.0),
+      north: pnt.lat() + (dy / 2.0),
+      south: pnt.lat() - (dy / 2.0)
     }
     return centerBox
   }
 
   shrink_box (centerBox, shrinkToPercentage) {
     // centerBox is a google object from getBounds()
-
+    // screen handling
     centerBox = JSON.stringify(centerBox)
     centerBox = JSON.parse(centerBox)
 
@@ -51,6 +61,7 @@ class MapHelper {
   }
 
   right_size_box (newBox, oldBox) {
+    // screen handling
     // stop box from getting too big and crippling the app
     // different zoom levels will cause downloads to be too large
     // let shrinkToPercentage = this.settings.shrink_to
@@ -79,6 +90,62 @@ class MapHelper {
       return oldBox // zoomed out too far
     }
     return rightBox
+  }
+
+  markerImage ( drain ) {
+    let size = new this.component.google.maps.Size(27.0, 38.0);
+    let origin = new this.component.google.maps.Point(0, 0);
+    let anchor = new this.component.google.maps.Point(13.0, 18.0);
+    // let adoptedMarker = new this.component.google.maps.MarkerImage(constants.adoptedMarkerImage,
+    //size,
+    //origin,
+    //anchor
+  //);
+
+    let image = undefined
+    if (drain.type === 'adoptee') {
+      image = new this.component.google.maps.MarkerImage(
+        '.assets/orphan.svg',
+        size,
+        origin,
+        anchor);
+    } else if (drain.type === 'your_adoptee') {
+      image = new this.component.google.maps.MarkerImage(
+        '.assets/your-adoptee.svg',
+        size,
+        origin,
+        anchor);
+    } else {
+      image = new this.component.google.maps.MarkerImage(
+        '.assets/orphan.svg',
+        size,
+        origin,
+        anchor);
+    }
+    return image
+  }
+  marker( form ) {
+
+    return new this.component.google.maps.Marker(form)
+  }
+
+  addMarker (drain) {
+    /*
+      Objective: show the drains on the map
+      Strategy: only show newly downloaded drains
+    */
+    let image = this.markerImage(drain)
+    //setTimeout(function() {
+      const marker = new this.component.google.maps.Marker({
+        animation: this.component.google.maps.Animation.DROP,
+        id: this.getting('markers').length + 1,
+        position: drain.position,
+        draggable: false,
+        clickable: true,
+        icon: image
+      })
+      this.getting('markers').push(marker)
+    //}, drain.i * 100 )
   }
 }
 

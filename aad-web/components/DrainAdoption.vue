@@ -10,8 +10,8 @@
     >
       <GmapMarker
         v-for="(m, index) in settings.markers"
-        ref="mapMarker"
         :key="index"
+        ref="mapMarker"
         :animation="m.animation"
         :position="m.position"
         :draggable="m.draggable"
@@ -112,79 +112,121 @@ export default {
     }
   },
   mounted () {
-    /*
-    Objective: Initialize a map of drains
-    Strategy: Use vuejs's mounted to initialize
-    * at this point, google is loaded but initalization may not be complete
-    * get data from dataworld before component is visible
-    * runs when component is loaded
-    */
-    this.$refs.mapRef.$mapPromise
-      .then((map) => {
-        // waiting for map initalization
-        // this.mapHelper.set('title', 'mounted x')
-        this.mapHelper.set('randy', 'Y')
-        this.mapHelper.set('center', map.getCenter())
+      /*
+      Objective: Initialize a map of drains
+      Strategy: Use vuejs's mounted to initialize
+      * at this point, google is loaded but initalization may not be complete
+      * get data from dataworld before component is visible
+      * runs when component is loaded
+      */
+      this.$refs.mapRef.$mapPromise
+        .then((map) => {
+          // this.log('mounted 1')
+          this.mapHelper.set('randy', 'Y')
+          this.mapHelper.set('center', map.getCenter())
+          // this.log('mounted 2')
 
-        // this.settings.adopt.randy = 'Y'
-        // this.settings.adopt.center = map.getCenter()
-        // ----
-        const center = map.getCenter()
-        let centerBox = map.getBounds()
+          // ----
+          const center = map.getCenter()
+          // this.log('mounted 3')
 
-        if (!centerBox) { // patch up center_box
-          // centerBox = this.boxify(center)
-          centerBox = this.mapHelper.boxify( center )
-        } else {
-          // const shrinkToPercentage = this.settings.shrink_to
-          const shrinkToPercentage = this.mapHelper.getting('shrink_to')
-          // centerBox = this.shrink_box(centerBox, shrinkToPercentage)
-          centerBox = this.mapHelper.shrink_box(centerBox, shrinkToPercentage)
-        }
-        // configurethe drain download with centerBox
-        const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
-          .replace('%w', centerBox.west)
-          .replace('%e', centerBox.east)
-          .replace('%n', centerBox.north)
-          .replace('%s', centerBox.south)
-          .replace('%d', this.getDownloadedDrains())
-        const data = { query: queryStr, includeTableSchema: false }
-        const headers = {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
-        }
-        // get drains within a box ... the center_box
-        new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
-          .then((response) => {
-            // load the drain buffer, getting ready to show drains on map
-            this.settings.drain_buffer.length = 0 // clear the buffer
-            let counter = 0 // keep track for user feedback
+          let centerBox = map.getBounds()
+          // this.log('mounted 4')
 
-            let dr = {}
-            for (dr in response.data) {
-              counter++
+          if (!centerBox) { // patch up center_box
+            // centerBox = this.boxify(center)
+            // this.log('mounted 5')
 
-              this.settings.drain_buffer.push({
-                position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
-                sync_id: response.data[dr].dr_sync_id
-              })
-              // save data world id for use in later filtering
-              this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
-            }
-            if (counter === 0) {
-              this.feedback('No drains to see here!')
-            } else {
-              this.feedback('%d drains loaded!'.replace('%d', counter))
-            }
-            this.showDrains()
-          })
-          .catch((response) => {
-            this.feedback('Unexpected issue getting drains!')
-          })
-      })
-      .catch((response) => {
-        this.feedback('Unexpected issue getting map!')
-      })
+            centerBox = this.mapHelper.boxify( center )
+          } else {
+            // this.log('mounted 6')
+            // const shrinkToPercentage = this.settings.shrink_to
+            const shrinkToPercentage = this.mapHelper.getting('shrink_to')
+            // centerBox = this.shrink_box(centerBox, shrinkToPercentage)
+            centerBox = this.mapHelper.shrink_box(centerBox, shrinkToPercentage)
+          }
+          // this.log('mounted 7')
+
+          // configurethe drain download with centerBox
+          const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
+            .replace('%w', centerBox.west)
+            .replace('%e', centerBox.east)
+            .replace('%n', centerBox.north)
+            .replace('%s', centerBox.south)
+            .replace('%d', this.getDownloadedDrains())
+          // this.log('mounted 8')
+
+          const data = { query: queryStr, includeTableSchema: false }
+          // this.log('mounted 9')
+
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
+          }
+          // this.log('mounted 10')
+
+          // get drains within a box ... the center_box
+          new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
+            .then((response) => {
+              // this.log('mounted 11')
+
+              // load the drain buffer, getting ready to show drains on map
+              this.settings.drain_buffer.length = 0 // clear the buffer
+              let counter = 0 // keep track for user feedback
+              let dr = {}
+              for (dr in response.data) {
+                counter++
+                let tdr = {
+                  type: 'orphan',
+                  position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
+                  sync_id: response.data[dr].dr_sync_id
+                }
+                this.settings.drain_buffer.push(tdr)
+                // save data world id for use in later filtering
+                this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
+                // this.log('mounted 11.1')
+
+                const mapHelper = this.mapHelper
+
+                setTimeout(function () {
+                  const image = mapHelper.markerImage(tdr)
+                  // mapHelper.log(image)
+                  // mapHelper.log(tdr.position)
+                  const dropAnimation = mapHelper.dropAnimation
+                  const point = tdr.position
+                  const marker = mapHelper.marker({
+                    animation: dropAnimation,
+                    icon: image,
+                    position: point
+                  })
+                  /*
+                  const marker = mapHelper.marker({
+                    animation: dropAnimation,
+                    position: tdr.position,
+                    draggable: false,
+                    clickable: true,
+                    icon: image
+                  })
+                  */
+                  mapHelper.getting('markers').push(marker)
+                }, counter * 100)
+              }
+              // this.log('mounted 12')
+
+              if (counter === 0) {
+                this.feedback('No drains to see here!')
+              } else {
+                this.feedback('%d drains loaded!'.replace('%d', counter))
+              }
+              // this.showDrains()
+            })
+            .catch((response) => {
+              this.feedback('Unexpected issue getting drains!')
+            })
+        })
+        .catch((response) => {
+          this.feedback('Unexpected issue getting map!')
+        })
   },
   methods: {
     log (msg) {
@@ -205,24 +247,20 @@ export default {
       */
 
       // get new center
-      // this.settings.adopt.center = this.$refs.mapRef.$mapObject.getCenter()
       this.mapHelper.set(this.$refs.mapRef.$mapObject.getCenter())
-      // const center = this.settings.adopt.center
       const center = this.mapHelper.get('center')
 
       let newBox = this.$refs.mapRef.$mapObject.getBounds()
 
       if (!newBox) {
         // patch up center_box... map is lagging
-        // newBox = this.boxify(center)
         newBox = this.mapHelper.boxify(center)
       } else {
         // stop box from getting too big and crippling the app
-        // newBox = this.right_size_box(newBox, this.settings.center_box)
         newBox = this.mapHelper.right_size_box(newBox, this.settings.center_box)
-
       }
-      this.settings.center_box = newBox
+      this.mapHelper.settings('center_box', newBox)
+
       this.loadDrains()
       this.showDrains()
     },
@@ -234,6 +272,7 @@ export default {
       let dr = {}
       // add just the new drains
       for (dr in this.settings.drain_buffer) {
+
         const marker = new this.google.maps.Marker({
           id: this.settings.markers.length + 1,
           position: this.settings.drain_buffer[dr].position,
@@ -241,7 +280,11 @@ export default {
           clickable: true,
           animation: this.google.maps.Animation.DROP
         })
+
         this.settings.markers.push(marker)
+
+        // this.log(this.settings.drain_buffer[dr])
+        // this.mapHelper.showDrain( this.settings.drain_buffer[dr] )
       }
       this.settings.drain_buffer.length = 0 // clear the buffer
     },
@@ -271,10 +314,13 @@ export default {
         .then((response) => {
           let dr = {}
           let counter = 0
-
+          //$(response.data).each(function ( index, drain ) {
+            // this.log('drain')
+          //})
           for (dr in response.data) {
             counter++
             this.settings.drain_buffer.push({
+              type: 'orphan',
               position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
               syncId: response.data[dr].dr_sync_id
             })

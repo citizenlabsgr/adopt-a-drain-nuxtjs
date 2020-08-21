@@ -46,7 +46,7 @@
 // import Banner from '@/components/Banner.vue'
 import { DWHandlers } from './mixins/DWHandlers.js'
 import { gmapApi } from '~/node_modules/vue2-google-maps/src/main'
-
+import { MapHelper } from './mixins/MapHelper.js'
 // import World from '@/components/World.vue'
 export default {
 
@@ -105,6 +105,10 @@ export default {
     dwURL () {
       // data world
       return process.env.DW_DRAIN_URL
+    },
+    mapHelper () {
+      // MapHelper is a wrapper around this component
+      return new MapHelper( this )
     }
   },
   mounted () {
@@ -118,17 +122,24 @@ export default {
     this.$refs.mapRef.$mapPromise
       .then((map) => {
         // waiting for map initalization
-        this.settings.adopt.randy = 'Y'
-        this.settings.adopt.center = map.getCenter()
+        // this.mapHelper.set('title', 'mounted x')
+        this.mapHelper.set('randy', 'Y')
+        this.mapHelper.set('center', map.getCenter())
+
+        // this.settings.adopt.randy = 'Y'
+        // this.settings.adopt.center = map.getCenter()
         // ----
         const center = map.getCenter()
         let centerBox = map.getBounds()
 
         if (!centerBox) { // patch up center_box
-          centerBox = this.boxify(center)
+          // centerBox = this.boxify(center)
+          centerBox = this.mapHelper.boxify( center )
         } else {
-          const shrinkToPercentage = this.settings.shrink_to
-          centerBox = this.shrink_box(centerBox, shrinkToPercentage)
+          // const shrinkToPercentage = this.settings.shrink_to
+          const shrinkToPercentage = this.mapHelper.getting('shrink_to')
+          // centerBox = this.shrink_box(centerBox, shrinkToPercentage)
+          centerBox = this.mapHelper.shrink_box(centerBox, shrinkToPercentage)
         }
         // configurethe drain download with centerBox
         const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
@@ -184,67 +195,6 @@ export default {
     feedback (msg) {
       this.page.feedback = msg
     },
-    boundary_box () {
-      return JSON.stringify(this.$refs.mapRef.$mapObject.getBounds())
-    },
-    loadDims () {
-      this.settings.center_box = JSON.stringify(this.$refs.mapRef.$mapObject.getBounds())
-    },
-    boxify (center) {
-      // center is google center object
-      // center = JSON.parse(JSON.stringify(center))
-      const dx = 0.006319284439086914
-      const dy = 0.0021590927669254967
-      const centerBox = {
-        west: center.lng() - (dx / 2.0),
-        east: center.lng() + (dx / 2.0),
-        north: center.lat() + (dy / 2.0),
-        south: center.lat() - (dy / 2.0)
-      }
-      return centerBox
-    },
-    box_area (centerBoxJSON) {
-      //
-      // calculate an area for the boxify
-      // centerBox is a google object from getBounds()
-      const dy = (centerBoxJSON.north - centerBoxJSON.south)
-      const dx = (Math.abs(centerBoxJSON.west) - Math.abs(centerBoxJSON.east))
-      return dy * dx
-    },
-    shrink_box (centerBox, shrinkToPercentage) {
-      // centerBox is a google object from getBounds()
-
-      centerBox = JSON.stringify(centerBox)
-      centerBox = JSON.parse(centerBox)
-
-      const perc = 1.0 - shrinkToPercentage
-      const dy = (centerBox.north - centerBox.south) * perc
-      const dx = (Math.abs(centerBox.west) - Math.abs(centerBox.east)) * perc
-      // adjust size of drain filter
-      centerBox.west = centerBox.west + (dx / 2.0)
-      centerBox.east = centerBox.east - (dx / 2.0)
-      centerBox.north = centerBox.north - (dy / 2.0)
-      centerBox.south = centerBox.south + (dy / 2.0)
-      return centerBox
-    },
-    right_size_box (newBox, oldBox) {
-      // different zoom levels will cause downloads to be too large
-      let shrinkToPercentage = this.settings.shrink_to
-      let rightBox = this.shrink_box(newBox, shrinkToPercentage)
-      // shrink until area is ok
-      while (this.box_area(rightBox) > this.settings.max_center_box_area) {
-        shrinkToPercentage -= 0.1
-        if (shrinkToPercentage <= 0.1) {
-          this.feedback('Are you kidding me?! No more, no more!')
-          break
-        }
-        rightBox = this.shrink_box(newBox, shrinkToPercentage)
-      }
-      if (shrinkToPercentage <= 0.1) {
-        return oldBox // zoomed out too far
-      }
-      return rightBox
-    },
     doDragEnd () {
       /*
       Objective:
@@ -255,16 +205,22 @@ export default {
       */
 
       // get new center
-      this.settings.adopt.center = this.$refs.mapRef.$mapObject.getCenter()
-      const center = this.settings.adopt.center
+      // this.settings.adopt.center = this.$refs.mapRef.$mapObject.getCenter()
+      this.mapHelper.set(this.$refs.mapRef.$mapObject.getCenter())
+      // const center = this.settings.adopt.center
+      const center = this.mapHelper.get('center')
+
       let newBox = this.$refs.mapRef.$mapObject.getBounds()
 
       if (!newBox) {
         // patch up center_box... map is lagging
-        newBox = this.boxify(center)
+        // newBox = this.boxify(center)
+        newBox = this.mapHelper.boxify(center)
       } else {
         // stop box from getting too big and crippling the app
-        newBox = this.right_size_box(newBox, this.settings.center_box)
+        // newBox = this.right_size_box(newBox, this.settings.center_box)
+        newBox = this.mapHelper.right_size_box(newBox, this.settings.center_box)
+
       }
       this.settings.center_box = newBox
       this.loadDrains()

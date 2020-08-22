@@ -56,6 +56,7 @@ export default {
         feedback: 'Welcome'
       },
       settings: {
+        delay: 50,
         adopt: {
           randy: 'X',
           title: 'Adoption',
@@ -122,8 +123,11 @@ export default {
       this.$refs.mapRef.$mapPromise
         .then((map) => {
           // this.log('mounted 1')
-          this.mapHelper.set('randy', 'Y')
-          this.mapHelper.set('center', map.getCenter())
+          const mapHelper = this.mapHelper
+          mapHelper.set('randy','Y')
+          mapHelper.set('center', map.getCenter())
+          // this.mapHelper.set('randy', 'Y')
+          // this.mapHelper.set('center', map.getCenter())
           // this.log('mounted 2')
 
           // ----
@@ -136,14 +140,18 @@ export default {
           if (!centerBox) { // patch up center_box
             // centerBox = this.boxify(center)
             // this.log('mounted 5')
-
-            centerBox = this.mapHelper.boxify( center )
+            // centerBox = this.mapHelper.boxify( center )
+            centerBox = mapHelper.boxify( center )
           } else {
             // this.log('mounted 6')
             // const shrinkToPercentage = this.settings.shrink_to
-            const shrinkToPercentage = this.mapHelper.getting('shrink_to')
+            // const shrinkToPercentage = this.mapHelper.getting('shrink_to')
+            const shrinkToPercentage = mapHelper.getting('shrink_to')
+
             // centerBox = this.shrink_box(centerBox, shrinkToPercentage)
-            centerBox = this.mapHelper.shrink_box(centerBox, shrinkToPercentage)
+            // centerBox = this.mapHelper.shrink_box(centerBox, shrinkToPercentage)
+            centerBox = mapHelper.shrink_box(centerBox, shrinkToPercentage)
+
           }
           // this.log('mounted 7')
 
@@ -157,19 +165,16 @@ export default {
           // this.log('mounted 8')
 
           const data = { query: queryStr, includeTableSchema: false }
-          // this.log('mounted 9')
-
           const headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
           }
           // this.log('mounted 10')
 
+
           // get drains within a box ... the center_box
           new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
             .then((response) => {
-              // this.log('mounted 11')
-
               // load the drain buffer, getting ready to show drains on map
               this.settings.drain_buffer.length = 0 // clear the buffer
               let counter = 0 // keep track for user feedback
@@ -185,13 +190,10 @@ export default {
                 // save data world id for use in later filtering
                 this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
                 // this.log('mounted 11.1')
-
-                const mapHelper = this.mapHelper
+                // const mapHelper = this.mapHelper
 
                 setTimeout(function () {
                   const image = mapHelper.markerImage(tdr)
-                  // mapHelper.log(image)
-                  // mapHelper.log(tdr.position)
                   const dropAnimation = mapHelper.dropAnimation
                   const point = tdr.position
                   const marker = mapHelper.marker({
@@ -199,17 +201,8 @@ export default {
                     icon: image,
                     position: point
                   })
-                  /*
-                  const marker = mapHelper.marker({
-                    animation: dropAnimation,
-                    position: tdr.position,
-                    draggable: false,
-                    clickable: true,
-                    icon: image
-                  })
-                  */
                   mapHelper.getting('markers').push(marker)
-                }, counter * 100)
+                }, counter * this.settings.delay)
               }
               // this.log('mounted 12')
 
@@ -262,31 +255,7 @@ export default {
       this.mapHelper.settings('center_box', newBox)
 
       this.loadDrains()
-      this.showDrains()
-    },
-    showDrains () {
-      /*
-        Objective: show the drains on the map
-        Strategy: only show newly downloaded drains
-      */
-      let dr = {}
-      // add just the new drains
-      for (dr in this.settings.drain_buffer) {
-
-        const marker = new this.google.maps.Marker({
-          id: this.settings.markers.length + 1,
-          position: this.settings.drain_buffer[dr].position,
-          draggable: false,
-          clickable: true,
-          animation: this.google.maps.Animation.DROP
-        })
-
-        this.settings.markers.push(marker)
-
-        // this.log(this.settings.drain_buffer[dr])
-        // this.mapHelper.showDrain( this.settings.drain_buffer[dr] )
-      }
-      this.settings.drain_buffer.length = 0 // clear the buffer
+      // this.showDrains()
     },
     loadDrains () {
       /*
@@ -297,6 +266,8 @@ export default {
       * avoid downloading drain more than once
       * no need to cache, caching is done in markers
       */
+      const mapHelper = this.mapHelper
+
       const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
         .replace('%w', this.settings.center_box.west)
         .replace('%e', this.settings.center_box.east)
@@ -312,22 +283,33 @@ export default {
       this.settings.drain_buffer.length = 0 // clear the buffer
       new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
         .then((response) => {
+
+
           let dr = {}
           let counter = 0
-          //$(response.data).each(function ( index, drain ) {
-            // this.log('drain')
-          //})
           for (dr in response.data) {
             counter++
-            this.settings.drain_buffer.push({
+            let tdr = {
               type: 'orphan',
               position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
               syncId: response.data[dr].dr_sync_id
-            })
+            }
+            this.settings.drain_buffer.push(tdr)
+            // save data world id for use in later filtering
             this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
-          }
 
-          this.showDrains()
+            setTimeout(function () {
+              const image = mapHelper.markerImage(tdr)
+              const dropAnimation = mapHelper.dropAnimation
+              const point = tdr.position
+              const marker = mapHelper.marker({
+                animation: dropAnimation,
+                icon: image,
+                position: point
+              })
+              mapHelper.getting('markers').push(marker)
+            }, counter * this.settings.delay)
+          }
 
           if (counter === 0) {
             this.feedback('Nothing to show here!')

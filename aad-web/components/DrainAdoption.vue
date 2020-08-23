@@ -13,9 +13,7 @@
     >
 
     </GmapMap>
-<div>hi</div>
-    <div id="map"></div>
-<div>xxxx</div>
+
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>
@@ -162,7 +160,6 @@ export default {
       this.mapHelper.settings('center_box', newBox)
 
       this.loadDrains()
-      // this.showDrains()
     },
     loadDrains () {
       /*
@@ -175,18 +172,18 @@ export default {
       */
       // this.log('loadDrains 1')
       const mapHelper = this.mapHelper
-      // start
+      // prepare seach boundary for query
       const center = mapHelper.map.get('center')
       let centerBox = mapHelper.map.getBounds()
       if (!centerBox) { // patch up center_box
-        // this.log('mounted 5')
         centerBox = mapHelper.boxify( center )
       } else {
-        // this.log('mounted 6')
         const shrinkToPercentage = mapHelper.getting('shrink_to')
         centerBox = mapHelper.shrink_box(centerBox, shrinkToPercentage)
       }
+      // this.log('loadDrains 2')
 
+      // prepare data.world query string
       const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
         .replace('%w', centerBox.west)
         .replace('%e', centerBox.east)
@@ -194,17 +191,18 @@ export default {
         .replace('%s', centerBox.south)
         .replace('%d', this.getDownloadedDrains())
 
-      // this.log('loadDrains 3')
+      // this.log(queryStr)
 
+      // pull data.world parameters together
       const data = { query: queryStr, includeTableSchema: false }
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
       }
-      // this.log('loadDrains 4')
-
       this.settings.drain_buffer.length = 0 // clear the buffer
+      // this.log('loadDrains 3')
 
+      // call the data.world service
       new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
         .then((response) => {
           // mapHelper.log('loadDrains 6')

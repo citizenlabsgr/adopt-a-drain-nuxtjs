@@ -97,6 +97,7 @@ class MapHelper {
   }
 
   markerImage ( drain ) {
+    // Objective: visually differentiate Orphan, Adoptee, and your Adoptee
     const size = new this.component.google.maps.Size(27.0, 38.0);
     const origin = new this.component.google.maps.Point(0, 0);
     const anchor = new this.component.google.maps.Point(13.0, 18.0);
@@ -104,22 +105,30 @@ class MapHelper {
     let image = undefined
     if (drain.type === 'adoptee') {
       image = new this.component.google.maps.MarkerImage(
-        '.assets/orphan.svg',
+        '/adoptee.svg',
         size,
         origin,
         anchor);
     } else if (drain.type === 'your_adoptee') {
       image = new this.component.google.maps.MarkerImage(
-        '.assets/your-adoptee.svg',
+        '/your-adoptee.svg',
         size,
         origin,
         anchor);
     } else {
+
+      image = new this.component.google.maps.MarkerImage(
+        '/orphan.svg',
+        size,
+        origin,
+        anchor);
+      /*
       image = new this.component.google.maps.MarkerImage(
         'https://raw.githubusercontent.com/Wilfongjt/adopt-a-drain/master/aad-web/assets/drains/available-drain.svg',
         size,
         origin,
         anchor);
+      */
     }
     /*
     image = new this.component.google.maps.MarkerImage(
@@ -131,15 +140,15 @@ class MapHelper {
     return image
   }
   marker( form ) {
-
+    // Objective: Hide the details of creating a marker
     return new this.component.google.maps.Marker(form)
   }
-
+  /*
   addMarker (drain) {
-    /*
-      Objective: show the drains on the map
-      Strategy: only show newly downloaded drains
-    */
+
+    //  Objective: show the drains on the map
+    //  Strategy: only show newly downloaded drains
+
     const image = this.markerImage(drain)
     //setTimeout(function() {
       const marker = new this.component.google.maps.Marker({
@@ -153,6 +162,7 @@ class MapHelper {
       this.getting('markers').push(marker)
     //}, drain.i * 100 )
   }
+  */
 }
 
 export { MapHelper }

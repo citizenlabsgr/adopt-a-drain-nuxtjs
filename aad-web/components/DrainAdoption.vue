@@ -1,24 +1,21 @@
 <template>
   <div v-if="authorized">
+    <button class="button" @click="flipMarkers ()" >
+      flip
+    </button>
     <GmapMap
       ref="mapRef"
-      :center="settings.adopt.center"
-      :map-type-id="settings.adopt.map_type_id"
-      :zoom="settings.adopt.zoom"
+      :center="settings.options.center"
+      :map-type-id="settings.options.map_type_id"
+      :zoom="settings.options.zoom"
       style="height: 550px"
       @dragend="doDragEnd()"
     >
-      <GmapMarker
-        v-for="(m, index) in settings.markers"
-        :key="index"
-        ref="mapMarker"
-        :animation="m.animation"
-        :position="m.position"
-        :draggable="m.draggable"
-        :clickable="m.clickable"
-        @click="center=m.position"
-      />
+
     </GmapMap>
+<div>hi</div>
+    <div id="map"></div>
+<div>xxxx</div>
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>
@@ -57,7 +54,7 @@ export default {
       },
       settings: {
         delay: 50,
-        adopt: {
+        options: {
           randy: 'X',
           title: 'Adoption',
           subtitle: 'Find a drain near you and adopt it.',
@@ -123,104 +120,14 @@ export default {
       this.$refs.mapRef.$mapPromise
         .then((map) => {
           // this.log('mounted 1')
-          const mapHelper = this.mapHelper
-          mapHelper.set('randy','Y')
-          mapHelper.set('center', map.getCenter())
-          // this.mapHelper.set('randy', 'Y')
-          // this.mapHelper.set('center', map.getCenter())
-          // this.log('mounted 2')
-
-          // ----
-          const center = map.getCenter()
-          // this.log('mounted 3')
-
-          let centerBox = map.getBounds()
-          // this.log('mounted 4')
-
-          if (!centerBox) { // patch up center_box
-            // centerBox = this.boxify(center)
-            // this.log('mounted 5')
-            // centerBox = this.mapHelper.boxify( center )
-            centerBox = mapHelper.boxify( center )
-          } else {
-            // this.log('mounted 6')
-            // const shrinkToPercentage = this.settings.shrink_to
-            // const shrinkToPercentage = this.mapHelper.getting('shrink_to')
-            const shrinkToPercentage = mapHelper.getting('shrink_to')
-
-            // centerBox = this.shrink_box(centerBox, shrinkToPercentage)
-            // centerBox = this.mapHelper.shrink_box(centerBox, shrinkToPercentage)
-            centerBox = mapHelper.shrink_box(centerBox, shrinkToPercentage)
-
-          }
-          // this.log('mounted 7')
-
-          // configurethe drain download with centerBox
-          const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
-            .replace('%w', centerBox.west)
-            .replace('%e', centerBox.east)
-            .replace('%n', centerBox.north)
-            .replace('%s', centerBox.south)
-            .replace('%d', this.getDownloadedDrains())
-          // this.log('mounted 8')
-
-          const data = { query: queryStr, includeTableSchema: false }
-          const headers = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
-          }
-          // this.log('mounted 10')
-
-
-          // get drains within a box ... the center_box
-          new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
-            .then((response) => {
-              // load the drain buffer, getting ready to show drains on map
-              this.settings.drain_buffer.length = 0 // clear the buffer
-              let counter = 0 // keep track for user feedback
-              let dr = {}
-              for (dr in response.data) {
-                counter++
-                let tdr = {
-                  type: 'orphan',
-                  position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
-                  sync_id: response.data[dr].dr_sync_id
-                }
-                this.settings.drain_buffer.push(tdr)
-                // save data world id for use in later filtering
-                this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
-                // this.log('mounted 11.1')
-                // const mapHelper = this.mapHelper
-
-                setTimeout(function () {
-                  const image = mapHelper.markerImage(tdr)
-                  const dropAnimation = mapHelper.dropAnimation
-                  const point = tdr.position
-                  const marker = mapHelper.marker({
-                    animation: dropAnimation,
-                    icon: image,
-                    position: point
-                  })
-                  mapHelper.getting('markers').push(marker)
-                }, counter * this.settings.delay)
-              }
-              // this.log('mounted 12')
-
-              if (counter === 0) {
-                this.feedback('No drains to see here!')
-              } else {
-                this.feedback('%d drains loaded!'.replace('%d', counter))
-              }
-              // this.showDrains()
-            })
-            .catch((response) => {
-              this.feedback('Unexpected issue getting drains!')
-            })
+          this.loadDrains()
+          // this.log('mounted out')
         })
         .catch((response) => {
           this.feedback('Unexpected issue getting map!')
         })
-  },
+    },
+
   methods: {
     log (msg) {
       /* eslint-disable no-console */
@@ -266,27 +173,45 @@ export default {
       * avoid downloading drain more than once
       * no need to cache, caching is done in markers
       */
+      // this.log('loadDrains 1')
       const mapHelper = this.mapHelper
+      // start
+      const center = mapHelper.map.get('center')
+      let centerBox = mapHelper.map.getBounds()
+      if (!centerBox) { // patch up center_box
+        // this.log('mounted 5')
+        centerBox = mapHelper.boxify( center )
+      } else {
+        // this.log('mounted 6')
+        const shrinkToPercentage = mapHelper.getting('shrink_to')
+        centerBox = mapHelper.shrink_box(centerBox, shrinkToPercentage)
+      }
 
       const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
-        .replace('%w', this.settings.center_box.west)
-        .replace('%e', this.settings.center_box.east)
-        .replace('%n', this.settings.center_box.north)
-        .replace('%s', this.settings.center_box.south)
+        .replace('%w', centerBox.west)
+        .replace('%e', centerBox.east)
+        .replace('%n', centerBox.north)
+        .replace('%s', centerBox.south)
         .replace('%d', this.getDownloadedDrains())
+
+      // this.log('loadDrains 3')
 
       const data = { query: queryStr, includeTableSchema: false }
       const headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
       }
+      // this.log('loadDrains 4')
+
       this.settings.drain_buffer.length = 0 // clear the buffer
+
       new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
         .then((response) => {
-
-
-          let dr = {}
+          // mapHelper.log('loadDrains 6')
+          const map = mapHelper.map
           let counter = 0
+          let dr = {}
+
           for (dr in response.data) {
             counter++
             let tdr = {
@@ -294,17 +219,20 @@ export default {
               position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
               syncId: response.data[dr].dr_sync_id
             }
+            // this.log('loadDrains 8')
             this.settings.drain_buffer.push(tdr)
             // save data world id for use in later filtering
             this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
-
+            // this.log('loadDrains 9')
+            const image = mapHelper.markerImage(tdr)
             setTimeout(function () {
-              const image = mapHelper.markerImage(tdr)
+            // mapHelper.log('loadDrains 10x')
               const dropAnimation = mapHelper.dropAnimation
               const point = tdr.position
               const marker = mapHelper.marker({
                 animation: dropAnimation,
                 icon: image,
+                map:map,
                 position: point
               })
               mapHelper.getting('markers').push(marker)
@@ -320,6 +248,7 @@ export default {
         .catch((response) => {
           this.feedback('Unexpected issue loading drains!')
         })
+        // this.log('loadDrains out')
     },
     getDownloadedDrains () {
       /*

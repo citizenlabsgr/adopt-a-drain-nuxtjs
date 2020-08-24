@@ -8,6 +8,7 @@ class MapHelper {
     this.map = component.$refs.mapRef.$mapObject
     this.set('randy', 'Y')
     this.set('center', component.$refs.mapRef.$mapObject.getCenter())
+
   }
 
   set(key, value) {
@@ -26,6 +27,10 @@ class MapHelper {
     return this.component.settings[key]
   }
 
+  feedback( msg ) {
+     this.component.feedback(msg)
+  }
+
   log( msg ) {
      this.component.log(msg)
   }
@@ -34,11 +39,17 @@ class MapHelper {
     return this.component.google
   }
 
+  getMaxArea(){
+    return this.component.settings.max_center_box_area
+  }
+
   getBounds() {
     return this.map.getBounds()
   }
 
   boxify ( pnt ) {
+    // Objective: keep data download from getting too big
+    // Strategy: create screen center box when no google map obj is available
     // screen handling
     // generate a box from a point
     const dx = 0.006319284439086914
@@ -52,6 +63,50 @@ class MapHelper {
     return centerBox
   }
 
+  viewBox ( box ) {
+    // Objective: keep data download from getting too big
+    // Strategy: expand or shrink box until a maximum area is just found
+    // assume box is too big ... so make smaller first
+    // this.log('viewBox 1')
+    box = JSON.stringify(box)
+    // this.log('viewBox 2')
+
+    box = JSON.parse(box)
+    // this.log('viewBox 3')
+
+    const bumpSize = 0.01 // growth ratio
+    const dy = box.north - box.south
+    const dx = (Math.abs(box.west) - Math.abs(box.east))
+    let area_ = dy * dx
+    let bumpY = dy * bumpSize
+    let bumpX = dx * bumpSize
+    // this.log('viewBox 4')
+    // this.log('viewBox 5')
+    // this.log(area_)
+    // this.log(this.getMaxArea())
+    // make smaller
+    while (area_ > this.getMaxArea()) {
+      box.north -= bumpY
+      box.south += bumpY
+      box.west += bumpX
+      box.east -= bumpX
+      area_ = (box.north - box.south) * (Math.abs(box.west) - Math.abs(box.east))
+    }
+    // this.log('viewBox 6')
+    // this.log(area_)
+
+    // make just a little bigger
+    while (area_ < this.getMaxArea()) {
+      box.north += bumpY
+      box.south -= bumpY
+      box.west -= bumpX
+      box.east += bumpX
+      area_ = (box.north - box.south) * (Math.abs(box.west) - Math.abs(box.east))
+    }
+    // this.log('viewBox out')
+    return box
+  }
+  /*
   shrink_box (centerBox, shrinkToPercentage) {
     // centerBox is a google object from getBounds()
     // screen handling
@@ -68,7 +123,8 @@ class MapHelper {
     centerBox.south = centerBox.south + (dy / 2.0)
     return centerBox
   }
-
+  */
+  /*
   right_size_box (newBox, oldBox) {
     // screen handling
     // stop box from getting too big and crippling the app
@@ -88,14 +144,13 @@ class MapHelper {
         break
       }
       rightBox = this.shrink_box(newBox, shrinkToPercentage)
-
     }
     if (shrinkToPercentage <= 0.1) {
       return oldBox // zoomed out too far
     }
     return rightBox
   }
-
+  */
   markerImage ( drain ) {
     // Objective: visually differentiate Orphan, Adoptee, and your Adoptee
     const size = new this.component.google.maps.Size(27.0, 38.0);
@@ -122,21 +177,8 @@ class MapHelper {
         size,
         origin,
         anchor);
-      /*
-      image = new this.component.google.maps.MarkerImage(
-        'https://raw.githubusercontent.com/Wilfongjt/adopt-a-drain/master/aad-web/assets/drains/available-drain.svg',
-        size,
-        origin,
-        anchor);
-      */
     }
-    /*
-    image = new this.component.google.maps.MarkerImage(
-      '~assets/orphan.svg',
-      size,
-      origin,
-      anchor);
-      */
+
     return image
   }
   marker( form ) {

@@ -21,13 +21,6 @@
         </div>
       </div>
     </div>
-
-    <!-- ol>
-      <li v-for="item in drain_info">
-        {{item.dr_sync_id}}/{{item.dr_owner}}
-
-      </li>
-    </ol -->
   </div>
 </template>
 <script>
@@ -86,7 +79,7 @@ export default {
         },
         dx: 0.0,
         dy: 0.0,
-        max_center_box_area: 0.00015,
+        max_center_box_area: 0.00005,
         center_box: {},
         drain_sync: [], // a list of drain sync_ids already downloaded
         drain_buffer: [], // a cache of drain data, defined before showing on map
@@ -170,14 +163,56 @@ export default {
       if (!newBox) {
         // patch up center_box... map is lagging
         newBox = this.mapHelper.boxify(center)
-      } else {
-        // stop box from getting too big and crippling the app
-        newBox = this.mapHelper.right_size_box(newBox, this.settings.center_box)
       }
       this.mapHelper.settings('center_box', newBox)
-
       this.loadDrains()
     },
+    /*
+    // Sets the map on all markers in the array.
+    setMapOnAll(map) {
+      for (let i in this.settings.markers) {
+        this.settings.markers[i].setMap(map);
+      }
+    },
+    */
+    // Removes the markers from the map, but keeps them in the array.
+    clearMarkers(centerBox) {
+      // this.setMapOnAll(null);
+      for (let mark in this.settings.markers) {
+        // this.log('marker')
+        // this.log(this.settings.markers[mark].position.lat())
+        if (
+          centerBox.north < this.settings.markers[mark].position.lat() ||
+          centerBox.south > this.settings.markers[mark].position.lat() ||
+          centerBox.west > this.settings.markers[mark].position.lng() ||
+          centerBox.east < this.settings.markers[mark].position.lng()
+        ) {
+          this.settings.markers[mark].setMap(null);
+        }
+      }
+    },
+    deleteMarkers (centerBox) {
+      this.clearMarkers(centerBox)
+      let tmp = []
+      for (let mark in this.settings.markers) {
+        if (this.settings.markers[mark].getMap() !== null){
+          tmp.push(this.settings.markers[mark])
+        }
+      }
+      this.settings.markers = []
+      for (let mark in tmp) {
+        this.settings.markers.push(tmp[mark])
+      }
+    },
+    /*
+    deleteAllMarkers () {
+      // this.log('deleteMarkers 1')
+      this.clearMarkers()
+      // this.log('deleteMarkers 2')
+      this.settings.markers = []
+      // this.log('deleteMarkers out')
+    },
+    */
     loadDrains () {
       /*
       Objective: Keep from downloading all the drains at one time
@@ -194,21 +229,28 @@ export default {
       let centerBox = mapHelper.map.getBounds()
       if (!centerBox) { // patch up center_box
         centerBox = mapHelper.boxify( center )
-      } else {
+      }
+      /* else {
         const shrinkToPercentage = mapHelper.getting('shrink_to')
         centerBox = mapHelper.shrink_box(centerBox, shrinkToPercentage)
       }
+      */
       // this.log('loadDrains 2')
 
+      centerBox = mapHelper.viewBox(centerBox)
+      // this.log(centerBox)
+
+      // this.log('loadDrains 2.1')
+      this.deleteMarkers(centerBox)
+      // this.log('loadDrains 3')
       // prepare data.world query string
-      const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n) %d'
+      const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
         .replace('%w', centerBox.west)
         .replace('%e', centerBox.east)
         .replace('%n', centerBox.north)
         .replace('%s', centerBox.south)
-        .replace('%d', this.getDownloadedDrains())
 
-      // this.log(queryStr)
+      // this.log('loadDrains 4')
 
       // pull data.world parameters together
       const data = { query: queryStr, includeTableSchema: false }
@@ -216,6 +258,8 @@ export default {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
       }
+      // this.log('loadDrains 5')
+
       this.settings.drain_buffer.length = 0 // clear the buffer
       // this.log('loadDrains 3')
 
@@ -269,27 +313,9 @@ export default {
           this.feedback('Unexpected issue loading drains!')
         })
         // this.feedback('low_point')
-
         // this.log('loadDrains out')
-    },
-    getDownloadedDrains () {
-      /*
-       Objective: avoid downloading drains more than once
-       Strategy: make a where clause to filter out already loaded dwDrains
-      */
-      let lst = ''
-      let i = 0
-      for (i in this.settings.drain_sync) {
-        if (lst.length > 0) {
-          lst += ', '
-        }
-        lst += '"' + this.settings.drain_sync[i] + '"'
-      }
-      if (lst.length === 0) {
-        return ' '
-      }
-      return 'and dr_sync_id NOT IN (%d)'.replace('%d', lst)
     }
   }
 }
+
 </script>

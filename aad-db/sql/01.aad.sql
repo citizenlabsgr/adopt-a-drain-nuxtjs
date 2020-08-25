@@ -11,7 +11,7 @@
 -- DONE 1.2.1: Change "process" type to "event" type
 -- DONE 1.2.1: Change Process_logger to event_logger
 -- DONE 1.2.1: Change 1_2_0 to 1_2_1
--- DONE 1.2.1: Dont allow drain to be adopted more than once ... uses index 
+-- DONE 1.2.1: Dont allow drain to be adopted more than once ... uses index
 -- DONE 1.2.0: Add Adpotee
 -- DONE 1.2.0: Rename schema from aad_schema_1_2_1 to aad_version_1_2_1
 
@@ -82,6 +82,8 @@ create table if not exists
 ----------------
 CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_first_idx ON aad_base.adopt_a_drain(reg_pk,reg_sk);
 CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_second_idx ON aad_base.adopt_a_drain(reg_sk,reg_data);
+CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_second_flip_idx ON aad_base.adopt_a_drain(reg_data, reg_sk);
+
 --CREATE INDEX IF NOT EXISTS adopt_a_drain_second_idx ON aad_base.adopt_a_drain(reg_sk,reg_data);
 
 -- CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_reg_pk_pkey ON aad_base.adopt_a_drain(reg_pk);

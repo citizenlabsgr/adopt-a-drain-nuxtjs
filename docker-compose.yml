@@ -14,25 +14,25 @@ version: '3'
 # ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
 # bash -c "npm install && npm run dev"
 services:
-  web:
-    #container_name: adopt-a-drain
-    image: wilfongjt/adopt-a-drain
-    build:
-      context: ./aad-web/
-    command: >
-      bash -c "npm install && npm run dev"
-    volumes:
-      - ./aad-web:/usr/src
-    ports:
-      - "3000:3000"
-    environment:
-      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
-      - DW_USER=${DW_USER}
-      - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
-      - DW_DRAIN_URL=${DW_DRAIN_URL}
-      - AAD_API_TOKEN=${AAD_API_TOKEN}
-      - AAD_API_URL=${AAD_API_URL}
-      - AAD_API_VERSION=${AAD_API_VERSION}
+  #web:
+  #  #container_name: adopt-a-drain
+  #  image: wilfongjt/adopt-a-drain
+  #  build:
+  #    context: ./aad-web/
+  #  command: >
+  #    bash -c "npm install && npm run dev"
+  #  volumes:
+  #    - ./aad-web:/usr/src
+  #  ports:
+  #    - "3000:3000"
+  #  environment:
+  #    - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+  #    - DW_USER=${DW_USER}
+  #    - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
+  #    - DW_DRAIN_URL=${DW_DRAIN_URL}
+  #    - AAD_API_TOKEN=${AAD_API_TOKEN}
+  #    - AAD_API_URL=${AAD_API_URL}
+  #    - AAD_API_VERSION=${AAD_API_VERSION}
 
   #############
   # POSTGRES

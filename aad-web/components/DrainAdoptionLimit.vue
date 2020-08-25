@@ -8,20 +8,15 @@
       style="height: 550px"
       @dragend="doDragEnd()"
     >
+
     </GmapMap>
 
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>
 
-    <div>
-      <div>
-        <div v-for="item in drain_info">
-          <span>{{item.dr_sync_id}}</span>  <span>{{item.dr_owner}}</span>
-        </div>
-      </div>
-    </div>
   </div>
+  <!-- show markers manually -->
 </template>
 <script>
 /*
@@ -46,8 +41,8 @@
 import { DWHandlers } from './mixins/DWHandlers.js'
 import { gmapApi } from '~/node_modules/vue2-google-maps/src/main'
 import { MapHelper } from './mixins/MapHelper.js'
-import { TableHelper } from './mixins/TableHelper.js'
-
+// import { TableHelper } from './mixins/TableHelper.js'
+// import {ServerTable, ClientTable, Event} from 'vue-tables-2';
 // import World from '@/components/World.vue'
 export default {
 
@@ -58,7 +53,7 @@ export default {
       },
       drain_info: [],
       settings: {
-        delay: 50,
+        delay: 30,
         options: {
           randy: 'X',
           title: 'Adoption',
@@ -77,14 +72,11 @@ export default {
           streetViewControl: true,
           zoomControl: true
         },
-        dx: 0.0,
-        dy: 0.0,
         max_center_box_area: 0.00005,
         center_box: {},
-        drain_sync: [], // a list of drain sync_ids already downloaded
+        //drain_sync: [], // a list of drain sync_ids already downloaded
         drain_buffer: [], // a cache of drain data, defined before showing on map
-        markers: [],
-        shrink_to: 0.5 // shrink bounding box to shrink_to %
+        markers: []
       }
     }
   },
@@ -112,9 +104,6 @@ export default {
     mapHelper () {
       // MapHelper is a wrapper around this component
       return new MapHelper( this )
-    },
-    tableHelper () {
-      return new TableHelper ( 'info', this )
     }
   },
   mounted () {
@@ -167,14 +156,7 @@ export default {
       this.mapHelper.settings('center_box', newBox)
       this.loadDrains()
     },
-    /*
-    // Sets the map on all markers in the array.
-    setMapOnAll(map) {
-      for (let i in this.settings.markers) {
-        this.settings.markers[i].setMap(map);
-      }
-    },
-    */
+
     // Removes the markers from the map, but keeps them in the array.
     clearMarkers(centerBox) {
       // this.setMapOnAll(null);
@@ -268,15 +250,13 @@ export default {
         .then((response) => {
           // mapHelper.log('loadDrains 6')
           const map = mapHelper.map
-          const tableHelper = this.tableHelper
+          //const tableHelper = this.tableHelper
 
           let counter = 0
           let dr = {}
           // let low_point = {dr_lat: 90.01}
           for (dr in response.data) {
-            //tableHelper.add(response.data[dr])
-            //this.log(response.data[dr])
-            tableHelper.add(response.data[dr])
+
             counter++
             let tdr = {
               type: 'orphan',
@@ -286,7 +266,7 @@ export default {
             // this.log('loadDrains 8')
             this.settings.drain_buffer.push(tdr)
             // save data world id for use in later filtering
-            this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
+            // this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
             // this.log('loadDrains 9')
             const image = mapHelper.markerImage(tdr)
             setTimeout(function () {
@@ -319,3 +299,7 @@ export default {
 }
 
 </script>
+
+<style scoped>
+
+</style>

@@ -130,52 +130,29 @@ ROLLBACK;
 
 BEGIN;
 
-  SELECT plan(2);
+  SELECT plan(3);
 
 -- TEST: Test(a) adopter Insert
-/*drain is {
- "dr_asset_id":"",
- "dr_discharge":"",
- "dr_jurisdiction":"",
- "dr_lat":"",
- "dr_lon":"",
- "dr_location":"",
- "dr_owner":"",
- "dr_subtype":"",
- "dr_subwatershed":"",
- "dr_type":""}
-
-*/
 /*
 | adoptee success | <request.jwt.claim.jti> | 'adoptee#<dr-asset-id>' | 'adoptee' | <adoptee-form> |
 */
 SELECT is (
   aad_version_1_4_0.adoptee( '{
-    "type":"adoptee",
-    "drain_id":"GR12345",
-    "lat":42.01,
-    "lon":-84.01}'::JSON
+    "name":"some opt name",
+    "drain_id":"GR_40089457",
+    "lat":42.96265175640001,
+    "lon":-85.6676956307}'::JSON
   ),
   '{"msg": "OK", "status": 200}'::JSONB,
   'adoptee - insert test 1_4_0'::TEXT
 );
-/*
-SELECT is (
-  aad_version_1_4_0.adoptee( '{
-    "type":"adoptee",
-    "drain_id":"GR12345",
-    "lat":42.01,
-    "lon":-84.01}'::JSON
-  ),
-  '{"msg": "Conflict duplicate adoptee.", "type": "adoptee", "status": "409"}'::JSONB,
-  'adoptee - insert test 1_4_0'::TEXT
-);
-*/
+-- '{"name":"some opt name", "drain_id":"GR_40089457","lat":42.96265175640001,"lon":-85.6676956307}'
+
 PREPARE new_adoptee AS select aad_version_1_4_0.adoptee( '{
-  "type":"adoptee",
-  "drain_id":"GR12345",
-  "lat":42.01,
-  "lon":-84.01}'::JSON
+  "name":"some opt name",
+  "drain_id":"GR_40089457",
+  "lat":42.96265175640001,
+  "lon":-85.6676956307}'::JSON
 );
 SELECT throws_ok(
     'new_adoptee',
@@ -184,6 +161,30 @@ SELECT throws_ok(
     'We should get a unique violation for a duplicate PK'
 );
 
+PREPARE boundary_search AS select aad_version_1_4_0.adoptees(
+  '{"north": 42.96465175640001,
+  "south": 42.96065175640001,
+  "west": -85.6736956307,
+  "east": -85.6670956307}'::JSON
+);
+SELECT is (
+  aad_version_1_4_0.adoptees('{
+    "north": 42.96465175640001,
+    "south": 42.96065175640001,
+    "west": -85.6736956307,
+    "east": -85.6670956307}'::JSON
+  ),
+  '{"lat": 42.96265175640001, "lon": -85.6676956307, "name": "some opt name", "type": "adoptee", "drain_id": "GR_40089457", "adopter_key": "testkey1234567890"}'::JSONB,
+  'adoptees - select by boundary test 1_4_0'::TEXT
+);
+--'{"north": 42.96465175640001,"south": 42.96065175640001,"west": -85.6736956307,"east": -85.6670956307}'
+/* SELECT throws_ok(
+    'boundary_search',
+    'PT200',
+    'Boundary Search',
+    'We should get a single adoptee'
+);
+*/
 SELECT * FROM finish();
 
 ROLLBACK;

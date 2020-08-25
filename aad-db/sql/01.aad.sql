@@ -82,6 +82,7 @@ create table if not exists
 ----------------
 CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_first_idx ON aad_base.adopt_a_drain(reg_pk,reg_sk);
 CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_second_idx ON aad_base.adopt_a_drain(reg_sk,reg_data);
+-- speed up adoptees query by bounding rect
 CREATE UNIQUE INDEX IF NOT EXISTS adopt_a_drain_second_flip_idx ON aad_base.adopt_a_drain(reg_data, reg_sk);
 
 --CREATE INDEX IF NOT EXISTS adopt_a_drain_second_idx ON aad_base.adopt_a_drain(reg_sk,reg_data);

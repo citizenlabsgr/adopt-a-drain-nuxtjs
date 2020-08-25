@@ -471,10 +471,19 @@ grant EXECUTE on FUNCTION aad_version_1_4_0.adoptee(TEXT) to editor_aad; -- C
 -- FUNCTION: Create adoptees(JSON)
 --------------------
 -- find in boundary
-CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(bounds JSON) RETURNS JSONB
 AS $$
-  Select reg_form from aad_base.adopt_a_drain
-  where reg_sk='adoptee';
+/* JSON is like '{"north": 42.96465175640001,
+  "south": 42.96065175640001,
+  "west": -85.6736956307,
+  "east": -85.6670956307}'
+*/
+  Select reg_form from aad_base.adopt_a_drain where reg_data = 'adoptee' and
+  CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) < CAST (bounds ->> 'north'  AS DOUBLE PRECISION) and
+  CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) > CAST (bounds ->> 'south'  AS DOUBLE PRECISION) and
+  CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) > CAST (bounds ->> 'west'  AS DOUBLE PRECISION) and 
+  CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) < CAST (bounds ->> 'east'  AS DOUBLE PRECISION);
+
 $$ LANGUAGE sql;
 
 -- GRANT: Grant Execute

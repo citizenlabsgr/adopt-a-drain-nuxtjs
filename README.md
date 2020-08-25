@@ -27,7 +27,7 @@ Adopt a drain
 * **Adoptee** is an adopted storm drain
 * **Document** is a block of text, formatted with Markdown, and accessible to the application 
 * **Orphan** is an unadopted storm drain
-
+* **API-EP** is the Application Programming Interface EndPoint
 Document is a block of text, formatted with Markdown, and accessible to the application 
 
 # Get Started
@@ -60,7 +60,7 @@ LB_GUEST_PASSWORD=<provide-guest-password-for-client>
 LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
 AAD_API_TOKEN=<sample-aad-api-token>
 AAD_API_URL=http://localhost:3100/rpc
-AAD_API_VERSION=aad_version_1_3_0
+AAD_API_VERSION=aad_version_1_4_0
 
 # Postgres (aad-db)
 POSTGRES_DB=aad_db
@@ -69,7 +69,7 @@ POSTGRES_PASSWORD=<provide-database-password>
 POSTGRES_JWT_SECRET=<provde-32-char-password>
 
 # Postgrest (aad-db)
-PGRST_DB_SCHEMA=aad_version_1_3_0
+PGRST_DB_SCHEMA=aad_version_1_4_0
 PGRST_DB_ANON_ROLE=guest_aad
 ```
 * \<sample-aad-api-token\> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
@@ -156,12 +156,13 @@ AAD API Generalization
                                     Map API (aka, Google Map API)
                                    /     Orphan API (Data World API)
                                   /    /     
-Adopt-a-Drain <----> AAD API <--------------------------------
-                                           \     \     \    \
-                                            \     \     \    Document API
-                                             \     \     Signin API
-                                              \     Adoptee API
-                                               Adopter API
+Adopt-a-Drain <----> AAD API <------------------------------------
+                                           \     \     \     \    \
+                                            \     \     \     \    Document API-EP
+                                             \     \     \     Signin API-EP
+                                              \     \     Adoptees API-EP
+                                               \     Adoptee API-EP
+                                                Adopter API-EP
 
 ```
 
@@ -174,6 +175,7 @@ The AAD API is a collection of APIs implemented in different ways.  To keep the 
 | **Orphan API** | [Data.World API](https://apidocs.data.world)  | https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
 | **Adopter API** | [Postgrest](https://github.com/PostgREST/postgrest)  | rpc/adopter |
 | **Adoptee API** | [Postgrest](https://github.com/PostgREST/postgrest)   | rpc/adoptee |
+| **Adoptees API** | [Postgrest](https://github.com/PostgREST/postgrest)   | rpc/adoptees |
 | **Signin API**  | [Postgrest](https://github.com/PostgREST/postgrest)   | rpc/credential |
 | **Document** | |  
 * development endpoint prefix: http://localhost:3100/
@@ -216,6 +218,7 @@ Again to keep the writing simple, data is framed in terms of forms and documents
 | adoptee  | Create an adoptee (aka, Adopt a drain) | status  |
 |          | Read adoptee by id  | adoptee  |
 |          | Delete or orphan a drain | status  |
+| adoptees  | Read adoptees | adoptee  |
 | signin   | Create an Authorization Token | adopter-token |
 | forgot   | Create a forgot password token  | status |
 | document | Create a document | status |

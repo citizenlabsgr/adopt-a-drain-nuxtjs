@@ -11,7 +11,8 @@
 
 <script>
 // import { AWSHandlers } from './mixins/AWSHandlers.js'
-import DrainAdoption from '@/components/DrainAdoption.vue'
+// import DrainAdoption from '@/components/DrainAdoption.vue'
+import DrainAdoption from '@/components/DrainAdoptionLimit.vue'
 
 export default {
   components: {

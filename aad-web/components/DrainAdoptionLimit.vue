@@ -223,8 +223,6 @@ export default {
       // this.log(centerBox)
       ///////////////////
 
-
-
       mapHelper.log('loaddrains 9')
       // download Adoptees
       const _data = centerBox
@@ -233,7 +231,7 @@ export default {
         'Authorization': 'Bearer %s'.replace('%s', process.env.AAD_API_TOKEN),
         'Content-Type': 'application/json',
         'Content-Profile': 'aad_version_1_4_0',
-        'Prefer': 'params=single-object',
+        'Prefer': 'params=single-object'
       }
       mapHelper.log(_headers)
       mapHelper.log('loadDrains 11')

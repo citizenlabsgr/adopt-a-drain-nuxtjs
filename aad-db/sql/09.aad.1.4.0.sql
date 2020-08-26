@@ -473,6 +473,33 @@ grant EXECUTE on FUNCTION aad_version_1_4_0.adoptee(TEXT) to editor_aad; -- C
 -- FUNCTION: Create adoptees(JSON)
 --------------------
 -- find in boundary
+CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
+AS $$
+BEGIN
+  /* JSON is like '{"north": 42.96465175640001,
+    "south": 42.96065175640001,
+    "west": -85.6736956307,
+    "east": -85.6670956307}'
+  */
+  return QUERY
+      Select to_jsonb(reg_form) from aad_base.adopt_a_drain where reg_data = 'adoptee' and
+        CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) < CAST (bounds ->> 'north'  AS DOUBLE PRECISION) and
+        CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) > CAST (bounds ->> 'south'  AS DOUBLE PRECISION) and
+        CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) > CAST (bounds ->> 'west'  AS DOUBLE PRECISION) and
+        CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) < CAST (bounds ->> 'east'  AS DOUBLE PRECISION)
+  ;
+  IF NOT FOUND THEN
+       RAISE EXCEPTION 'No adoptees in %.', $1;
+   END IF;
+
+   RETURN;
+END;
+$$ LANGUAGE plpgsql;
+-- GRANT: Grant Execute
+grant EXECUTE on FUNCTION aad_version_1_4_0.adoptees(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_4_0.adoptees(JSON) to guest_aad; -- C
+
+
 /*
 CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(bounds JSON) RETURNS JSONB
 AS $$
@@ -489,14 +516,15 @@ AS $$
 
 $$ LANGUAGE sql;
 */
+/*
 CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(bounds JSON) RETURNS SETOF JSONB
 AS $$
 BEGIN
-/* JSON is like '{"north": 42.96465175640001,
-  "south": 42.96065175640001,
-  "west": -85.6736956307,
-  "east": -85.6670956307}'
-*/
+  -- JSON is like '{"north": 42.96465175640001,
+  -- "south": 42.96065175640001,
+  -- "west": -85.6736956307,
+  -- "east": -85.6670956307}'
+
   return QUERY (SELECT row_to_json(r) as result
     from (
       Select reg_form from aad_base.adopt_a_drain where reg_data = 'adoptee' and
@@ -513,6 +541,7 @@ BEGIN
    RETURN;
 END;
 $$ LANGUAGE plpgsql;
+*/
 /*
 return (SELECT row_to_json(r) as result
   from (
@@ -524,9 +553,7 @@ return (SELECT row_to_json(r) as result
   ) r
 );
 */
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_4_0.adoptees(JSON) to editor_aad; -- C
-grant EXECUTE on FUNCTION aad_version_1_4_0.adoptees(JSON) to guest_aad; -- C
+
 
 /*
 CREATE OR REPLACE FUNCTION just_fail() RETURNS void

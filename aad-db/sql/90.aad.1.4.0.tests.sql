@@ -130,7 +130,7 @@ ROLLBACK;
 
 BEGIN;
 
-  SELECT plan(3);
+  SELECT plan(4);
 
 -- TEST: Test(a) adopter Insert
 /*
@@ -140,6 +140,16 @@ SELECT is (
   aad_version_1_4_0.adoptee( '{
     "name":"some opt name",
     "drain_id":"GR_40089457",
+    "lat":42.96265175640001,
+    "lon":-85.6676956307}'::JSON
+  ),
+  '{"msg": "OK", "status": 200}'::JSONB,
+  'adoptee - insert test 1_4_0'::TEXT
+);
+SELECT is (
+  aad_version_1_4_0.adoptee( '{
+    "name":"some opt name",
+    "drain_id":"GR_40089458",
     "lat":42.96265175640001,
     "lon":-85.6676956307}'::JSON
   ),

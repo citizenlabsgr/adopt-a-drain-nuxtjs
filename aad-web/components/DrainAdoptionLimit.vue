@@ -38,6 +38,7 @@
     ref: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 */
 // import Banner from '@/components/Banner.vue'
+import { AADHandlers } from './mixins/AADHandlers.js'
 import { DWHandlers } from './mixins/DWHandlers.js'
 import { gmapApi } from '~/node_modules/vue2-google-maps/src/main'
 import { MapHelper } from './mixins/MapHelper.js'
@@ -76,7 +77,8 @@ export default {
         center_box: {},
         //drain_sync: [], // a list of drain sync_ids already downloaded
         drain_buffer: [], // a cache of drain data, defined before showing on map
-        markers: []
+        markers: [],
+        adoptees: []
       }
     }
   },
@@ -204,96 +206,142 @@ export default {
       * avoid downloading drain more than once
       * no need to cache, caching is done in markers
       */
-      // this.log('loadDrains 1')
+      this.log('loadDrains 1')
+      //////////
+      // common to both Handlers
+      ////////////
       const mapHelper = this.mapHelper
       // prepare seach boundary for query
       const center = mapHelper.map.get('center')
-      let centerBox = mapHelper.map.getBounds()
-      if (!centerBox) { // patch up center_box
-        centerBox = mapHelper.boxify( center )
+      let cBox = mapHelper.map.getBounds()
+      if (!cBox) { // patch up center_box
+        cBox = mapHelper.boxify( center )
       }
-      /* else {
-        const shrinkToPercentage = mapHelper.getting('shrink_to')
-        centerBox = mapHelper.shrink_box(centerBox, shrinkToPercentage)
-      }
-      */
-      // this.log('loadDrains 2')
+      this.log('loadDrains 2')
 
-      centerBox = mapHelper.viewBox(centerBox)
+      const centerBox = mapHelper.viewBox(cBox)
       // this.log(centerBox)
+      ///////////////////
 
-      // this.log('loadDrains 2.1')
-      this.deleteMarkers(centerBox)
-      // this.log('loadDrains 3')
-      // prepare data.world query string
-      const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
-        .replace('%w', centerBox.west)
-        .replace('%e', centerBox.east)
-        .replace('%n', centerBox.north)
-        .replace('%s', centerBox.south)
 
-      // this.log('loadDrains 4')
 
-      // pull data.world parameters together
-      const data = { query: queryStr, includeTableSchema: false }
-      const headers = {
+      mapHelper.log('loaddrains 9')
+      // download Adoptees
+      const _data = centerBox
+
+      const _headers = {
+        'Authorization': 'Bearer %s'.replace('%s', process.env.AAD_API_TOKEN),
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
+        'Content-Profile': 'aad_version_1_4_0',
+        'Prefer': 'params=single-object',
       }
-      // this.log('loadDrains 5')
+      mapHelper.log(_headers)
+      mapHelper.log('loadDrains 11')
+      mapHelper.log(process.env.AAD_API_URL+'/adoptees')
 
-      this.settings.drain_buffer.length = 0 // clear the buffer
-      // this.log('loadDrains 3')
-
-      // call the data.world service
-      new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
+      aadHandlers.aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
         .then((response) => {
-          // mapHelper.log('loadDrains 6')
-          const map = mapHelper.map
-          //const tableHelper = this.tableHelper
-
-          let counter = 0
+          //const mapHelper = this.mapHelper
+          mapHelper.log('loadDrains 12')
+          mapHelper.log(response.data)
           let dr = {}
           // let low_point = {dr_lat: 90.01}
           for (dr in response.data) {
-
-            counter++
-            let tdr = {
-              type: 'orphan',
-              position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
-              syncId: response.data[dr].dr_sync_id
-            }
-            // this.log('loadDrains 8')
-            this.settings.drain_buffer.push(tdr)
-            // save data world id for use in later filtering
-            // this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
-            // this.log('loadDrains 9')
-            const image = mapHelper.markerImage(tdr)
-            setTimeout(function () {
-            // mapHelper.log('loadDrains 10x')
-              const dropAnimation = mapHelper.dropAnimation
-              const point = tdr.position
-              const marker = mapHelper.marker({
-                animation: dropAnimation,
-                icon: image,
-                map:map,
-                position: point
-              })
-              mapHelper.getting('markers').push(marker)
-            }, counter * this.settings.delay)
+            mapHelper.log(response.data[dr])
           }
+          //////////////
+          // Prepare to load orphans
+          ///////
+          /*
+          this.log('loadDrains 2.1')
+          this.deleteMarkers(centerBox)
+          this.log('loadDrains 3')
+          // prepare data.world query string
+          const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
+            .replace('%w', centerBox.west)
+            .replace('%e', centerBox.east)
+            .replace('%n', centerBox.north)
+            .replace('%s', centerBox.south)
 
-          if (counter === 0) {
-            this.feedback('Nothing to show here!')
-          } else {
-            this.feedback('Showing %d more Drains!'.replace('%d', counter))
+          this.log('loadDrains 4')
+
+          // pull data.world parameters together
+          const data = { query: queryStr, includeTableSchema: false }
+          const headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
           }
+          this.log('loadDrains 5')
+
+          this.settings.drain_buffer.length = 0 // clear the buffer
+          this.log('loadDrains 6')
+          const aadHandlers = new AADHandlers(this)
+          this.log('loadDrains 7')
+          //////////////
+          // call the data.world service once adoptees are loaded
+          /////////
+          new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
+            .then((response) => {
+              mapHelper.log('loadDrains 8')
+              const map = mapHelper.map
+              //const tableHelper = this.tableHelper
+              let counter = 0
+              let dr = {}
+              // let low_point = {dr_lat: 90.01}
+              for (dr in response.data) {
+                counter++
+                let tdr = {
+                  type: 'orphan',
+                  position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
+                  syncId: response.data[dr].dr_sync_id
+                }
+                // this.log('loadDrains 9')
+                this.settings.drain_buffer.push(tdr)
+                // save data world id for use in later filtering
+                // this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
+                // this.log('loadDrains 10')
+                const image = mapHelper.markerImage(tdr)
+                setTimeout(function () {
+                // mapHelper.log('loadDrains 10x')
+                  const dropAnimation = mapHelper.dropAnimation
+                  const point = tdr.position
+                  const marker = mapHelper.marker({
+                    animation: dropAnimation,
+                    icon: image,
+                    map:map,
+                    position: point
+                  })
+                  mapHelper.getting('markers').push(marker)
+                }, counter * this.settings.delay)
+              }
+              if (counter === 0) {
+                this.feedback('Nothing to show here!')
+              } else {
+                this.feedback('Showing %d more Drains!'.replace('%d', counter))
+              }
+
+            })
+            .catch((response) => {
+              this.feedback('Unexpected issue loading drains!')
+            }) // end of DWHandlers
+            */
         })
         .catch((response) => {
-          this.feedback('Unexpected issue loading drains!')
-        })
+          this.feedback('Unexpected issue with adoptees!')
+        }) // end of AADHandler
+
+
         // this.feedback('low_point')
         // this.log('loadDrains out')
+        /*
+        curl http://localhost:3100/rpc/adoptees -X POST \
+            -H "Authorization: Bearer $ADOPTER_TOKEN" \
+            -H "Content-Type: application/json" \
+            -H "Content-Profile: aad_version_1_4_0" \
+            -H "Prefer: params=single-object" \
+            -d '{"north": 42.96465175640001,"south": 42.96065175640001,"west": -85.6736956307,"east": -85.6670956307}'
+        */
+
     }
   }
 }

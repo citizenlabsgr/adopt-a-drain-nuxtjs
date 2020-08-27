@@ -202,11 +202,11 @@ export default {
       Objective: Keep from downloading all the drains at one time
       Strategy:
       * Limit the number of drains with a rectangle in middle of map screen
-      * only download when panning
-      * avoid downloading drain more than once
-      * no need to cache, caching is done in markers
+      * only download initialization and when panning
+      * cache adoptees
+      * check drains agaist adoptee list, when found change symbol
       */
-      this.log('loadDrains 1')
+      // this.log('loadDrains 1')
       //////////
       // common to both Handlers
       ////////////
@@ -217,13 +217,13 @@ export default {
       if (!cBox) { // patch up center_box
         cBox = mapHelper.boxify( center )
       }
-      this.log('loadDrains 2')
+      // this.log('loadDrains 2')
 
       const centerBox = mapHelper.viewBox(cBox)
       // this.log(centerBox)
       ///////////////////
 
-      mapHelper.log('loaddrains 9')
+      // mapHelper.log('loaddrains 9')
       // download Adoptees
       const _data = centerBox
 
@@ -233,27 +233,35 @@ export default {
         'Content-Profile': 'aad_version_1_4_0',
         'Prefer': 'params=single-object'
       }
-      mapHelper.log(_headers)
-      mapHelper.log('loadDrains 11')
-      mapHelper.log(process.env.AAD_API_URL+'/adoptees')
+      // mapHelper.log('loadDrains 11')
 
-      aadHandlers.aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
+      // mapHelper.log(_data)
+      // mapHelper.log(_headers)
+      // mapHelper.log(process.env.AAD_API_URL+'/adoptees')
+      // mapHelper.log('loadDrains 12')
+
+      new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
         .then((response) => {
-          //const mapHelper = this.mapHelper
-          mapHelper.log('loadDrains 12')
-          mapHelper.log(response.data)
+          // const mapHelper = this.mapHelper
+          mapHelper.log('loadDrains 13')
+          // mapHelper.log(response.data)
           let dr = {}
           // let low_point = {dr_lat: 90.01}
+          // make adoptee list, use for later symbolism
+          this.settings.adoptees={}
           for (dr in response.data) {
-            mapHelper.log(response.data[dr])
+            this.settings.adoptees[response.data[dr]['adoptee']['drain_id']]=response.data[dr]['adoptee']
           }
+          // mapHelper.log(this.settings.adoptees)
+          // mapHelper.log('loadDrains 14')
+
           //////////////
           // Prepare to load orphans
           ///////
-          /*
-          this.log('loadDrains 2.1')
+
+          //this.log('loadDrains 15')
           this.deleteMarkers(centerBox)
-          this.log('loadDrains 3')
+          //this.log('loadDrains 16')
           // prepare data.world query string
           const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
             .replace('%w', centerBox.west)
@@ -261,7 +269,7 @@ export default {
             .replace('%n', centerBox.north)
             .replace('%s', centerBox.south)
 
-          this.log('loadDrains 4')
+          // this.log('loadDrains 17')
 
           // pull data.world parameters together
           const data = { query: queryStr, includeTableSchema: false }
@@ -269,18 +277,18 @@ export default {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
           }
-          this.log('loadDrains 5')
+          // this.log('loadDrains 18')
 
           this.settings.drain_buffer.length = 0 // clear the buffer
-          this.log('loadDrains 6')
+          // this.log('loadDrains 19')
           const aadHandlers = new AADHandlers(this)
-          this.log('loadDrains 7')
+          // this.log('loadDrains 20')
           //////////////
           // call the data.world service once adoptees are loaded
           /////////
           new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
             .then((response) => {
-              mapHelper.log('loadDrains 8')
+              // mapHelper.log('loadDrains 21')
               const map = mapHelper.map
               //const tableHelper = this.tableHelper
               let counter = 0
@@ -293,11 +301,15 @@ export default {
                   position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
                   syncId: response.data[dr].dr_sync_id
                 }
+                if (this.settings.adoptees[tdr['syncId']]) {
+                  tdr['type']='adoptee'
+                  tdr['name']=this.settings.adoptees[tdr['syncId']].name
+                  // mapHelper.log('set adoptee ' + counter + JSON.stringify(tdr))
+                }
                 // this.log('loadDrains 9')
                 this.settings.drain_buffer.push(tdr)
                 // save data world id for use in later filtering
                 // this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
-                // this.log('loadDrains 10')
                 const image = mapHelper.markerImage(tdr)
                 setTimeout(function () {
                 // mapHelper.log('loadDrains 10x')
@@ -312,17 +324,19 @@ export default {
                   mapHelper.getting('markers').push(marker)
                 }, counter * this.settings.delay)
               }
+              // this.log(this.settings.drain_buffer)
+
               if (counter === 0) {
                 this.feedback('Nothing to show here!')
               } else {
                 this.feedback('Showing %d more Drains!'.replace('%d', counter))
               }
-
             })
             .catch((response) => {
               this.feedback('Unexpected issue loading drains!')
             }) // end of DWHandlers
-            */
+
+            // mapHelper.log('loadDrains out')
         })
         .catch((response) => {
           this.feedback('Unexpected issue with adoptees!')

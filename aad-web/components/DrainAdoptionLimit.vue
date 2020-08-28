@@ -10,7 +10,7 @@
     >
 
     </GmapMap>
-
+    <div> {{ adopterKey }} </div>
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>
@@ -84,6 +84,15 @@ export default {
   },
   computed: {
     google: gmapApi,
+    adopterKey() {
+     // JWT's are two base64-encoded JSON objects and a trailing signature
+     // joined by periods. The middle section is the data payload.
+     if (this.adopter_token) return JSON.parse(atob(this.adopter_token.split('.')[1])).key;
+     return undefined;
+    },
+    adopter_token () {
+      return this.$store.state.adopter.token
+    },
     authorized () {
       // if (!this.$store.state.authenticated) { return false }
       return true
@@ -118,9 +127,7 @@ export default {
       */
       this.$refs.mapRef.$mapPromise
         .then((map) => {
-          // this.log('mounted 1')
           this.loadDrains()
-          // this.log('mounted out')
         })
         .catch((response) => {
           this.feedback('Unexpected issue getting map!')
@@ -161,10 +168,12 @@ export default {
 
     // Removes the markers from the map, but keeps them in the array.
     clearMarkers(centerBox) {
-      // this.setMapOnAll(null);
+      /*
+        Objective: minimize the number of drains in the application at one time
+        Strategy: disable markers not found in the centerBox
+      */
       for (let mark in this.settings.markers) {
-        // this.log('marker')
-        // this.log(this.settings.markers[mark].position.lat())
+
         if (
           centerBox.north < this.settings.markers[mark].position.lat() ||
           centerBox.south > this.settings.markers[mark].position.lat() ||
@@ -176,27 +185,26 @@ export default {
       }
     },
     deleteMarkers (centerBox) {
+      /*
+        Objective: minimize the number of drains in the application at one time
+        Strategy: remove markers falling outside a box
+      */
       this.clearMarkers(centerBox)
       let tmp = []
+      // copy markers found in the box, skip those with map == null
       for (let mark in this.settings.markers) {
         if (this.settings.markers[mark].getMap() !== null){
           tmp.push(this.settings.markers[mark])
         }
       }
+      // delete all markers in marker list
       this.settings.markers = []
+      // put markers in box back into marker list load
       for (let mark in tmp) {
         this.settings.markers.push(tmp[mark])
       }
     },
-    /*
-    deleteAllMarkers () {
-      // this.log('deleteMarkers 1')
-      this.clearMarkers()
-      // this.log('deleteMarkers 2')
-      this.settings.markers = []
-      // this.log('deleteMarkers out')
-    },
-    */
+
     loadDrains () {
       /*
       Objective: Keep from downloading all the drains at one time
@@ -206,7 +214,6 @@ export default {
       * cache adoptees
       * check drains agaist adoptee list, when found change symbol
       */
-      // this.log('loadDrains 1')
       //////////
       // common to both Handlers
       ////////////
@@ -217,13 +224,10 @@ export default {
       if (!cBox) { // patch up center_box
         cBox = mapHelper.boxify( center )
       }
-      // this.log('loadDrains 2')
 
       const centerBox = mapHelper.viewBox(cBox)
-      // this.log(centerBox)
       ///////////////////
 
-      // mapHelper.log('loaddrains 9')
       // download Adoptees
       const _data = centerBox
 
@@ -233,35 +237,22 @@ export default {
         'Content-Profile': 'aad_version_1_4_0',
         'Prefer': 'params=single-object'
       }
-      // mapHelper.log('loadDrains 11')
-
-      // mapHelper.log(_data)
-      // mapHelper.log(_headers)
-      // mapHelper.log(process.env.AAD_API_URL+'/adoptees')
-      // mapHelper.log('loadDrains 12')
 
       new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
         .then((response) => {
-          // const mapHelper = this.mapHelper
-          mapHelper.log('loadDrains 13')
-          // mapHelper.log(response.data)
+
           let dr = {}
-          // let low_point = {dr_lat: 90.01}
           // make adoptee list, use for later symbolism
           this.settings.adoptees={}
           for (dr in response.data) {
             this.settings.adoptees[response.data[dr]['adoptee']['drain_id']]=response.data[dr]['adoptee']
           }
-          // mapHelper.log(this.settings.adoptees)
-          // mapHelper.log('loadDrains 14')
 
           //////////////
           // Prepare to load orphans
           ///////
 
-          //this.log('loadDrains 15')
           this.deleteMarkers(centerBox)
-          //this.log('loadDrains 16')
           // prepare data.world query string
           const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
             .replace('%w', centerBox.west)
@@ -269,50 +260,54 @@ export default {
             .replace('%n', centerBox.north)
             .replace('%s', centerBox.south)
 
-          // this.log('loadDrains 17')
-
           // pull data.world parameters together
           const data = { query: queryStr, includeTableSchema: false }
           const headers = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
           }
-          // this.log('loadDrains 18')
 
           this.settings.drain_buffer.length = 0 // clear the buffer
-          // this.log('loadDrains 19')
           const aadHandlers = new AADHandlers(this)
-          // this.log('loadDrains 20')
           //////////////
           // call the data.world service once adoptees are loaded
           /////////
           new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
             .then((response) => {
-              // mapHelper.log('loadDrains 21')
               const map = mapHelper.map
-              //const tableHelper = this.tableHelper
               let counter = 0
               let dr = {}
-              // let low_point = {dr_lat: 90.01}
+              // Load data.world data
               for (dr in response.data) {
+                let res_dr = response.data[dr]
+
                 counter++
+                // assume all drains are orphans
                 let tdr = {
                   type: 'orphan',
-                  position: { lat: response.data[dr].dr_lat, lng: response.data[dr].dr_lon },
-                  syncId: response.data[dr].dr_sync_id
+                  position: { lat: res_dr.dr_lat, lng: res_dr.dr_lon },
+                  syncId: res_dr.dr_sync_id
                 }
+
+                // is adoptee
                 if (this.settings.adoptees[tdr['syncId']]) {
+
                   tdr['type']='adoptee'
                   tdr['name']=this.settings.adoptees[tdr['syncId']].name
-                  // mapHelper.log('set adoptee ' + counter + JSON.stringify(tdr))
+                  // is current adopter's drain
+                  if (this.adopterKey && this.settings.adoptees[tdr['syncId']].adopter_key) { // confirm someone is signed in
+                    if (this.adopterKey === this.settings.adoptees[tdr['syncId']].adopter_key) {
+                      tdr['type']='your_adoptee'
+                      tdr['adopter_key']=this.adopterKey
+                    }
+                  }
                 }
-                // this.log('loadDrains 9')
+                // identify my adoption
                 this.settings.drain_buffer.push(tdr)
                 // save data world id for use in later filtering
-                // this.settings.drain_sync.push(response.data[dr].dr_sync_id) // helps to prevent downloading drain more than once
                 const image = mapHelper.markerImage(tdr)
+                // rain down markers
                 setTimeout(function () {
-                // mapHelper.log('loadDrains 10x')
                   const dropAnimation = mapHelper.dropAnimation
                   const point = tdr.position
                   const marker = mapHelper.marker({
@@ -322,9 +317,9 @@ export default {
                     position: point
                   })
                   mapHelper.getting('markers').push(marker)
-                }, counter * this.settings.delay)
+                }, counter * this.settings.delay )
+
               }
-              // this.log(this.settings.drain_buffer)
 
               if (counter === 0) {
                 this.feedback('Nothing to show here!')
@@ -336,24 +331,10 @@ export default {
               this.feedback('Unexpected issue loading drains!')
             }) // end of DWHandlers
 
-            // mapHelper.log('loadDrains out')
         })
         .catch((response) => {
           this.feedback('Unexpected issue with adoptees!')
         }) // end of AADHandler
-
-
-        // this.feedback('low_point')
-        // this.log('loadDrains out')
-        /*
-        curl http://localhost:3100/rpc/adoptees -X POST \
-            -H "Authorization: Bearer $ADOPTER_TOKEN" \
-            -H "Content-Type: application/json" \
-            -H "Content-Profile: aad_version_1_4_0" \
-            -H "Prefer: params=single-object" \
-            -d '{"north": 42.96465175640001,"south": 42.96065175640001,"west": -85.6736956307,"east": -85.6670956307}'
-        */
-
     }
   }
 }

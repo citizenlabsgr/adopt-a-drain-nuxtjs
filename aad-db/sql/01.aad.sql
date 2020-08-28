@@ -2,6 +2,7 @@
 --------------
 -- Environment
 --------------
+-- TODO 1.4.2: adoptee isnt unique enough, add user key
 
 -- TODO ?.?.?: When adopter is deactivated then deactivate all adoptions by that adopter
 -- TODO ?.?.?: put admin hold on adopter. test for active adopter record during signin. When active is false then adopter is the same as deleted.
@@ -134,7 +135,10 @@ BEGIN
         NEW.reg_form := NEW.reg_form  || _form;
 
       ELSEIF (NEW.reg_form ->> 'type' = 'adoptee') then
-          NEW.reg_sk := format('adoptee#%s', NEW.reg_form ->> 'drain_id');
+          NEW.reg_sk := format('adoptee#%s#%s',
+                                  COALESCE(current_setting('request.jwt.claim.key','t'),'8a39dc33-0c6c-4b4e-bdb8-3829af311dd8'),
+                                  NEW.reg_form ->> 'drain_id');
+          -- NEW.reg_sk := format('adoptee#%s', NEW.reg_form ->> 'drain_id');
           NEW.reg_data := 'adoptee';
           NEW.reg_pk := COALESCE(current_setting('request.jwt.claim.jti','t'),'test@citizenlabs.org');
 

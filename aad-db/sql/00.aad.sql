@@ -1,5 +1,4 @@
 \c postgres
-
 -- DONE 0.0.0: Setup environment variables
 -- DONE 0.0.0: Create Database
 -- DONE 0.0.0: Create Extensions

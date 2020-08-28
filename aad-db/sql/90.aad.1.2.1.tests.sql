@@ -10,11 +10,11 @@
 ------------------------
 -- TESTs
 ------------------------
-
+/*
 \c aad_db;
 
 SET search_path TO aad_version_1_2_1, public;
-
+*/
 --------------------
 -- EVENT_LOGGER Tests
 --------------------

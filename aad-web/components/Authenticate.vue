@@ -8,6 +8,7 @@
       <h2 class="subtitle">
         {{ page[0].subtitle }}
       </h2>
+
       <!-- User Name -->
       <span>
         <label for="username">Email</label>
@@ -39,6 +40,8 @@
       <h2 class="subtitle">
         {{ page[1].subtitle }}
       </h2>
+      <div>[ {{ adopter_token }} ]</div>
+      <div> {{jwtData}} </div>
       <button class="button" @click="onSignOut ()">Sign Out</button>
     </div>
   </div>
@@ -71,6 +74,12 @@ export default {
     }
   },
   computed: {
+    jwtData() {
+     // JWT's are two base64-encoded JSON objects and a trailing signature
+     // joined by periods. The middle section is the data payload.
+     if (this.adopter_token) return JSON.parse(atob(this.adopter_token.split('.')[1]));
+     return {};
+    },
     adopter_token () {
       return this.$store.state.adopter.token
     },

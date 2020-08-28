@@ -67,12 +67,9 @@ class MapHelper {
     // Objective: keep data download from getting too big
     // Strategy: expand or shrink box until a maximum area is just found
     // assume box is too big ... so make smaller first
-    // this.log('viewBox 1')
     box = JSON.stringify(box)
-    // this.log('viewBox 2')
 
     box = JSON.parse(box)
-    // this.log('viewBox 3')
 
     const bumpSize = 0.01 // growth ratio
     const dy = box.north - box.south
@@ -80,10 +77,7 @@ class MapHelper {
     let area_ = dy * dx
     let bumpY = dy * bumpSize
     let bumpX = dx * bumpSize
-    // this.log('viewBox 4')
-    // this.log('viewBox 5')
-    // this.log(area_)
-    // this.log(this.getMaxArea())
+
     // make smaller
     while (area_ > this.getMaxArea()) {
       box.north -= bumpY
@@ -92,8 +86,6 @@ class MapHelper {
       box.east -= bumpX
       area_ = (box.north - box.south) * (Math.abs(box.west) - Math.abs(box.east))
     }
-    // this.log('viewBox 6')
-    // this.log(area_)
 
     // make just a little bigger
     while (area_ < this.getMaxArea()) {
@@ -103,54 +95,9 @@ class MapHelper {
       box.east += bumpX
       area_ = (box.north - box.south) * (Math.abs(box.west) - Math.abs(box.east))
     }
-    // this.log('viewBox out')
     return box
   }
-  /*
-  shrink_box (centerBox, shrinkToPercentage) {
-    // centerBox is a google object from getBounds()
-    // screen handling
-    centerBox = JSON.stringify(centerBox)
-    centerBox = JSON.parse(centerBox)
 
-    const perc = 1.0 - shrinkToPercentage
-    const dy = (centerBox.north - centerBox.south) * perc
-    const dx = (Math.abs(centerBox.west) - Math.abs(centerBox.east)) * perc
-    // adjust size of drain filter
-    centerBox.west = centerBox.west + (dx / 2.0)
-    centerBox.east = centerBox.east - (dx / 2.0)
-    centerBox.north = centerBox.north - (dy / 2.0)
-    centerBox.south = centerBox.south + (dy / 2.0)
-    return centerBox
-  }
-  */
-  /*
-  right_size_box (newBox, oldBox) {
-    // screen handling
-    // stop box from getting too big and crippling the app
-    // different zoom levels will cause downloads to be too large
-    let shrinkToPercentage = this.getting('shrink_to')
-    let rightBox = this.shrink_box(newBox, shrinkToPercentage)
-
-    // shrink until area is ok
-    const dy = (rightBox.north - rightBox.south)
-    const dx = (Math.abs(rightBox.west) - Math.abs(rightBox.east))
-    const box_area = dy * dx
-
-    while (box_area > this.getting('max_center_box_area')) {
-      shrinkToPercentage -= 0.1
-      if (shrinkToPercentage <= 0.1) {
-        this.feedback('Are you kidding me?! No more, no more!')
-        break
-      }
-      rightBox = this.shrink_box(newBox, shrinkToPercentage)
-    }
-    if (shrinkToPercentage <= 0.1) {
-      return oldBox // zoomed out too far
-    }
-    return rightBox
-  }
-  */
   markerImage ( drain ) {
     // Objective: visually differentiate Orphan, Adoptee, and your Adoptee
     const size = new this.component.google.maps.Size(27.0, 38.0);
@@ -171,40 +118,19 @@ class MapHelper {
         origin,
         anchor);
     } else {
-
       image = new this.component.google.maps.MarkerImage(
         '/orphan.svg',
         size,
         origin,
         anchor);
     }
-
     return image
   }
   marker( form ) {
     // Objective: Hide the details of creating a marker
     return new this.component.google.maps.Marker(form)
   }
-  /*
-  addMarker (drain) {
 
-    //  Objective: show the drains on the map
-    //  Strategy: only show newly downloaded drains
-
-    const image = this.markerImage(drain)
-    //setTimeout(function() {
-      const marker = new this.component.google.maps.Marker({
-        animation: this.component.google.maps.Animation.DROP,
-        id: this.getting('markers').length + 1,
-        position: drain.position,
-        draggable: false,
-        clickable: true,
-        icon: image
-      })
-      this.getting('markers').push(marker)
-    //}, drain.i * 100 )
-  }
-  */
 }
 
 export { MapHelper }

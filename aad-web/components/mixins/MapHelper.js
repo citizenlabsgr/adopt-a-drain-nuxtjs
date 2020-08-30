@@ -98,6 +98,35 @@ class MapHelper {
     return box
   }
 
+  markerImage ( type ) {
+    // Objective: visually differentiate Orphan, Adoptee, and your Adoptee
+    const size = new this.component.google.maps.Size(27.0, 38.0);
+    const origin = new this.component.google.maps.Point(0, 0);
+    const anchor = new this.component.google.maps.Point(13.0, 18.0);
+
+    let image = undefined
+    if (type === 'adoptee') {
+      image = new this.component.google.maps.MarkerImage(
+        '/adoptee.svg',
+        size,
+        origin,
+        anchor);
+    } else if (type === 'your_adoptee') {
+      image = new this.component.google.maps.MarkerImage(
+        '/your-adoptee.svg',
+        size,
+        origin,
+        anchor);
+    } else {
+      image = new this.component.google.maps.MarkerImage(
+        '/orphan.svg',
+        size,
+        origin,
+        anchor);
+    }
+    return image
+  }
+  /*
   markerImage ( drain ) {
     // Objective: visually differentiate Orphan, Adoptee, and your Adoptee
     const size = new this.component.google.maps.Size(27.0, 38.0);
@@ -126,6 +155,7 @@ class MapHelper {
     }
     return image
   }
+  */
   marker( form ) {
     // Objective: Hide the details of creating a marker
     return new this.component.google.maps.Marker(form)

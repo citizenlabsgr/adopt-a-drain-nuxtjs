@@ -5,19 +5,20 @@
 
 -- TODO ?.?.?: When adopter is deactivated then deactivate all adoptions by that adopter
 -- TODO ?.?.?: test for active adopter record during signin. When active is false then adopter is the same as deleted.
--- TODO 1.4.0: Add boundary search to adoptee
--- TODO 1.4.0: change 1.3.0 to 1.4.0
--- TODO 1.4.0: remove commented code
--- TODO 1.2.1: Change "process" type to "event" type
--- TODO 1.2.1: Change Process_logger to event_logger
--- TODO 1.2.1: Change 1_2_1 to 1_3_0
+-- TODO 1.4.0: adoptees Should return a json array
+-- DONE 1.4.0: Add boundary search to adoptee
+-- DONE 1.4.0: change 1.3.0 to 1.4.0
+-- DONE 1.4.0: remove commented code
+-- DONE 1.2.1: Change "process" type to "event" type
+-- DONE 1.2.1: Change Process_logger to event_logger
+-- DONE 1.2.1: Change 1_2_1 to 1_3_0
 -- DONE 1.2.1: Create add_base schema
 -- DONE 1.2.1: Move adopt_a_drain table to aad_base schema
 -- DONE 1.2.1: stop insert of duplicate adoptee
 -- DONE 1.2.1: add reg_data to adopter insert
 -- DONE 1.2.1: add reg_data to adoptee insert
 -- DONE 1.2.1: add reg_ata to signin
-
+/*
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
 \set lb_woden `echo "'$LB_WODEN'"`
@@ -211,7 +212,8 @@ AS $$
     );
 
   END;
-$$ LANGUAGE plpgsql;-- GRANT: Grant Execute
+$$ LANGUAGE plpgsql;
+-- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_version_1_4_0.signin(JSON) to guest_aad;
 
 -----------------
@@ -471,36 +473,29 @@ grant EXECUTE on FUNCTION aad_version_1_4_0.adoptee(TEXT) to editor_aad; -- C
 -- FUNCTION: Create adoptees(JSON)
 --------------------
 -- find in boundary
-CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(bounds JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_4_0.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
 AS $$
-/* JSON is like '{"north": 42.96465175640001,
-  "south": 42.96065175640001,
-  "west": -85.6736956307,
-  "east": -85.6670956307}'
-*/
-  Select reg_form from aad_base.adopt_a_drain where reg_data = 'adoptee' and
-  CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) < CAST (bounds ->> 'north'  AS DOUBLE PRECISION) and
-  CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) > CAST (bounds ->> 'south'  AS DOUBLE PRECISION) and
-  CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) > CAST (bounds ->> 'west'  AS DOUBLE PRECISION) and 
-  CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) < CAST (bounds ->> 'east'  AS DOUBLE PRECISION);
+BEGIN
+  -- JSON is like '{"north": 42.96465175640001,
+  --  "south": 42.96065175640001,
+  --  "west": -85.6736956307,
+  --  "east": -85.6670956307}'
 
-$$ LANGUAGE sql;
+  return QUERY
+      Select to_jsonb(reg_form) from aad_base.adopt_a_drain where reg_data = 'adoptee' and
+        CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) < CAST (bounds ->> 'north'  AS DOUBLE PRECISION) and
+        CAST (reg_form ->> 'lat' AS DOUBLE PRECISION) > CAST (bounds ->> 'south'  AS DOUBLE PRECISION) and
+        CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) > CAST (bounds ->> 'west'  AS DOUBLE PRECISION) and
+        CAST (reg_form ->> 'lon' AS DOUBLE PRECISION) < CAST (bounds ->> 'east'  AS DOUBLE PRECISION)
+  ;
+  IF NOT FOUND THEN
+       RAISE EXCEPTION 'No adoptees in %.', $1;
+   END IF;
 
+   RETURN;
+END;
+$$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_version_1_4_0.adoptees(JSON) to editor_aad; -- C
 grant EXECUTE on FUNCTION aad_version_1_4_0.adoptees(JSON) to guest_aad; -- C
-
-/*
-CREATE OR REPLACE FUNCTION just_fail() RETURNS void
-  LANGUAGE plpgsql
-  AS $$
-BEGIN
-	RAISE sqlstate 'PT402' using
-	  message = 'Payment Required',
-	  detail = 'Quota exceeded',
-	  hint = 'Upgrade your plan';
-END
-$$;
-
-grant EXECUTE on FUNCTION aad_version_1_4_0.just_fail() to guest_aad;
 */

@@ -1,3 +1,4 @@
+/*
 \c aad_db
 --------------
 -- Environment
@@ -103,61 +104,10 @@ CREATE TYPE aad_version_1_3_0.jwt_token AS (
   token text
 );
 
------------------
--- FUNCTION: Create signin_validate(form JSONB)
------------------
-/*
-CREATE OR REPLACE FUNCTION aad_version_1_3_0.signin_validate(form JSONB) RETURNS JSONB
-AS $$
-  BEGIN
-    -- confirm all required attributes are in form
-    if not(form ? 'type' and form ? 'name' and form ? 'password') then
-        return '{"status":"PT400", "msg":"Bad Request, missing one or more form attributes.","type":"signin"}'::JSONB;
-    end if;
-    -- validate attribute values
-    if not(form ->> 'type' = 'signin') then
-        return '{"status":"PT400", "msg":"Bad Request type value.","type":"signin"}'::JSONB;
-    end if;
-    -- proper password
-    -- if not (exists(select regexp_matches(form ->> 'password', '^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$') )) then
-    --    return '{"status":"400","msg": "Bad Request, bad password.","type":"signin"}'::JSONB;
-    -- end if;
-    -- proper name ... name
-    -- if not( exists( select regexp_matches(form ->> 'name', '[a-z\-_0-9]+@[a-z]+\.[a-z]+') ) ) then
-    --  return '{"status":"400", "msg":"Bad Request, bad name.","type":"signin"}'::JSONB;
-    -- end if;
-
-    return '{"status":"200", "msg":"OK"}'::JSONB;
-  END;
-$$ LANGUAGE plpgsql;
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_3_0.signin_validate(JSONB) to guest_aad;
-*/
 
 ------------
 -- FUNCTION: Create aad_version_1_3_0.signin(form JSON)
 ------------
-/*
-CREATE OR REPLACE FUNCTION aad_version_1_3_0.signin(form JSON) RETURNS JSONB
-AS $$
-  -- make token to execute app(JSON)
-  declare rc JSONB;
-  declare signin_token TEXT;
-  declare event_error JSONB;
-  declare _form JSONB;
-  Declare _jwt_role TEXT;
-  Declare _model_user JSONB;
-  Declare _validation JSONB;
-  Declare _pw TEXT;
-  DECLARE _fr JSONB;
-  BEGIN
-    return '{"status":"200", "msg":"OK"}'::JSONB;
-
-  END;
-$$ LANGUAGE plpgsql;-- GRANT: Grant Execute
-
-grant EXECUTE on FUNCTION aad_version_1_3_0.signin(JSON) to guest_aad;
-*/
 
 CREATE OR REPLACE FUNCTION aad_version_1_3_0.signin(form JSON) RETURNS JSONB
 AS $$
@@ -207,16 +157,6 @@ AS $$
     -- validate input form
     -- confirm all required attributes are in form
     -- validate attribute values
-    /*
-    _validation := aad_version_1_3_0.signin_validate(_form);
-    if _validation ->> 'status' != '200' then
-        PERFORM aad_base.event_logger(_validation);
-        RAISE sqlstate _validation ->> 'status' using
-          message = 'Unauthorized',
-          detail = 'signin',
-          hint = 'Not what I expected?';
-    end if;
-    */
 
     -- confirm all required attributes are in form
     if not(_form ? 'type' and _form ? 'name' and _form ? 'password') then
@@ -325,13 +265,6 @@ AS $$
     _form := form::JSONB || '{"type":"adopter"}'::JSONB;
     -- confirm all required attributes are in form
     -- validate attribute values
-    /*
-    _validation := aad_version_1_3_0.adopter_validate(_form);
-    if _validation ->> 'status' != '200' then
-        PERFORM aad_base.event_logger(_validation);
-        return _validation;
-    end if;
-    */
 
     -- confirm all required attributes are in form
     if not(_form ? 'type' and _form ? 'name' and _form ? 'password') then
@@ -416,42 +349,7 @@ $$ LANGUAGE plpgsql;
 grant EXECUTE on FUNCTION aad_version_1_3_0.adopter(JSON) to guest_aad; -- upsert
 grant EXECUTE on FUNCTION aad_version_1_3_0.adopter(JSON) to editor_aad; -- upsert
 
------------------
--- FUNCTION: Create adopter_validate(form JSONB)
------------------
-/*
-CREATE OR REPLACE FUNCTION aad_version_1_3_0.adopter_validate(form JSONB) RETURNS JSONB
-AS $$
 
-  BEGIN
-    -- name, type, "group, adopter, password
-    -- name, type, app_id, password
-    -- confirm all required attributes are in form
-    if not(form ? 'type' and form ? 'name' and form ? 'password') then
-       return '{"status":"400","msg":"Bad Request, adopter is missing one or more form attributes","type":"adopter"}'::JSONB;
-    end if;
-    -- validate attribute values
-    if not(form ->> 'type' = 'adopter') then
-       return '{"status":"400", "msg":"Bad Request type value.","type":"adopter"}'::JSONB;
-    end if;
-
-    -- proper password
-    if not (exists(select regexp_matches(form ->> 'password', '^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$') )) then
-       return '{"status":"400", "msg":"Bad Request password value.","type":"adopter"}'::JSONB;
-    end if;
-    -- proper name ... name
-    if not( exists( select regexp_matches(form ->> 'name', '[a-z\-_0-9]+@[a-z]+\.[a-z]+') ) ) then
-       return '{"status":"400", "msg":"Bad Request name value.","type":"adopter"}'::JSONB;
-    end if;
-
-    return '{"status": "200", "msg":"OK"}'::JSONB;
-  END;
-$$ LANGUAGE plpgsql;
-
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_3_0.adopter_validate(JSONB) to guest_aad; -- upsert
-grant EXECUTE on FUNCTION aad_version_1_3_0.adopter_validate(JSONB) to editor_aad; -- upsert
-*/
 -----------------
 -- FUNCTION: Create adopter(id TEXT)
 -----------------
@@ -464,39 +362,6 @@ $$ LANGUAGE sql;
 -- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_version_1_3_0.adopter(TEXT) to editor_aad; -- select
 
-
------------------
--- FUNCTION: Create adoptee_validate(form JSONB)
------------------
-/*
-'{
-  "type":"adoptee",
-  "drain_id":"gr12345667",
-  "lat":42.01,
-  "lon":-84.01
- }'
-*/
-/*
-CREATE OR REPLACE FUNCTION aad_version_1_3_0.adoptee_validate(form JSONB) RETURNS JSONB
-AS $$
-
-  BEGIN
-    -- confirm all required attributes are in form
-    if not(form ? 'lat' and form ? 'lon' and form ? 'drain_id' and form ? 'adopter_key' ) then
-       return format('{"status":"400","msg":"Bad Request, missing one or more form attributes", "type":"adoptee", "form":%s}', form)::JSONB;
-    end if;
-    -- validate attribute values
-    if not(form ->> 'type' = 'adoptee') then
-       return '{"status":"400", "msg":"Bad Request type value.", "type":"adoptee"}'::JSONB;
-    end if;
-
-    return '{"status": "200"}'::JSONB;
-  END;
-$$ LANGUAGE plpgsql;
-
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_3_0.adoptee_validate(JSONB) to editor_aad;
-*/
 -----------------
 -- FUNCTION: Create adoptee(form JSON)
 -----------------
@@ -615,18 +480,4 @@ $$ LANGUAGE sql;
 
 -- GRANT: Grant Execute
 grant EXECUTE on FUNCTION aad_version_1_3_0.adoptee(TEXT) to editor_aad; -- C
-
-/*
-CREATE OR REPLACE FUNCTION just_fail() RETURNS void
-  LANGUAGE plpgsql
-  AS $$
-BEGIN
-	RAISE sqlstate 'PT402' using
-	  message = 'Payment Required',
-	  detail = 'Quota exceeded',
-	  hint = 'Upgrade your plan';
-END
-$$;
-
-grant EXECUTE on FUNCTION aad_version_1_3_0.just_fail() to guest_aad;
 */

@@ -10,10 +10,11 @@
 ------------------------
 -- TESTs
 ------------------------
+/*
 \c aad_db;
 
 SET search_path TO aad_version_1_3_0, public;
-
+*/
 --------------------
 -- EVENT_LOGGER Tests
 --------------------
@@ -25,7 +26,7 @@ SET search_path TO aad_version_1_3_0, public;
 | Show terms of use | guest or <request.jwt.claim.jti> | event#<guid>	| tou |
 | Initiate forgot password | <request.jwt.claim.jti> | event#<guid>	| forgot |
 */
-
+/*
 BEGIN;
 
   SELECT plan(1);
@@ -44,7 +45,7 @@ BEGIN;
   SELECT * FROM finish();
 
 ROLLBACK;
-
+*/
 
 -------------------
 -- Adopter TESTs
@@ -52,6 +53,7 @@ ROLLBACK;
 /*
 | add adopter  | <request.jwt.claim.jti> | 'profile#<request.jwt.claim.jti>' | <type> | <adopter-form> |
 */
+/*
 BEGIN;
 
   SELECT plan(2);
@@ -75,6 +77,7 @@ SELECT throws_ok(
     'Conflict',
     'We should get a unique violation for a duplicate PK'
 );
+*/
 /*
   SELECT ok (
     aad_version_1_3_0.adopter('{
@@ -84,6 +87,7 @@ SELECT throws_ok(
     )::JSONB ->> 'status' = '409','adopter - 409 duplicate 1_3_0'
   );
 */
+/*
 SELECT * FROM finish();
 
 ROLLBACK;
@@ -105,11 +109,12 @@ BEGIN;
     '{"msg": "OK", "status": 200}'::JSONB,
     'adopter - insert 200 1_3_0'::TEXT
   );
-
+*/
 -- TEST: Test(b) signin Insert
 /*
 | signin sucess | <guest> | 'event#<guid>' | 'signin' | <signin-form> |
 */
+/*
 SELECT ok (
   aad_version_1_3_0.signin('{
     "name":  "me@someplace.com",
@@ -122,16 +127,16 @@ SELECT ok (
 SELECT * FROM finish();
 
 ROLLBACK;
-
+*/
 
 -------------------
 -- Adoptee TESTs
 -------------------
-
+/*
 BEGIN;
 
   SELECT plan(2);
-
+*/
 -- TEST: Test(a) adopter Insert
 /*drain is {
  "dr_asset_id":"",
@@ -149,6 +154,7 @@ BEGIN;
 /*
 | adoptee success | <request.jwt.claim.jti> | 'adoptee#<dr-asset-id>' | 'adoptee' | <adoptee-form> |
 */
+/*
 SELECT is (
   aad_version_1_3_0.adoptee( '{
     "type":"adoptee",
@@ -159,6 +165,7 @@ SELECT is (
   '{"msg": "OK", "status": 200}'::JSONB,
   'adoptee - insert test 1_3_0'::TEXT
 );
+*/
 /*
 SELECT is (
   aad_version_1_3_0.adoptee( '{
@@ -171,6 +178,7 @@ SELECT is (
   'adoptee - insert test 1_3_0'::TEXT
 );
 */
+/*
 PREPARE new_adoptee AS select aad_version_1_3_0.adoptee( '{
   "type":"adoptee",
   "drain_id":"GR12345",
@@ -187,3 +195,4 @@ SELECT throws_ok(
 SELECT * FROM finish();
 
 ROLLBACK;
+*/

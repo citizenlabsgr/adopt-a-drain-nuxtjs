@@ -37,7 +37,7 @@ Document is a block of text, formatted with Markdown, and accessible to the appl
 | **[Google map key](https://developers.google.com/maps/documentation/javascript/get-api-key)** | GOOGLE_MAPS_API_KEY | yes, they ask for a credit card but wont bill you. |
 | **[Data.World API Token](https://data.world)**  | DW_AUTH_TOKEN | Look in Data.World's advanced settings.  |
 | **[Docker](https://www.docker.com)** | N/A | Docker will get you up and going faster.  |
-| **[AAD API Token(https://jwt.io)]**  | AAD_AUTH_TOKEN | use aad-payload, password is same as POSTGRES_JWT_SECRET  |
+| **[AAD API Token](https://jwt.io)**  | AAD_AUTH_TOKEN | use aad-payload, password is same as POSTGRES_JWT_SECRET  |
 
 * aad-payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
 

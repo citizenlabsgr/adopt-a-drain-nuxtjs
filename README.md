@@ -1,14 +1,22 @@
 # Adopt a Drain (AAD)
-Adopt a drain
+
+We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to descibe the repository. 
+
 
 ## Why Change Adopt-a-Drain?
+The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America. 
+Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers. 
+ 
+
 ### Goals
 | ID | Goal
 | :------ | --------
 | G1  | **Grow**, the AAD developer pool  |
 | G2  | **Clarify**, the codebase  |
 | G3  | **Simplify**, AAD's development and deployment  |
-| G4  | **Decouple**, the application from the data and services  |
+| G4  | **Decouple**, the application from the data and services  | 
+
+
 
 ### Strategies   
 | Strategy | Goal IDs
@@ -19,77 +27,38 @@ Adopt a drain
 | ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 | Establish Test Driven Development | G2 |
 
-### Definitions
-* **AAD** is Adopt-A-Drain
-* **Abandon** is the process making an adoptee an orphan.  
-* **Adopter** is an AAD registered user
-* **Adoption** is the process adopting an orphan storm drain
-* **Adoptee** is an adopted storm drain
-* **Document** is a block of text, formatted with Markdown, and accessible to the application 
-* **Orphan** is an unadopted storm drain
-* **API-EP** is the Application Programming Interface EndPoint
-Document is a block of text, formatted with Markdown, and accessible to the application 
+## Contribution Process 
+1. **Find an Issue**: Review the repo's issues (Stories, Things, and Actions)
+1. **Clone**: Get copy of the code 
+1. **Branch**: Isolate the production code from your new features/development code
+1. **Develop**: Make your contribution (write tests, write code, repeat)
+    1. Write tests
+    1. Write code 
+    1. Repeat
+1. **Document**: Update the documentation to describe your contribution
+1. **Pull Push**: Merge changes from trunk/others into your branch (Pull), and then merge your contributions back to your branch on GitHub 
+1. **Pull Request**: Notifiy the repo owner that your contribution is ready for review
+1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
 
-# Get Started
+# Developer Setup
+1. Complete the [Prerequisites](#prerequisites)
+1. [Get started](STARTUP.md)
+
 ## Prerequisites
-| Prerequisite | Token | Note
-| :------ | -------- | --------
-| **[Google map key](https://developers.google.com/maps/documentation/javascript/get-api-key)** | GOOGLE_MAPS_API_KEY | yes, they ask for a credit card but wont bill you. |
-| **[Data.World API Token](https://data.world)**  | DW_AUTH_TOKEN | Look in Data.World's advanced settings.  |
-| **[Docker](https://www.docker.com)** | N/A | Docker will get you up and going faster.  |
-| **[AAD API Token](https://jwt.io)**  | AAD_AUTH_TOKEN | use aad-payload, password is same as POSTGRES_JWT_SECRET  |
-
-* aad-payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
-
-
-### Environment Variables
-Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
-```
-# adopt-a-drain/.env
-
-# Google Map API (aad-web)
-GOOGLE_MAPS_API_KEY=<get a key from google>
-
-# Data.World API (aad-web)
-DW_USER=citizenlabs
-DW_AUTH_TOKEN=<get a personal token from data.world's advanced settings>
-DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
-
-# Adopt-a-Drain (aad-web)
-LB_GUEST_PASSWORD=<provide-guest-password-for-client>
-LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
-AAD_API_TOKEN=<sample-aad-api-token>
-AAD_API_URL=http://localhost:3100/rpc
-AAD_API_VERSION=aad_version_1_4_0
-
-# Postgres (aad-db)
-POSTGRES_DB=aad_db
-POSTGRES_USER=postgres
-POSTGRES_PASSWORD=<provide-database-password>
-POSTGRES_JWT_SECRET=<provde-32-char-password>
-
-# Postgrest (aad-db)
-PGRST_DB_SCHEMA=aad_version_1_4_0
-PGRST_DB_ANON_ROLE=guest_aad
-```
-* \<sample-aad-api-token\> is eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
-
-
-### System Startup, Docker-Compose
-```
-# build the docker containers
-cd adopt-a-drain/aad-web/
-docker-comopose build
-
-# after build
-cd adopt-a-drain/
-docker-compose up
-
-# after development
-docker-compose down
-
-```
-* Always use docker-compose down to avoid corrupting the Postgres database (aad_db).
+This can be the hardest section for new developers and a challenge to seasoned veterans.
+Keys and Tokens are never saved to the repo.
+1. **[Install Docker](https://www.docker.com)** 
+1.  **[Google Map Key](https://developers.google.com/maps/documentation/javascript/get-api-key)**
+    1. setup an account 
+    1. get a key
+1. **[Data.World API Token](https://data.world)**
+    1. setup an account
+    1. get a token from the account page
+1. **[AAD API Token](https://jwt.io)** (developers can use the token provided)
+    1. header is {"alg": "HS256","typ": "JWT"}
+    1. payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
+    1. verify signature password is PASSWORDmustBEATLEAST32CHARSLONGLONG
+        1. password is configured in the .env as POSTGRES_JWT_SECRET
 
 ### Tests
 Tests are run automatically when docker-compose is run.
@@ -107,33 +76,51 @@ docker-compose run web npm run test
 
 ### Tools
 * Code Editor: Atom https://atom.io
+* Docker: https://www.docker.com
 * Python Editor: PyCharm https://www.jetbrains.com/pycharm/download/#section=mac
 * SQL Client: Postico https://eggerapps.at/postico/
 * Database: Postgres https://www.postgresql.org
 * API: Postgrest http://postgrest.org/en/v7.0.0/
 
+#Issues
+We use three kinds of issues Stories, Things, and Actions.
+##Stories
+You should almost never need to write a story.
+1. __Stories__ describe the needs and wants of the business Owner and/or the Team Leader
+1. Name Pattern: As a \<stakeholder>, I need <general-description>, so I can <reason>. 
+1. Common Stakeholders: developer, process owner, team leader
+1. Get a  [Story List](https://github.com/Wilfongjt/adopt-a-drain/issues?q=As+a) by filtering issues with "As a"
 
-# Issues
-We use three kinds of issues
-1. __Stories__, Stories describe the need and wants of the business Owner and/or the Team Leader
-2. __Things__, Things need to be designed, tested, and developed. 
-3. __Actions__, Verbs describe actions to be taken. 
-  
-You should almost never need to write a story.  All things are logical constructs of stories, and all actions are the activities necessary to construct things.
-  
-Use __nouns__ to designate things and __verbs__ to designate actions.
-Common nouns include: API, Component, Database, Process, Table
-Common verbs include: Create, Change, Cleanup, Document, Delete, Integrate, Migrate, Update, Refactor, Remove, and Rename. 
-
-## How to Name an Issue
- * __Review the Story issues__, Filter by story number, e.g., #45", to get list of a Story's issues  
-* __Name Pattern__, #<story-number>.<title>
-* __Story-number__, Filtering by "As a" will give a list of all story issues, find the story-number there.
-* __Title__, start with verb or noun, followed by short description
+##Things
+All things are logical constructs of Stories. You can't have a thing that doesn't relate to a Story.
+1. __Things__, Things need to be designed, tested, and developed.
+1. Name Pattern: #<story-number>.\<noun>:\<description>
+1. Common nouns include: API, Component, Database, Process, Table
+1. Thing titles always start with a "#" followed by story number (aka, issue number), followed by a noun 
+1. Get a list of Things by filtering issues with # followed by a story number.
+    1. e.g., #45, list all things and actions associated with Story #45 
+##Actions
+Actions are the activities necessary to construct things
+1. __Actions__ are verbs describing activity to be taken. 
+1. Name Pattern: #<story-number>.\<verb>.\<description>
+1. Common verbs include: Create, Change, Cleanup, Document, Delete, Integrate, Migrate, Update, Refactor, Remove, and Rename. 
+1. Get a list of Actions by filtering issues with # followed by a story number.
+    1. e.g., #45, list all things and action associated with Story #45 
 
 # Understanding AAD
 Some details
 
+### Definitions
+* **AAD** is Adopt-A-Drain
+* **Abandon** is the process making an adoptee an orphan.  
+* **Adopter** is an AAD registered user
+* **Adoption** is the process adopting an orphan storm drain
+* **Adoptee** is an adopted storm drain
+* **Document** is a block of text, formatted with Markdown, and accessible to the application 
+* **Orphan** is an unadopted storm drain
+* **API-EP** is the Application Programming Interface EndPoint
+
+Document is a block of text, formatted with Markdown, and accessible to the application 
 ## Core Processes
 | Process | Description |  Method |
 | :------ | -------- | ------ |

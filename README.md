@@ -9,13 +9,13 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 
 * [Goals](#goals) 
 * [Strategies](#strategies)
-* [Understanding ADD](understanding-aad.md)
+* [Understanding ADD](UNDERSTANDING-AAD.md)
 * [Contribution Process](#contribution-process)
-* [Developer Setup](developer-setup.md)
 * [Prerequisites](#prerequisites)
-* [Docker](docker.md)
-* [Issues](issues.md)
-* [Development Tools](tools.md)
+* [Developer Setup](STARTUP.md)
+* [Docker](DOCKER.md)
+* [Issues](ISSUES.md)
+* [Development Tools](TOOLS.md)
 
 ### Goals
 | ID | Goal
@@ -35,8 +35,8 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 | Establish Test Driven Development | G2 |
 
 ## Contribution Process 
-1. **Find an Issue**: Review the repo's issues (Stories, Things, and Actions)
-1. **Clone**: Get copy of the code 
+1. **Find an Issue**: Review the repo's issues ([Stories](ISSUES.md#stories), [Things](ISSUES.md#things), and [Actions](ISSUES.md#actions))
+1. [**Clone**](STARTUP.md#manual-setup): Get copy of the code 
 1. **Branch**: Isolate the production code from your new features/development code
 1. **Develop**: Make your contribution (write tests, write code, repeat)
     1. Write tests
@@ -46,11 +46,6 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 1. **Pull Push**: Merge changes from trunk/others into your branch (Pull), and then merge your contributions back to your branch on GitHub 
 1. **Pull Request**: Notifiy the repo owner that your contribution is ready for review
 1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
-
-# Developer Setup
-1. Complete the [Prerequisites](#prerequisites)
-1. [Get started](STARTUP.md)
-1. [Testing](#testing.md)
 
 ## Prerequisites
 This can be the hardest section for new developers and a challenge to seasoned veterans.
@@ -68,6 +63,10 @@ Keys and Tokens are never saved to the repo.
     1. verify signature password is PASSWORDmustBEATLEAST32CHARSLONGLONG
         1. password is configured in the .env as POSTGRES_JWT_SECRET
 
+# Developer Setup
+1. Complete the [Prerequisites](#prerequisites)
+1. [Get started](STARTUP.md)
+1. [Testing](#testing.md)
 
 ### Open Adopt-a-Drain
 * open browser

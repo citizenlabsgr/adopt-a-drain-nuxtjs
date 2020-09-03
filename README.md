@@ -1,12 +1,13 @@
 # Adopt a Drain (AAD)
 
-We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to descibe the repository. 
+We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to descibe the repository.
 
+hi 2
 
 ## Why Change Adopt-a-Drain?
-The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America. 
-Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers. 
- 
+The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.
+Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
+
 
 ### Goals
 | ID | Goal
@@ -14,7 +15,7 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 | G1  | **Grow**, the AAD developer pool  |
 | G2  | **Clarify**, the codebase  |
 | G3  | **Simplify**, AAD's development and deployment  |
-| G4  | **Decouple**, the application from the data and services  | 
+| G4  | **Decouple**, the application from the data and services  |
 
 
 
@@ -27,16 +28,16 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 | ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 | Establish Test Driven Development | G2 |
 
-## Contribution Process 
+## Contribution Process
 1. **Find an Issue**: Review the repo's issues (Stories, Things, and Actions)
-1. **Clone**: Get copy of the code 
+1. **Clone**: Get copy of the code
 1. **Branch**: Isolate the production code from your new features/development code
 1. **Develop**: Make your contribution (write tests, write code, repeat)
     1. Write tests
-    1. Write code 
+    1. Write code
     1. Repeat
 1. **Document**: Update the documentation to describe your contribution
-1. **Pull Push**: Merge changes from trunk/others into your branch (Pull), and then merge your contributions back to your branch on GitHub 
+1. **Pull Push**: Merge changes from trunk/others into your branch (Pull), and then merge your contributions back to your branch on GitHub
 1. **Pull Request**: Notifiy the repo owner that your contribution is ready for review
 1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
 
@@ -47,9 +48,9 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 ## Prerequisites
 This can be the hardest section for new developers and a challenge to seasoned veterans.
 Keys and Tokens are never saved to the repo.
-1. **[Install Docker](https://www.docker.com)** 
+1. **[Install Docker](https://www.docker.com)**
 1.  **[Google Map Key](https://developers.google.com/maps/documentation/javascript/get-api-key)**
-    1. setup an account 
+    1. setup an account
     1. get a key
 1. **[Data.World API Token](https://data.world)**
     1. setup an account
@@ -87,7 +88,7 @@ We use three kinds of issues Stories, Things, and Actions.
 ## Stories
 You should almost never need to write a story.
 1. __Stories__ describe the needs and wants of the business Owner and/or the Team Leader
-1. Name Pattern: As a \<stakeholder>, I need <general-description>, so I can <reason>. 
+1. Name Pattern: As a \<stakeholder>, I need <general-description>, so I can <reason>.
 1. Common Stakeholders: developer, process owner, team leader
 1. Get a  [Story List](https://github.com/Wilfongjt/adopt-a-drain/issues?q=As+a) by filtering issues with "As a"
 
@@ -96,17 +97,17 @@ All things are logical constructs of Stories. You can't have a thing that doesn'
 1. __Things__, Things need to be designed, tested, and developed.
 1. Name Pattern: #<story-number>.\<noun>:\<description>
 1. Common nouns include: API, Component, Database, Process, Table
-1. Thing titles always start with a "#" followed by story number (aka, issue number), followed by a noun 
+1. Thing titles always start with a "#" followed by story number (aka, issue number), followed by a noun
 1. Get a list of Things by filtering issues with # followed by a story number.
-    1. e.g., #45, list all things and actions associated with Story #45 
+    1. e.g., #45, list all things and actions associated with Story #45
 
 ## Actions
 Actions are the activities necessary to construct things
-1. __Actions__ are verbs describing activity to be taken. 
+1. __Actions__ are verbs describing activity to be taken.
 1. Name Pattern: #<story-number>.\<verb>.\<description>
-1. Common verbs include: Create, Change, Cleanup, Document, Delete, Integrate, Migrate, Update, Refactor, Remove, and Rename. 
+1. Common verbs include: Create, Change, Cleanup, Document, Delete, Integrate, Migrate, Update, Refactor, Remove, and Rename.
 1. Get a list of Actions by filtering issues with # followed by a story number.
-    1. e.g., #45, list all things and action associated with Story #45 
+    1. e.g., #45, list all things and action associated with Story #45
 
 # Understanding AAD
 Some details
@@ -117,11 +118,11 @@ Some details
 * **Adopter** is an AAD registered user
 * **Adoption** is the process adopting an orphan storm drain
 * **Adoptee** is an adopted storm drain
-* **Document** is a block of text, formatted with Markdown, and accessible to the application 
+* **Document** is a block of text, formatted with Markdown, and accessible to the application
 * **Orphan** is an unadopted storm drain
 * **API-EP** is the Application Programming Interface EndPoint
 
-Document is a block of text, formatted with Markdown, and accessible to the application 
+Document is a block of text, formatted with Markdown, and accessible to the application
 ## Core Processes
 | Process | Description |  Method |
 | :------ | -------- | ------ |

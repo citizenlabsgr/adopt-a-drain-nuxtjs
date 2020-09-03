@@ -2,7 +2,7 @@
 
 We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to descibe the repository.
 
-hi 2
+hi 2 before 1
 
 ## Why Change Adopt-a-Drain?
 The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.

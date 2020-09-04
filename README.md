@@ -2,20 +2,19 @@
 
 We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to descibe the repository.
 
-hi 2 before 1
-
 ## Why Change Adopt-a-Drain?
+The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.
+Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
 
-The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America. 
-Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers. 
 
-* [Goals](#goals) 
+* [Goals](#goals)
 * [Strategies](#strategies)
 * [Understanding ADD](UNDERSTANDING-AAD.md)
 * [Contribution Process](#contribution-process)
 * [Prerequisites](#prerequisites)
 * [Developer Setup](STARTUP.md)
 * [Docker](DOCKER.md)
+* [GitHub](GITHUB.md)
 * [Issues](ISSUES.md)
 * [Development Tools](TOOLS.md)
 
@@ -35,7 +34,6 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 | Replace the current application's user interface with a Single page design | G3,G4 |
 | ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 | Establish Test Driven Development | G2 |
-
 
 ## Contribution Process 
 1. **Find an Issue**: Review the repo's issues ([Stories](ISSUES.md#stories), [Things](ISSUES.md#things), and [Actions](ISSUES.md#actions))
@@ -75,6 +73,4 @@ Keys and Tokens are never saved to the repo.
 ### Open Adopt-a-Drain
 * open browser
 * http://localhost:3000
-
-
 

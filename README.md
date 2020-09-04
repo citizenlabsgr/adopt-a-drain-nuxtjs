@@ -6,6 +6,7 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.
 Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
 
+
 * [Goals](#goals)
 * [Strategies](#strategies)
 * [Understanding ADD](UNDERSTANDING-AAD.md)
@@ -34,9 +35,10 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 | ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 | Establish Test Driven Development | G2 |
 
-## Contribution Process
+## Contribution Process 
 1. **Find an Issue**: Review the repo's issues ([Stories](ISSUES.md#stories), [Things](ISSUES.md#things), and [Actions](ISSUES.md#actions))
-1. [**Clone**](STARTUP.md#manual-setup): Get copy of the code
+1. [**Clone**](STARTUP.md#manual-setup): Get copy of the code 
+
 1. **Branch**: Isolate the production code from your new features/development code
 1. **Develop**: Make your contribution (write tests, write code, repeat)
     1. Write tests
@@ -71,3 +73,4 @@ Keys and Tokens are never saved to the repo.
 ### Open Adopt-a-Drain
 * open browser
 * http://localhost:3000
+

@@ -83,7 +83,7 @@ Keys and Tokens are never saved to the repo.
 # Developer Setup
 1. Complete the [Prerequisites](#prerequisites)
 1. [Get started](STARTUP.md)
-1. [Testing](#TESTING.md)
+1. [Testing](TESTING.md)
 
 ### Open Adopt-a-Drain
 * open browser

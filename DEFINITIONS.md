@@ -29,7 +29,7 @@ Push is
 
 # Rebase
 Rebase is the process of
-Command 
+Command
 
 # Story
 You should almost never need to write a story.

@@ -52,7 +52,7 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 ## Responsibilities
 * A developer is responsible for their branches, writing and maintaining tests, writing testable code, code reviews and documentation
 * The team leader(s) is responsible for this repository's trunk
-* The team leader(s) is responsible for maintaining the issue
+* The team leader(s) is responsible for clarifying and maintaining issues
 
 ## Contribution Process
 1. **Find an Issue**: Review the repo's issues

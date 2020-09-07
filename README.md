@@ -6,7 +6,6 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.
 Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
 
-
 * [Goals](#goals)
 * [Strategies](#strategies)
 * [Understanding ADD](UNDERSTANDING-AAD.md)

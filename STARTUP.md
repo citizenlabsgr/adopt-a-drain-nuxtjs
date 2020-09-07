@@ -1,12 +1,12 @@
 # Developer Setup
-This is a the recommended setup, experienced git user may vary. 
+This is a the recommended setup, experienced git user may vary.
 * [Manually Setup Folders and Files](#manually-setup-folders-and-files)
 * [Optional Bash Setup Script](#optional-bash-setup-script)
 
 ## Manually Setup Folders and Files
 
 ```
-+-- <your-development-folder> 
++-- <your-development-folder>
     |
     +-- <your-branch-name>
         |
@@ -15,7 +15,7 @@ This is a the recommended setup, experienced git user may vary.
 ```
 ### Your Branch Name
 GitHub has a nice feature such that using a # followed by an issue number will create a link to that issue.
-For example, prefixing your branch name with #45, such as #45.update.reademe will help team members understand the relationship 
+For example, prefixing your branch name with #45, such as #45.update.reademe will help team members understand the relationship
 between issue #45 and the reason for your branch (update.readme).
 * use the issue number (eg #45) as prefix for your-branch-name
 
@@ -25,10 +25,10 @@ between issue #45 and the reason for your branch (update.readme).
     # Folders
     mkdir <your-development-folder>/
     cd <your-development-folder>/
-    
+
     mkdir <your-branch-name>/
     cd <your-branch-name>/
-    
+
     ```
 
 1. Clone Repo
@@ -40,28 +40,28 @@ between issue #45 and the reason for your branch (update.readme).
     1. Cut and paste the following into .env
     ```
     # adopt-a-drain/.env
-   
+
     # Google Map API (aad-web)
     GOOGLE_MAPS_API_KEY=<your-google-map-api-key>
-    
+
     # Data.World API (aad-web)
     DW_AUTH_TOKEN=<your-data.world-authorization-token>
     DW_USER=citizenlabs
     DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
-    
+
     # Adopt-a-Drain (aad-web)
     AAD_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
     AAD_API_URL=http://localhost:3100/rpc
     AAD_API_VERSION=aad_version_1_4_2
     LB_GUEST_PASSWORD=mysecretclientpassword
     LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
-    
+
     # Postgres (aad-db)
     POSTGRES_DB=aad_db
     POSTGRES_USER=postgres
     POSTGRES_PASSWORD=mysecretdatabasepassword
     POSTGRES_JWT_SECRET=PASSWORDmustBEATLEAST32CHARSLONGLONG
-    
+
     # Postgrest (aad-db)
     PGRST_DB_SCHEMA=aad_version_1_4_2
     PGRST_DB_ANON_ROLE=guest_aad
@@ -70,17 +70,17 @@ between issue #45 and the reason for your branch (update.readme).
     ```
     # open a command window
     # from the adopt-a-drain/ folder
-    
+
     docker-compose build
-    
+
     docker-compose up
     ```
-    
+
 ### Stop Docker
     ```
     # open a command window
     # from the adopt-a-drain/ folder
-    
+
     docker-compose down
     ```
 ### Start Adopt A Drain
@@ -89,16 +89,16 @@ between issue #45 and the reason for your branch (update.readme).
     open -a safari http://localhost:3000
     ```
 
-#Optional Bash Setup Script 
+# Optional Bash Setup Script 
 The bash setup script performs the following:
- * Creates a repo clone, when not already downloaded 
- * Creates and checks out a local branch, 
+ * Creates a repo clone, when not already downloaded
+ * Creates and checks out a local branch,
  * Builds a .env file,
- * Makes a config.sh utility script, 
- * Makes a docker up utility script, 
+ * Makes a config.sh utility script,
+ * Makes a docker up utility script,
  * Makes a docker down utility script,
 
-## Using the Setup Script 
+## Using the Setup Script
 1. Create or set <your-development-folder>
 1. Create a setup.sh script file:
     ```
@@ -109,12 +109,12 @@ The bash setup script performs the following:
     1. Replace **<your-branch-name>** with your actual branch name in setup.sh
     1. Replace **<your-google-map-api-key>** with your actual key in setup.sh
     1. Replace **<your-data.world-authorization-token>** with your actual token in setup.sh
-1. Make script executable: 
+1. Make script executable:
     ```
     # from your-develoment-folder
     chmod 755 setup.sh
-    ``` 
-1. Run the script: ./setup.sh 
+    ```
+1. Run the script: ./setup.sh
     ```
     # from your-develoment-folder
     ./setup.sh
@@ -123,7 +123,7 @@ The bash setup script performs the following:
 ## Setup Script Output Folders and Files
 Expected folders and some files
 ```
-+-- your-development-folder 
++-- your-development-folder
     |-- config.sh
     |-- setup.sh
     |-- config.sh
@@ -291,4 +291,4 @@ echo "PGRST_DB_SCHEMA=aad_version_1_4_2" >> .env
 echo "PGRST_DB_ANON_ROLE=guest_aad" >> .env
 
 echo "OK"
-``` 
+```

@@ -6,7 +6,6 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.
 Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
 
-
 * [Goals](#goals)
 * [Strategies](#strategies)
 * [Understanding ADD](UNDERSTANDING-AAD.md)
@@ -35,19 +34,37 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 | ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 | Establish Test Driven Development | G2 |
 
-## Contribution Process 
-1. **Find an Issue**: Review the repo's issues ([Stories](ISSUES.md#stories), [Things](ISSUES.md#things), and [Actions](ISSUES.md#actions))
-1. [**Clone**](STARTUP.md#manual-setup): Get copy of the code 
+## Guides
+* Small tasks are better than big tasks.
+* A small task is any work that can be done in a single setting
+* Big tasks are broken into small tasks
 
-1. **Branch**: Isolate the production code from your new features/development code
-1. **Develop**: Make your contribution (write tests, write code, repeat)
-    1. Write tests
-    1. Write code
-    1. Repeat
-1. **Document**: Update the documentation to describe your contribution
-1. **Pull Push**: Merge changes from trunk/others into your branch (Pull), and then merge your contributions back to your branch on GitHub
+## Rules
+* The Trunk is always production ready
+* Development is always associated with an issue
+* Development is always done on a branch
+
+## Roles
+* Developer: YOU
+* Owner: Courtney Cromley (LGROW)
+* Team Leader: James Wilfong (Citizen Labs)
+
+## Responsibilities
+* A developer is responsible for their branches, making code functional, code reviews and documentation
+* The team leader(s) is responsible for this repository's trunk
+* The team leader(s) is responsible for maintaining the issue
+
+## Contribution Process
+1. **Find an Issue**: Review the repo's issues ([Stories](ISSUES.md#stories), [Things](ISSUES.md#things), and [Actions](ISSUES.md#actions))
+1. [**Clone**](STARTUP.md#manual-setup): Get copy of the repository
+
+1. **Branch**: Make a branch to isolate your contribution
+1. **Develop**: Make your contribution (write tests, write code, update documentation, repeat)
+1. **Document**: Update the documentation to describe your code contribution
+1. **Sync Repo**: Merge changes from trunk/others into your local-branch, and then merge your contributions back to your remote-branch on GitHub
 1. **Pull Request**: Notifiy the repo owner that your contribution is ready for review
 1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
+
 
 ## Prerequisites
 This can be the hardest section for new developers and a challenge to seasoned veterans.
@@ -73,4 +90,3 @@ Keys and Tokens are never saved to the repo.
 ### Open Adopt-a-Drain
 * open browser
 * http://localhost:3000
-

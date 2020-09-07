@@ -1,4 +1,6 @@
-Rebase Process
+
+# Contribution Process
+
 ```
   Process                                     Git Commands
   -----------------------------------------   ---------------------------------
@@ -10,26 +12,31 @@ Rebase Process
    |   |           |
    |   |   [save your changes]                 git add .
    |   |           |                           git commit -m "#<issue-no>.<description>"
-   |   |           |
    |   ^-----------|
    |   |           |
    |   |   [get collaborator changes]          git checkout master
    |   |           |                           git pull origin master
    |   ^-----------|
-   |   |   [start to merge yours and their changes]
-   |   |           |                           git checkout <your-branch-name>
-   |   |           |                           git rebase master
    |   |           |
-   |   |   [fix any conflicts]                 #Use an editor like atom or visual studio
+   |   |   [merge their changes with yours]
+   |   |           |                           git checkout <your-branch-name>
+   |   |           |                           git rebase                     
+   |   |           |
+   |   |   [fix any conflicts]                 
+   |   |           |                                
+   |   |   [continue merge]                    After fixes complete then 
+   |   |           |                                git rebase --continue
    |   ^-----------|
    |               |
    |       [check your repo's status]          git status
+   |               |
    ^---------------|
+                   |
            [terminate]
-               .
-               .
-               .
+                   .
+                   .
+                   .
     [Optionally, push your change to GitHub]   git push origin <your-branch-name>
               |
-       [Open Github in browser]
+       [Submit a Pull Request]
 ```

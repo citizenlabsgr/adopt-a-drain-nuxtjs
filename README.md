@@ -50,7 +50,7 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 * Team Leader: James Wilfong (Citizen Labs)
 
 ## Responsibilities
-* A developer is responsible for their branches, making code functional, code reviews and documentation
+* A developer is responsible for their branches, writing and maintaining tests, writing testable code, code reviews and documentation
 * The team leader(s) is responsible for this repository's trunk
 * The team leader(s) is responsible for maintaining the issue
 

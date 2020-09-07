@@ -1,6 +1,5 @@
 
 # AAD Issues
-Keep up
 We use three kinds of issues [Stories](#stories), [Things](#things), and [Actions](#actions).
 
 # Stories

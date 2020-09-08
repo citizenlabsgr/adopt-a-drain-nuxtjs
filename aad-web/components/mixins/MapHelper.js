@@ -1,6 +1,7 @@
 class MapHelper {
   constructor (component) {
     // component is the nuxt component
+    this.initialLocation
     this.component = component
     this.dropAnimation = component.google.maps.Animation.DROP
     //this.map = undefined
@@ -126,41 +127,9 @@ class MapHelper {
     }
     return image
   }
-  /*
-  markerImage ( drain ) {
-    // Objective: visually differentiate Orphan, Adoptee, and your Adoptee
-    const size = new this.component.google.maps.Size(27.0, 38.0);
-    const origin = new this.component.google.maps.Point(0, 0);
-    const anchor = new this.component.google.maps.Point(13.0, 18.0);
-
-    let image = undefined
-    if (drain.type === 'adoptee') {
-      image = new this.component.google.maps.MarkerImage(
-        '/adoptee.svg',
-        size,
-        origin,
-        anchor);
-    } else if (drain.type === 'your_adoptee') {
-      image = new this.component.google.maps.MarkerImage(
-        '/your-adoptee.svg',
-        size,
-        origin,
-        anchor);
-    } else {
-      image = new this.component.google.maps.MarkerImage(
-        '/orphan.svg',
-        size,
-        origin,
-        anchor);
-    }
-    return image
-  }
-  */
   marker( form ) {
     // Objective: Hide the details of creating a marker
     return new this.component.google.maps.Marker(form)
   }
-
 }
-
 export { MapHelper }

@@ -14,17 +14,17 @@
    |   |           |                           git commit -m "#<issue-no>.<description>"
    |   ^-----------|
    |   |           |
-   |   |   [get collaborator changes]          git checkout master
-   |   |           |                           git pull origin master
+   |   |   [get collaborator changes]          git checkout trunk
+   |   |           |                           git pull origin trunk
    |   ^-----------|
    |   |           |
    |   |   [merge their changes with yours]
    |   |           |                           git checkout <your-branch-name>
-   |   |           |                           git rebase                     
+   |   |           |                           git rebase
    |   |           |
-   |   |   [fix any conflicts]                 
-   |   |           |                                
-   |   |   [continue merge]                    After fixes complete then 
+   |   |   [fix any conflicts]
+   |   |           |
+   |   |   [continue merge]                    After fixes complete then
    |   |           |                                git rebase --continue
    |   ^-----------|
    |               |

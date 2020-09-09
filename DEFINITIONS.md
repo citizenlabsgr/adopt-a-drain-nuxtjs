@@ -18,14 +18,14 @@ A clone is a copy of a remote repository on your local drive
 
 # Pull
 "Pull" refers to a process where a local-repository is refreshed from a remote repository.
-* Command: git pull origin master
+* Command: git pull origin trunk
 
 # Pull Request
 "Pull Request" how a developer tells the team leader (repository owner) a branch is ready for review.
 GitHub: Select your-branch-name and click "Pull request"
 
 # Push
-Push is  
+Push is
 
 # Rebase
 Rebase is the process of

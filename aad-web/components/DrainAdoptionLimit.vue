@@ -49,11 +49,15 @@
   mapdrag
     ref: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 */
+let infoWindow
+
 import { GLHandlers } from './mixins/GLHandlers.js'
 import { AADHandlers } from './mixins/AADHandlers.js'
 import { DWHandlers } from './mixins/DWHandlers.js'
 import { gmapApi } from '~/node_modules/vue2-google-maps/src/main'
 import { MapHelper } from './mixins/MapHelper.js'
+
+
 
 export default {
 
@@ -95,6 +99,7 @@ export default {
   },
   computed: {
     google: gmapApi,
+
     adopterKey() {
      // JWT's are two base64-encoded JSON objects and a trailing signature
      // joined by periods. The middle section is the data payload.
@@ -204,7 +209,35 @@ export default {
       this.mapHelper.settings('center_box', newBox)
       this.loadDrains()
     },
+    addInfoWindow(marker, drainObj) {
 
+      const mapHelper = this.mapHelper
+        // preparing infowindow
+
+      let conteudo = '<info>'
+      for (let dr in drainObj) {
+        //mapHelper.log(dr)
+
+        mapHelper.log()
+        if (! (drainObj[dr] instanceof Object) ) {
+          conteudo += dr + ': ' + '<h4>' + drainObj[dr] + '</h4>'
+          '<br/>'
+        }
+      }
+      conteudo += '</info>';
+
+      // adding listener, so infowindow is opened
+      google.maps.event.addListener(marker, "click", function() {
+
+          if (infoWindow)
+              infoWindow.close();
+
+          infoWindow = new google.maps.InfoWindow({
+              content: conteudo
+          });
+          infoWindow.open(mapHelper.map, marker);
+      });
+    },
     // Removes the markers from the map, but keeps them in the array.
 
     hideMarkers(centerBox) {
@@ -264,8 +297,11 @@ export default {
             const mapHelper = this.mapHelper
             const map = mapHelper.map
             const drains = this.settings.drains
+            mapHelper.log('AADHandlers 1')
             let counter = 0
             for (dr in response.data) {
+              mapHelper.log('AADHandlers 2')
+
               if (this.settings.drains[response.data[dr]['adoptee']['drain_id']]) { // found
                 // turn on (if off) by setting map
                 if (this.settings.drains[response.data[dr]['adoptee']['drain_id']].marker.getMap() === null) { // found
@@ -285,21 +321,71 @@ export default {
                             infoWindow.setContent('Location found.');
                             infoWindow.open(map);
                 */
+                /*
+                let activeInfoWindow
+                let isWindowOpen = false
+                let activeThingId
+                let activeMarker
+                let thingIds = []
+
+                google.maps.event.addListener(marker, 'click', function() {
+
+                      if(activeInfoWindow) {
+                        activeInfoWindow.close();
+                      }
+                      let infoWindow = new google.maps.InfoWindow({
+                        maxWidth: 370
+                      });
+                      google.maps.event.addListener(infoWindow, 'closeclick', function() {
+                        isWindowOpen = false;
+                      });
+                      activeInfoWindow = infoWindow;
+                      activeThingId = tdr.drain_id;
+                      activeMarker = marker;
+                      $.ajax({
+                        type: 'GET',
+                        url: '/info_window',
+                        data: {
+                          'thing_id': thingId
+                        },
+                        success: function(data) {
+
+                          // Prevent race condition, which could lead to multiple windows being open at the same time.
+                          if(infoWindow === activeInfoWindow) {
+                            infoWindow.setContent(data); // set content of info window
+                            infoWindow.open(map, marker); // present info window to user
+                            isWindowOpen = true;
+                          }
+                        }
+                      });
+                    });
+                */
+                //mapHelper.log('Marker 1')
+                /////////////
+                //
+                ///////////
                 setTimeout(function () {
-                               const dropAnimation = mapHelper.dropAnimation
-                               const point = {lat:tdr.lat, lng:tdr.lon }
-                               const marker = mapHelper.marker({
-                                 animation: dropAnimation,
-                                 icon: image,
-                                 map:map,
-                                 position: point
-                               })
-                               tdr['marker'] = marker
-                             }, counter * this.settings.delay )
+
+                  const dropAnimation = mapHelper.dropAnimation
+                  const point = {lat:tdr.lat, lng:tdr.lon }
+                  const marker = mapHelper.marker({
+                   animation: dropAnimation,
+                   icon: image,
+                   map:map,
+                   position: point
+                  })
+                  tdr['marker'] = marker
+                  // infoWindow
+                  //this.addInfoWindow(marker, tdr )
+
+                  }, counter * this.settings.delay )
+
               }
               counter++
               // add marker
             } // for
+            mapHelper.log('AADHandlers 3')
+
             //////////////
             // Prepare to load orphans
             ///////
@@ -362,6 +448,8 @@ export default {
                                      position: point
                                    })
                                    tdr['marker'] = marker
+                                   mapHelper.component.addInfoWindow(marker, tdr )
+
                                  }, counter * this.settings.delay )
                   }
                   counter++

@@ -23,6 +23,8 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 * Dave W
 * Ross H
 
+# Index
+---
 * [Goals](#goals)
 * [Strategies](#strategies)
 * [Understanding AAD](UNDERSTANDING-AAD.md)
@@ -34,10 +36,10 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 * [GitHub](GITHUB.md)... [github-playground](https://github.com/citizenlabsgr/open-lab).
 * [Submit an Issue](ISSUES.md)
 * [Development Tools](TOOLS.md)
-
+---
 **Note:**
 * Docker is configured so as to not persist the development database
-
+---
 ### Goals
 | ID | Goal
 | :------ | --------

@@ -8,13 +8,13 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 
 * [Goals](#goals)
 * [Strategies](#strategies)
-* [Understanding ADD](UNDERSTANDING-AAD.md)
+* [Understanding AAD](UNDERSTANDING-AAD.md)
 * [Contribution Process](#contribution-process)
 * [Prerequisites](#prerequisites)
 * [Developer Setup](STARTUP.md)
 * [Docker](DOCKER.md)
 * [GitHub](GITHUB.md)
-* [Issues](ISSUES.md)
+* [Submit an Issue](ISSUES.md)
 * [Development Tools](TOOLS.md)
 
 ### Note:

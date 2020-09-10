@@ -36,7 +36,7 @@ You should almost never need to write a story.
 1. A __Story__ describes the needs and wants of the business Owner and/or the Team Leader
 1. Name Pattern: As a \<stakeholder>, I need <general-description>, so I can <reason>.
 1. Common Stakeholders: developer, owner, team leader
-1. Get a  [Story List](https://github.com/Wilfongjt/adopt-a-drain/issues?q=As+a) by filtering issues with "As a"
+1. Get a  [Story List](https://github.com/citizenlabsgr/adopt-a-drain/issues?q=As+a) by filtering issues with "As a"
 
 # Thing
 A thing is a logical construct of a Story. You can't have a thing that doesn't relate to a Story.

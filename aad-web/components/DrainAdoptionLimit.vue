@@ -297,10 +297,8 @@ export default {
             const mapHelper = this.mapHelper
             const map = mapHelper.map
             const drains = this.settings.drains
-            mapHelper.log('AADHandlers 1')
             let counter = 0
             for (dr in response.data) {
-              mapHelper.log('AADHandlers 2')
 
               if (this.settings.drains[response.data[dr]['adoptee']['drain_id']]) { // found
                 // turn on (if off) by setting map
@@ -384,7 +382,6 @@ export default {
               counter++
               // add marker
             } // for
-            mapHelper.log('AADHandlers 3')
 
             //////////////
             // Prepare to load orphans

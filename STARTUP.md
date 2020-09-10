@@ -28,7 +28,7 @@ This is a the recommended setup, experienced git user may vary.
     |
     +-- <your-branch-name>
         |
-        +-- adopt-a-drain
+        +-- adopt-a-drain-nuxtjs
             |-- .env
 ```
 ### Your Branch Name
@@ -52,12 +52,12 @@ between issue #45 and the reason for your branch (update.readme).
 1. Clone Repo
     ```
     # from <your-branch-name> folder
-    git clone https://github.com/Wilfongjt/adopt-a-drain.git
+    git clone https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs.git
     ```
-1. Create .env file in adopt-a-drain folder
+1. Create .env file in adopt-a-drain-nuxtjs folder
     1. Cut and paste the following into .env
     ```
-    # adopt-a-drain/.env
+    # adopt-a-drain-nuxtjs/.env
 
     # Google Map API (aad-web)
     GOOGLE_MAPS_API_KEY=<your-google-map-api-key>
@@ -87,7 +87,7 @@ between issue #45 and the reason for your branch (update.readme).
 ### Start Docker
     ```
     # open a command window
-    # from the adopt-a-drain/ folder
+    # from the adopt-a-drain-nuxtjs/ folder
 
     docker-compose build
 
@@ -97,7 +97,7 @@ between issue #45 and the reason for your branch (update.readme).
 ### Stop Docker
     ```
     # open a command window
-    # from the adopt-a-drain/ folder
+    # from the adopt-a-drain-nuxtjs/ folder
 
     docker-compose down
     ```
@@ -148,19 +148,19 @@ Expected folders and some files
     |-- down.sh
     |-- up.sh
     +-- your-branch-name
-        +-- adopt-a-drain
+        +-- adopt-a-drain-nuxtjs
             |-- .env
 ```
 ## Start Docker
 ```
 # open a command window
-# from the adopt-a-drain/ folder
+# from the adopt-a-drain-nuxtjs/ folder
 ./up.sh
 ```
 ## Stop Docker
 ```
 # open a command window
-# from the adopt-a-drain/ folder
+# from the adopt-a-drain-nuxtjs/ folder
 ./down.sh
 ```
 ## Start Adopt A Drain
@@ -185,9 +185,9 @@ export DW_AUTH_TOKEN=<your-data.world-authorization-token>
 # Optional Configuration Changes (good enough for develpment)
 #####################
 
-export GIT_PROJECT=adopt-a-drain
+export GIT_PROJECT=adopt-a-drain-nuxtjs
 export GIT_PREFIX=aad
-export GIT_OWNERNAME=Wilfongjt
+export GIT_OWNERNAME=citizenlabsgr
 export MY_DATA_FOLDER=~/.data/aad_db
 
 ####################
@@ -281,9 +281,9 @@ git status
 
 #### Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
 #####################################
-#### Generate an adopt-a-drain/.env
+#### Generate an adopt-a-drain-nuxtjs/.env
 #####################################
-# adopt-a-drain/.env
+# adopt-a-drain-nuxtjs/.env
 
 echo "# Google Map API (aad-web)" > .env
 echo "GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}" >> .env

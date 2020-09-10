@@ -9,9 +9,13 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 > A joint project with the [Grand Valley Metropolitan Council](http://www.gvmc.org) and the [Lower Grand River Organization of Watersheds](https://www.lgrow.org). The very broad goal is create an Adopt-a-Drain program for the Grand River watershed, covering nearly 3,000 square miles of land from just west of Lansing to Lake Michigan.
 >
 > **Project**: * [Goals](#goals) * [Strategies](#strategies)
+>
 > **Design**:  * [Understanding AAD](UNDERSTANDING-AAD.md)
+>
 > **Data**: * [Data](DATA.md)
+>
 > **Developers**: * [Setup](STARTUP.md) * [Prerequisites](#prerequisites) * [Docker](DOCKER.md) * [GitHub](GITHUB.md) * [github-playground](https://github.com/citizenlabsgr/open-lab) * [Tools](TOOLS.md)
+>
 > **Contributing**: * [Contributing](CONTRIBUTIONS.md) * [Submit an Issue](ISSUES.md)
 
 
@@ -21,14 +25,14 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 
 **Project Guides:**
 
-> * Courtney C (LGROW)
+* Courtney C (LGROW)
 * Cara D (LGROW)
 * Eileen B (LGROW)
 * James W (Citizen Labs)
 
 **Maintainers (people with write access):**
 
-> * Jace B
+* Jace B
 * Dave W
 * Ross H
 

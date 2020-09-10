@@ -17,6 +17,9 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 * [Issues](ISSUES.md)
 * [Development Tools](TOOLS.md)
 
+### Note:
+* Docker is configured so as to not persist the development database
+
 ### Goals
 | ID | Goal
 | :------ | --------

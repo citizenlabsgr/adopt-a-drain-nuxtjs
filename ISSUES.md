@@ -2,6 +2,11 @@
 # AAD Issues
 We use three kinds of issues [Stories](#stories), [Things](#things), and [Actions](#actions).
 
+Notes:
+* Don't let the guideline get in the way of submitting an issue.
+* Team leader is responsible for conforming issue submissions to our guidelines
+
+# Guidelines
 # Stories
 You should almost never need to write a story.
 1. __Stories__ describe the needs and wants of the business Owner and/or the Team Leader

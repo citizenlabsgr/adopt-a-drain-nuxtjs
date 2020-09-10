@@ -57,7 +57,7 @@ services:
       - "./aad-db/sql:/docker-entrypoint-initdb.d"
 
       # Uncomment this if you want to persist the data.
-      - "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
+      #- "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
     networks:
       - postgrest-backend
     restart: always

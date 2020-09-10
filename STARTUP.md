@@ -1,4 +1,21 @@
-# Developer Setup
+
+# Prerequisites
+This can be the hardest section for new developers and a challenge to seasoned veterans.
+Keys and Tokens are never saved to the repo.
+1. **[Install Docker](https://www.docker.com)**
+1.  **[Google Map Key](https://developers.google.com/maps/documentation/javascript/get-api-key)**
+    1. setup an account
+    1. get a key
+1. **[Data.World API Token](https://data.world)**
+    1. setup an account
+    1. get a token from the account page
+1. **[AAD API Token](https://jwt.io)** (developers can use the token provided)
+    1. header is {"alg": "HS256","typ": "JWT"}
+    1. payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
+    1. verify signature password is PASSWORDmustBEATLEAST32CHARSLONGLONG
+        1. password is configured in the .env as POSTGRES_JWT_SECRET
+
+# Setup
 This is a the recommended setup, experienced git user may vary.
 * [Manually Setup Folders and Files](#manually-setup-folders-and-files)
 * [Optional Bash Setup Script](#optional-bash-setup-script)
@@ -89,7 +106,7 @@ between issue #45 and the reason for your branch (update.readme).
     open -a safari http://localhost:3000
     ```
 
-# Optional Bash Setup Script 
+# Optional Bash Setup Script
 The bash setup script performs the following:
  * Creates a repo clone, when not already downloaded
  * Creates and checks out a local branch,

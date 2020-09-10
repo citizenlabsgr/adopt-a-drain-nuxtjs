@@ -1,32 +1,52 @@
 # Adopt a Drain (AAD)
 
+**Slack:** #project-adoptdrain
+
 We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to describe the repository.
 
-## Why Change Adopt-a-Drain?
+**Project Description:**
+
+A joint project with the [Grand Valley Metropolitan Council](http://www.gvmc.org) and the [Lower Grand River Organization of Watersheds](https://www.lgrow.org). The very broad goal is create an Adopt-a-Drain program for the Grand River watershed, covering nearly 3,000 square miles of land from just west of Lansing to Lake Michigan.
+
+**Why Change Adopt-a-Drain?**
 The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America.
 Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
+
+**Project Guides:**
+* Courtney C (LGROW)
+* Cara D (LGROW)
+* Eileen B (LGROW)
+* James W (Citizen Labs)
+
+**Maintainers (people with write access):**
+* Jace B
+* Dave W
+* Ross H
 
 * [Goals](#goals)
 * [Strategies](#strategies)
 * [Understanding AAD](UNDERSTANDING-AAD.md)
-* [Contribution Process](#contribution-process)
+* [Contributing](CONTRIBUTIONS.md)
+* [Data](DATA.md)
 * [Prerequisites](#prerequisites)
 * [Developer Setup](STARTUP.md)
 * [Docker](DOCKER.md)
-* [GitHub](GITHUB.md)
+* [GitHub](GITHUB.md)... [github-playground](https://github.com/citizenlabsgr/open-lab).
 * [Submit an Issue](ISSUES.md)
 * [Development Tools](TOOLS.md)
 
-### Note:
+**Note:**
 * Docker is configured so as to not persist the development database
 
 ### Goals
 | ID | Goal
 | :------ | --------
+| G   | **Continue**, the Adopt-a-Drain program for the Grand River watershed |
 | G1  | **Grow**, the AAD developer pool  |
 | G2  | **Clarify**, the codebase  |
 | G3  | **Simplify**, AAD's development and deployment  |
 | G4  | **Decouple**, the application from the data and services  |
+| G   |   |
 
 ### Strategies   
 | Strategy | Goal IDs
@@ -57,15 +77,6 @@ Citizen Labs has taken the idea, simplified the code, and reworked the architect
 * The team leader(s) is responsible for this repository's trunk
 * The team leader(s) is responsible for clarifying and maintaining issues
 
-## Contribution Process
-1. **Find an Issue**: Review the repo's issues
-1. [**Clone**](STARTUP.md#manual-setup): Get copy of the repository
-1. **Branch**: Make a branch to isolate your contribution
-1. **Develop**: Make your contribution (write tests, write code, update documentation, repeat)
-1. **Document**: Update the documentation to describe your code contribution
-1. **Sync Repo**: Merge changes from trunk/others into your local-branch, and then merge your contributions back to your remote-branch on GitHub
-1. **Request a Review**: Notify the repo owner that your contribution is ready for review
-1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
 
 ## Prerequisites
 This can be the hardest section for new developers and a challenge to seasoned veterans.

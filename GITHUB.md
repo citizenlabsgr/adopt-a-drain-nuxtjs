@@ -1,5 +1,5 @@
 
-# Contribution Process
+# GIT Process
 
 ```
   Process                                     Git Commands

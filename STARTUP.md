@@ -1,5 +1,6 @@
+# Get Started
 
-# Prerequisites
+#### Prerequisites
 This can be the hardest section for new developers and a challenge to seasoned veterans.
 Keys and Tokens are never saved to the repo.
 1. **[Install Docker](https://www.docker.com)**

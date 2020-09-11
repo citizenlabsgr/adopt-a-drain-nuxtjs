@@ -16,6 +16,26 @@ A branch is an independent line of development.
 A clone is a copy of a remote repository on your local drive
 * Command: https://github.com/<repo-owner-name>/<repo-name>.git
 
+# Conformant Submit
+Disable Submit button until all required data is provided and validated.  
+
+# Email Feedback
+A training loop that guides the user to providing and completing a proper email input value.
+Pattern: <name>@<domain> e.g, george@gmail.com
+Regex JS: /\S+@\S+\.\S+/
+Regex SQL: '[a-z\-_0-9]+@[a-z]+\.[a-z]+'
+
+
+# Not Empty Feedback
+A training loop that guides the user to providing and completing a non-blank input
+
+# Password Feedback
+A training loop that guides the user to providing and completing a proper password input value.
+Pattern: TBD
+Regex JS:  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/
+Regex SQL: '^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$'
+
+
 # Pull
 "Pull" refers to a process where a local-repository is refreshed from a remote repository.
 * Command: git pull origin trunk
@@ -46,5 +66,8 @@ A thing is a logical construct of a Story. You can't have a thing that doesn't r
 1. A Thing title always starts with a "#" followed by story number (aka, issue number), followed by a noun
 1. Get a list of Things by filtering issues with # followed by a story number.
     1. e.g., #45, list all things and actions associated with Story #45
+
+# Username Feedback
+A training loop that guides the user to providing and completing a proper username input value. See [Email Feedback](#email-feedback)
 
 # Trunk

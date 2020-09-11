@@ -6,16 +6,22 @@
 
 > A joint project with the [Grand Valley Metropolitan Council](http://www.gvmc.org) and the [Lower Grand River Organization of Watersheds](https://www.lgrow.org). The very broad goal is create an Adopt-a-Drain program for the Grand River watershed, covering nearly 3,000 square miles of land from just west of Lansing to Lake Michigan.
 
-[Project](#project) * [Design](#design) * [Data](#data) * [Contributions](#contributions) *[Developers](#developers) *  [Tools](#tools)
+[Project](#project) | [Contributions](#contributions) | [Processes](#processes) | [Data](#data) | [Developers](#developers) |  [Tools](#tools)
 
 **Why Change Adopt-a-Drain?**
 
 > The original Adopt a Drain idea, design and code is the product of the San Francisco Brigade of Code for America. Citizen Labs has taken the idea, simplified the code, and reworked the architecture to appeal to a broader group of developers.
 
+##### Data
+
+> Data is provided by Grand Valley Metropolitan Council's REGIS, or [Regional Geographic Information System](http://www.gvmc.org/regis/index.shtml). REGIS provides a common database, infrastructure, and suite of applications used for spatial data management by our members.  To facilitate a more informed decision making process, twenty cities, townships, and quasi-governmental organizations have joined together to develop REGIS, one of the largest local government multi-participant Geographic Information System (GIS) projects.
+
+* Storm Drain data is hosted at data.world: https://data.world/activity/citizenlabs
+* Storm drains are stored at https://data.world/citizenlabs/grb-storm-drains-2019-04-03
 
 
 # Project
-[Goals](#goals) * [Strategies](#strategies) * [Guides](#project-guides) * [Maintainers](#maintainers)
+[Goals](#goals) | [Strategies](#strategies) | [Guides](#project-guides) | [Maintainers](#maintainers)
 
 #### Goals
 | ID | Goal
@@ -49,20 +55,9 @@
 * Dave W
 * Ross H
 
-# Design
-* [Understanding AAD](UNDERSTANDING-AAD.md)
-
-# Data
-
-> Data is provided by Grand Valley Metropolitan Council's REGIS, or [Regional Geographic Information System](http://www.gvmc.org/regis/index.shtml). REGIS provides a common database, infrastructure, and suite of applications used for spatial data management by our members.  To facilitate a more informed decision making process, twenty cities, townships, and quasi-governmental organizations have joined together to develop REGIS, one of the largest local government multi-participant Geographic Information System (GIS) projects.
-
-* Storm Drain data is hosted at data.world: https://data.world/activity/citizenlabs
-* Storm drains are stored at https://data.world/citizenlabs/grb-storm-drains-2019-04-03
-
-
 # Contributions
 
-[Contributing](#make-a-contribution) * [Contribution Process](#contribution-process) * [Submit an Issue](ISSUES.md)
+[Make a Contribution](#make-a-contribution) | [How to Contribute](#how-to-contribute) | [Submit an Issue](ISSUES.md)
 
 #### Make a Contribution
 
@@ -87,21 +82,19 @@ Here are some ways *you* can contribute:
 * by closing issues
 * by reviewing patches
 
-#### Contribution Process
-1. **Find an Issue**: Review the repo's issues
-1. [**Clone**](STARTUP.md#manual-setup): Get copy of the repository
-1. **Branch**: Make a branch to isolate your contribution
-1. **Develop**: Make your contribution (write tests, write code, update documentation, repeat)
-1. **Document**: Update the documentation to describe your code contribution
-1. **Sync Repo**: Merge changes from trunk/others into your local-branch, and then merge your contributions back to your remote-branch on GitHub
-1. **Request a Review**: Notify the repo owner that your contribution is ready for review
-1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
+#### How to Contribute
+* [Contribution Process](PROCESS.md#contribution-process)
 
 #### Submit an Issue
   * [Submit an Issue](ISSUES.md)
 
+# Processes
+
+[Participation Processes](PROCESSES.md#participation-processes) | [System Processes](PROCESSES.md#system-processes)
+
+
 # Developers
-[Tasks](#tasks) * [Rules](#rules) * [Roles](#roles) * [Responsibilities](#Responsibilities) * [Get Started](STARTUP.md) * [GitHub](#github) * [Docker](#docker) * [Notes](#notes)
+[Tasks](#tasks) | [Rules](#rules) | [Roles](#roles) | [Responsibilities](#Responsibilities) | [Design](#design) | [Get Started](STARTUP.md) | [GitHub](#github) | [Docker](#docker) | [Notes](#notes)
 
 #### Tasks
 * Small tasks are better than big tasks.
@@ -122,6 +115,9 @@ Here are some ways *you* can contribute:
 * A developer is responsible for their branches, writing and maintaining tests, writing testable code, code reviews and documentation
 * The team leader(s) is responsible for this repository's trunk
 * The team leader(s) is responsible for clarifying and maintaining issues
+
+#### Design
+* [Understanding AAD](UNDERSTANDING-AAD.md) 
 
 #### Get Started
 1. Complete the [Prerequisites](STARTUP.md#prerequisites)

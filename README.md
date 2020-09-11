@@ -116,8 +116,8 @@ Here are some ways *you* can contribute:
 
 #### Roles
 * Developer: YOU
-* Owner: Courtney Cromley (LGROW)
-* Team Leader: James Wilfong (Citizen Labs)
+* Owner: Courtney C (LGROW)
+* Team Leader: James W (Citizen Labs)
 
 #### Responsibilities
 * A developer is responsible for their branches, writing and maintaining tests, writing testable code, code reviews and documentation

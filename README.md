@@ -117,7 +117,7 @@ Here are some ways *you* can contribute:
 * The team leader(s) is responsible for clarifying and maintaining issues
 
 #### Design
-* [Understanding AAD](UNDERSTANDING-AAD.md) 
+* [Understanding AAD](UNDERSTANDING-AAD.md)
 
 #### Get Started
 1. Complete the [Prerequisites](STARTUP.md#prerequisites)
@@ -148,7 +148,9 @@ Here are some ways *you* can contribute:
 Loaded in Docker container
 * Node
 * Database: Postgres https://www.postgresql.org
+* JSON Web Tokens https://github.com/michelp/pgjwt
 * API: Postgrest http://postgrest.org/en/v7.0.0/
+
 
 
 

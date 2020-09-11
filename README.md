@@ -157,6 +157,6 @@ Loaded in Docker container
 
 
 ## License
-See [LICENSE.md](https://github.com/citizenlabsgr/openbudgetgr/blob/master/LICENSE) for details.
+See [LICENSE.md](https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs/blob/trunk/LICENSE) for details.
 
 [license]: https://github.com/citizenlabsgr/openbudgetgr/blob/master/LICENSE

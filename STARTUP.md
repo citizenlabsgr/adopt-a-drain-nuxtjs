@@ -1,4 +1,22 @@
-# Developer Setup
+# Get Started
+
+#### Prerequisites
+This can be the hardest section for new developers and a challenge to seasoned veterans.
+Keys and Tokens are never saved to the repo.
+1. **[Install Docker](https://www.docker.com)**
+1.  **[Google Map Key](https://developers.google.com/maps/documentation/javascript/get-api-key)**
+    1. setup an account
+    1. get a key
+1. **[Data.World API Token](https://data.world)**
+    1. setup an account
+    1. get a token from the account page
+1. **[AAD API Token](https://jwt.io)** (developers can use the token provided)
+    1. header is {"alg": "HS256","typ": "JWT"}
+    1. payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
+    1. verify signature password is PASSWORDmustBEATLEAST32CHARSLONGLONG
+        1. password is configured in the .env as POSTGRES_JWT_SECRET
+
+# Setup
 This is a the recommended setup, experienced git user may vary.
 * [Manually Setup Folders and Files](#manually-setup-folders-and-files)
 * [Optional Bash Setup Script](#optional-bash-setup-script)
@@ -10,7 +28,7 @@ This is a the recommended setup, experienced git user may vary.
     |
     +-- <your-branch-name>
         |
-        +-- adopt-a-drain
+        +-- adopt-a-drain-nuxtjs
             |-- .env
 ```
 ### Your Branch Name
@@ -34,12 +52,12 @@ between issue #45 and the reason for your branch (update.readme).
 1. Clone Repo
     ```
     # from <your-branch-name> folder
-    git clone https://github.com/Wilfongjt/adopt-a-drain.git
+    git clone https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs.git
     ```
-1. Create .env file in adopt-a-drain folder
+1. Create .env file in adopt-a-drain-nuxtjs folder
     1. Cut and paste the following into .env
     ```
-    # adopt-a-drain/.env
+    # adopt-a-drain-nuxtjs/.env
 
     # Google Map API (aad-web)
     GOOGLE_MAPS_API_KEY=<your-google-map-api-key>
@@ -69,7 +87,7 @@ between issue #45 and the reason for your branch (update.readme).
 ### Start Docker
     ```
     # open a command window
-    # from the adopt-a-drain/ folder
+    # from the adopt-a-drain-nuxtjs/ folder
 
     docker-compose build
 
@@ -79,7 +97,7 @@ between issue #45 and the reason for your branch (update.readme).
 ### Stop Docker
     ```
     # open a command window
-    # from the adopt-a-drain/ folder
+    # from the adopt-a-drain-nuxtjs/ folder
 
     docker-compose down
     ```
@@ -89,7 +107,7 @@ between issue #45 and the reason for your branch (update.readme).
     open -a safari http://localhost:3000
     ```
 
-# Optional Bash Setup Script 
+# Optional Bash Setup Script
 The bash setup script performs the following:
  * Creates a repo clone, when not already downloaded
  * Creates and checks out a local branch,
@@ -130,19 +148,19 @@ Expected folders and some files
     |-- down.sh
     |-- up.sh
     +-- your-branch-name
-        +-- adopt-a-drain
+        +-- adopt-a-drain-nuxtjs
             |-- .env
 ```
 ## Start Docker
 ```
 # open a command window
-# from the adopt-a-drain/ folder
+# from the adopt-a-drain-nuxtjs/ folder
 ./up.sh
 ```
 ## Stop Docker
 ```
 # open a command window
-# from the adopt-a-drain/ folder
+# from the adopt-a-drain-nuxtjs/ folder
 ./down.sh
 ```
 ## Start Adopt A Drain
@@ -167,9 +185,9 @@ export DW_AUTH_TOKEN=<your-data.world-authorization-token>
 # Optional Configuration Changes (good enough for develpment)
 #####################
 
-export GIT_PROJECT=adopt-a-drain
+export GIT_PROJECT=adopt-a-drain-nuxtjs
 export GIT_PREFIX=aad
-export GIT_OWNERNAME=Wilfongjt
+export GIT_OWNERNAME=citizenlabsgr
 export MY_DATA_FOLDER=~/.data/aad_db
 
 ####################
@@ -263,9 +281,9 @@ git status
 
 #### Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
 #####################################
-#### Generate an adopt-a-drain/.env
+#### Generate an adopt-a-drain-nuxtjs/.env
 #####################################
-# adopt-a-drain/.env
+# adopt-a-drain-nuxtjs/.env
 
 echo "# Google Map API (aad-web)" > .env
 echo "GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}" >> .env

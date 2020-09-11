@@ -9,6 +9,6 @@
 
 ### Application Tests   
 ```
-cd adopt-a-drain/
+cd adopt-a-drain-nuxtjs/
 docker-compose run web npm run test
 ```

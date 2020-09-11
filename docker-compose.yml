@@ -16,7 +16,7 @@ version: '3'
 services:
   web:
     #container_name: adopt-a-drain
-    image: wilfongjt/adopt-a-drain
+    image: citizenlabsgr/adopt-a-drain
     build:
       context: ./aad-web/
     command: >

@@ -2,13 +2,11 @@
 
 **Slack:** #project-adoptdrain
 
-We prefer to use the word "trunk" rather than "master." Trunk better fits the tree metaphor used to describe the repository.
-
 #### Project Description:
 
 > A joint project with the [Grand Valley Metropolitan Council](http://www.gvmc.org) and the [Lower Grand River Organization of Watersheds](https://www.lgrow.org). The very broad goal is create an Adopt-a-Drain program for the Grand River watershed, covering nearly 3,000 square miles of land from just west of Lansing to Lake Michigan.
 
-[Project](#project) * [Design](#design) * [Data](#data) * [Contributions](#contributing) *[Developers](#developers) *  [Tools](#tools)
+[Project](#project) * [Design](#design) * [Data](#data) * [Contributions](#contributions) *[Developers](#developers) *  [Tools](#tools)
 
 **Why Change Adopt-a-Drain?**
 
@@ -27,7 +25,7 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 | G2  | **Clarify**, the codebase  |
 | G3  | **Simplify**, AAD's development and deployment  |
 | G4  | **Decouple**, the application from the data and services  |
-| G   |   |
+
 
 #### Strategies   
 | Strategy | Goal IDs
@@ -59,13 +57,14 @@ We prefer to use the word "trunk" rather than "master." Trunk better fits the tr
 > Data is provided by Grand Valley Metropolitan Council's REGIS, or [Regional Geographic Information System](http://www.gvmc.org/regis/index.shtml). REGIS provides a common database, infrastructure, and suite of applications used for spatial data management by our members.  To facilitate a more informed decision making process, twenty cities, townships, and quasi-governmental organizations have joined together to develop REGIS, one of the largest local government multi-participant Geographic Information System (GIS) projects.
 
 * Storm Drain data is hosted at data.world: https://data.world/activity/citizenlabs
+* Storm drains are stored at https://data.world/citizenlabs/grb-storm-drains-2019-04-03
 
 
 # Contributions
 
-[Contributing](#contributing) * [Contribution Process](#contribution-process) * [Submit an Issue](ISSUES.md)
+[Contributing](#make-a-contribution) * [Contribution Process](#contribution-process) * [Submit an Issue](ISSUES.md)
 
-#### Contributing
+#### Make a Contribution
 
 > In the spirit of [free software][free-sw], **everyone** is encouraged to help
 improve this project. We welcome contributions from first timers. Updates to documentation or readme are greatly appreciated and make for a great first PR. They do not need to be discussed in advance and will be merged as soon as possible.
@@ -154,3 +153,10 @@ Loaded in Docker container
 * Node
 * Database: Postgres https://www.postgresql.org
 * API: Postgrest http://postgrest.org/en/v7.0.0/
+
+
+
+## License
+See [LICENSE.md](https://github.com/citizenlabsgr/openbudgetgr/blob/master/LICENSE) for details.
+
+[license]: https://github.com/citizenlabsgr/openbudgetgr/blob/master/LICENSE

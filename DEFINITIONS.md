@@ -8,6 +8,26 @@ Action is a task necessary to construct a thing
 1. Get a list of Actions by filtering issues with # followed by a story number.
     1. e.g., #45, list all things and action associated with Story #45
 
+# Adopter Data
+create {"name": "<email-address>", "password": ""}
+read   {"id":"", "name": "email-address"}
+update {"id":"", "name":"", "password":""}
+delete {"id":""}
+
+# Adoptee Data
+create {"name":"", "drain_id":"", "lat":NN.NNNNNNNNNNNNNN, "lon":-NNN.NNNNNNNNNNNNNN}
+read {"id":"", "name":"", "drain_id":"", "lat":NN.NNNNNNNNNNNNNN, "lon":-NNN.NNNNNNNNNNNNNN}
+delete read {"id":""}
+
+# Adoption Data
+Adoption Data is [Adoptee Data](#adoptee-data)
+
+# Authentication Data
+Authentication Data is a subset of [Adoptee Data](#adoptee-data)
+
+# Authorization Data
+Authorization Data is a subset of [Adopter Data](#adopter-data)
+
 # Branch
 A branch is an independent line of development.
 * Command: git checkout -b <your-branch-name>
@@ -35,6 +55,8 @@ Pattern: TBD
 Regex JS:  /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/
 Regex SQL: '^(?=.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*\W).*$'
 
+# Orphan Data
+Orphan data is a subset of [Adoptee Data](#adoptee-data)
 
 # Pull
 "Pull" refers to a process where a local-repository is refreshed from a remote repository.

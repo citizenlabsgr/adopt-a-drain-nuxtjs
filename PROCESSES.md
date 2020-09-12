@@ -182,7 +182,8 @@ Also known as abandon
 #### Send Reset Password Email
 Also known as reauthorize
 
-``` WIP
+```
+WIP
 +<----[Get            Name]
 ^        |     ^        |
 |        |     |<----[Username Feedback]

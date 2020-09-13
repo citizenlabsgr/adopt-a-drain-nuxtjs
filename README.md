@@ -6,7 +6,7 @@
 
 > A joint project with the [Grand Valley Metropolitan Council](http://www.gvmc.org) and the [Lower Grand River Organization of Watersheds](https://www.lgrow.org). The very broad goal is create an Adopt-a-Drain program for the Grand River watershed, covering nearly 3,000 square miles of land from just west of Lansing to Lake Michigan.
 
-[Project](#project) | [Contributions](#contributions) | [Processes](#processes) | [Data](#data) | [Developers](#developers) |  [Tools](#tools)
+[Project](#project) | [Contributions](#contributions) | [Processes](PROCESSES.md#processes) | [Data](#data) | [Developers](#developers) |  [Tools](#tools)
 
 **Why Change Adopt-a-Drain?**
 

@@ -59,6 +59,7 @@ ul {
 
 li {
   margin: 20px 10px 0px 20px;
+  font-variant: petite-caps;
 }
 
 img {

@@ -1,9 +1,8 @@
-/*
 \c aad_db
 --------------
 -- Environment
 --------------
-
+-- TODO ?.?.?: adoptee delete 1.5.0
 -- TODO ?.?.?: When adopter is deactivated then deactivate all adoptions by that adopter
 -- TODO ?.?.?: test for active adopter record during signin. When active is false then adopter is the same as deleted.
 -- TODO 1.4.2: All adoptees are showing up with red symbol. red is for currently logged in user
@@ -49,7 +48,7 @@ select :lb_woden as lb_woden, pg_typeof(:lb_woden::JSONB) as type;
 ---------------
 -- SCHEMA: Create Schema
 ---------------
-CREATE SCHEMA if not exists aad_version_1_4_2;
+CREATE SCHEMA if not exists aad_version_1_5_0;
 
 -- CREATE EXTENSION IF NOT EXISTS pgcrypto;;
 -- CREATE EXTENSION IF NOT EXISTS pgtap;;
@@ -88,31 +87,31 @@ grant usage on schema aad_base to guest_aad;
 grant usage on schema aad_base to editor_aad;
 grant usage on schema aad_base to event_logger_role;
 
-grant usage on schema aad_version_1_4_2 to guest_aad;
-grant usage on schema aad_version_1_4_2 to editor_aad;
-grant usage on schema aad_version_1_4_2 to event_logger_role;
+grant usage on schema aad_version_1_5_0 to guest_aad;
+grant usage on schema aad_version_1_5_0 to editor_aad;
+grant usage on schema aad_version_1_5_0 to event_logger_role;
 
 ---------------
 -- SCHEMA: Set Schema Path
 ---------------
 
-SET search_path TO aad_version_1_4_2, aad_base, public;
+SET search_path TO aad_version_1_5_0, aad_base, public;
 
 ----------------
 -- TYPE: Create Types
 ----------------
-CREATE TYPE aad_version_1_4_2.woden_token AS (
+CREATE TYPE aad_version_1_5_0.woden_token AS (
   woden text
 );
-CREATE TYPE aad_version_1_4_2.jwt_token AS (
+CREATE TYPE aad_version_1_5_0.jwt_token AS (
   token text
 );
 
 ------------
--- FUNCTION: Create aad_version_1_4_2.signin(form JSON)
+-- FUNCTION: Create aad_version_1_5_0.signin(form JSON)
 ------------
 
-CREATE OR REPLACE FUNCTION aad_version_1_4_2.signin(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_0.signin(form JSON) RETURNS JSONB
 AS $$
   -- make token to execute app(JSON)
   declare rc JSONB;
@@ -223,13 +222,13 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_4_2.signin(JSON) to guest_aad;
+grant EXECUTE on FUNCTION aad_version_1_5_0.signin(JSON) to guest_aad;
 
 -----------------
 -- FUNCTION: Create adopter(form JSON)
 -----------------
 
-CREATE OR REPLACE FUNCTION aad_version_1_4_2.adopter(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_0.adopter(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
   Declare _model_adopter JSONB;
@@ -348,27 +347,27 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_4_2.adopter(JSON) to guest_aad; -- upsert
-grant EXECUTE on FUNCTION aad_version_1_4_2.adopter(JSON) to editor_aad; -- upsert
+grant EXECUTE on FUNCTION aad_version_1_5_0.adopter(JSON) to guest_aad; -- upsert
+grant EXECUTE on FUNCTION aad_version_1_5_0.adopter(JSON) to editor_aad; -- upsert
 
 -----------------
 -- FUNCTION: Create adopter(id TEXT)
 -----------------
 -- convert ids to lowercase
 
-CREATE OR REPLACE FUNCTION aad_version_1_4_2.adopter(id TEXT) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_0.adopter(id TEXT) RETURNS JSONB
 AS $$
   Select reg_form-'password' as adopter from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adopter';
 $$ LANGUAGE sql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_4_2.adopter(TEXT) to editor_aad; -- select
+grant EXECUTE on FUNCTION aad_version_1_5_0.adopter(TEXT) to editor_aad; -- select
 
 -----------------
 -- FUNCTION: Create adoptee(form JSON)
 -----------------
 -- Insert {"type":"adoptee", "drain_id":"gr12345667", "lat":42.01, "lon":-84.01}
 
-CREATE OR REPLACE FUNCTION aad_version_1_4_2.adoptee(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_0.adoptee(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
   -- Declare _model_user JSONB;
@@ -398,7 +397,12 @@ AS $$
       _adopter_key := current_setting('request.jwt.claim.key','t');
     end if;
 
-
+    /*
+    if _jwt_role is NULL or _adopter_key is NULL then
+      _jwt_role := 'editor_aad';
+      _adopter_key := 'testkey1234567890';
+    end if;
+    */
     --
     if _jwt_role != 'editor_aad' then
       _validation := '{"status":"401", "msg":"Unauthorized Token", "type":"adoptee"}'::JSONB;
@@ -411,7 +415,20 @@ AS $$
     -- type stamp form and user key
     _form := form::JSONB || format('{"type":"adoptee", "adopter_key":"%s"}', _adopter_key)::JSONB;
 
-
+    /*
+    BEGIN
+      -- app.lb_editor_aad
+      _model_user := current_setting(format('app.lb_%s',_jwt_role))::jsonb;
+    EXCEPTION
+      WHEN others then
+        _validation := '{"status": "401", "msg":"Unauthorized Token", "type":"adoptee"}'::JSONB;
+        PERFORM aad_base.event_logger(_validation);
+        RAISE sqlstate 'PT401' using
+          message = format('Unauthorized Token for app.lb_%s',_jwt_role),
+          detail = 'adoptee',
+          hint = 'Try logging in again.';
+    END;
+    */
 
     -- _validation := adoptee_validate(_form);
     -- if _validation ->> 'status' != '200' then
@@ -467,23 +484,23 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute adoptee
-grant EXECUTE on FUNCTION aad_version_1_4_2.adoptee(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_0.adoptee(JSON) to editor_aad; -- C
 
 --------------------
 -- FUNCTION: Create adoptee(id TEXT)
 --------------------
-CREATE OR REPLACE FUNCTION aad_version_1_4_2.adoptee(id TEXT) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_0.adoptee(id TEXT) RETURNS JSONB
 AS $$
   Select reg_form from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adoptee';
 $$ LANGUAGE sql;
 
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_4_2.adoptee(TEXT) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_0.adoptee(TEXT) to editor_aad; -- C
 --------------------
 -- FUNCTION: Create adoptees(JSON)
 --------------------
 -- find in boundary
-CREATE OR REPLACE FUNCTION aad_version_1_4_2.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
+CREATE OR REPLACE FUNCTION aad_version_1_5_0.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
 AS $$
 Declare _validation JSONB;
 Declare _bounds JSONB;
@@ -517,6 +534,5 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_4_2.adoptees(JSON) to editor_aad; -- C
-grant EXECUTE on FUNCTION aad_version_1_4_2.adoptees(JSON) to guest_aad; -- C
-*/
+grant EXECUTE on FUNCTION aad_version_1_5_0.adoptees(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_0.adoptees(JSON) to guest_aad; -- C

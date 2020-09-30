@@ -1,3 +1,4 @@
+
 import { mount } from '@vue/test-utils'
 import Opportunities from '@/components/Opportunities.vue'
 

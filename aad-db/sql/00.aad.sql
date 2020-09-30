@@ -98,10 +98,16 @@ extra code
 --------------
 -- Environment: Read environment variables
 --------------
-
+\set lb_env `echo "'$LB_ENV'"`
 \set postgres_jwt_secret `echo "'$POSTGRES_JWT_SECRET'"`
 \set lb_guest_password `echo "'$LB_GUEST_PASSWORD'"`
 \set lb_woden `echo "'$LB_WODEN'"`
+
+select :lb_env as lb_env;
+select :lb_guest_password as lb_guest_password;
+select :postgres_jwt_secret as postgres_jwt_secret;
+select :lb_woden as lb_woden, pg_typeof(:lb_woden::JSONB) as type;
+
 --select :lb_guest_password;
 --select :postgres_jwt_secret ;
 --select :lb_woden ;

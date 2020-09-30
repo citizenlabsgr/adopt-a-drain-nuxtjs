@@ -1,3 +1,6 @@
+
+import { InfoHelper } from './InfoHelper.js'
+
 class MapHelper {
   constructor (component) {
     // component is the nuxt component
@@ -9,7 +12,7 @@ class MapHelper {
     this.map = component.$refs.mapRef.$mapObject
     this.set('randy', 'Y')
     this.set('center', component.$refs.mapRef.$mapObject.getCenter())
-
+    this.view_box = {}
   }
 
   set(key, value) {
@@ -64,7 +67,9 @@ class MapHelper {
     return centerBox
   }
 
-  viewBox ( box ) {
+  getViewBox() {return this.view_box;}
+
+  setViewBox ( box ) {
     // Objective: keep data download from getting too big
     // Strategy: expand or shrink box until a maximum area is just found
     // assume box is too big ... so make smaller first
@@ -96,7 +101,8 @@ class MapHelper {
       box.east += bumpX
       area_ = (box.north - box.south) * (Math.abs(box.west) - Math.abs(box.east))
     }
-    return box
+    this.view_box = box;
+    return this;
   }
 
   markerImage ( type ) {
@@ -131,5 +137,32 @@ class MapHelper {
     // Objective: Hide the details of creating a marker
     return new this.component.google.maps.Marker(form)
   }
+  infoHelper() {
+    return new InfoHelper(this.component)
+  }
+
+  /*
+  visualize(centerBox) {
+    //  Objective: minimize the number of drains in the application at one time
+    //  Strategy: disable markers not found in the centerBox
+
+    for(let drain_id in this.drain_dict.getData()) {
+      // turn off when outside the box
+      if (
+        centerBox.north < this.drain_dict.get(drain_id).getLat() ||
+        centerBox.south > this.drain_dict.get(drain_id).getLat() ||
+        centerBox.west > this.drain_dict.get(drain_id).getLon() ||
+        centerBox.east < this.drain_dict.get(drain_id).getLon()
+      ) {
+        this.drain_dict.get(drain_id).hideMarker();
+      } else {
+        console.log(this.mapHelper.map)
+        console.log(this.drain_dict.get(drain_id))
+        this.drain_dict.get(drain_id).showMarker(this.mapHelper.map);
+      }
+    }
+  }
+  */
+
 }
 export { MapHelper }

@@ -6,7 +6,9 @@
           Home
         </nuxt-link>
       </li>
-      <li v-if="!isAuthenticated">
+      <li v-if="!adopter_token_helper.isAuthenticated()">
+
+      <!--li v-if="!isAuthenticated()"-->
         <nuxt-link to="/login">
           SignIn
         </nuxt-link>
@@ -26,6 +28,8 @@
 </template>
 
 <script>
+import { TokenHelper } from './mixins/TokenHelper.js'
+
 export default {
 
   data () {
@@ -41,12 +45,21 @@ export default {
       }
       return ''
     },
+    adopter_token_helper () {
+      // Objective: Give user feedback about signin status
+      // Stratgey: use the adopter name stashed in adopter token
+      // Strategy: use the adopter's identity key to color code drain symbols
+
+      return new TokenHelper(this.$store.state.token)
+    }
+    /*
     isAuthenticated () {
       if (this.$store.state.adopter.expires_at < new Date().getTime()) {
-        this.$store.commit('adopter/detoken')
+        this.$store.commit('detoken')
       }
       return this.$store.state.adopter.authenticated
     },
+    */
   }
 }
 </script>
@@ -63,5 +76,6 @@ ul {
 
 li {
   margin: 0 10px;
+  font-variant: petite-caps;
 }
 </style>

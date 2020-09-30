@@ -33,6 +33,7 @@ services:
       - AAD_API_TOKEN=${AAD_API_TOKEN}
       - AAD_API_URL=${AAD_API_URL}
       - AAD_API_VERSION=${AAD_API_VERSION}
+      - LB_ENV=${LB_ENV}
 
   #############
   # POSTGRES
@@ -51,6 +52,7 @@ services:
       - POSTGRES_JWT_SECRET=${POSTGRES_JWT_SECRET}
       - LB_GUEST_PASSWORD=${LB_GUEST_PASSWORD}
       - LB_WODEN=${LB_WODEN}
+      - LB_ENV=${LB_ENV}
 
     volumes:
       # anything in initdb directory is created in the database

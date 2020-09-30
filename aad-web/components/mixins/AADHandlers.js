@@ -8,6 +8,14 @@ class AADHandlers {
     // component is the nuxt component
     this.component = component
   }
+  async aadAdoptee (aadURL, aadHeader, aadBody) {
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'post',
+      headers: aadHeader,
+      data: aadBody })
+    return response
+  }
   async aadAdoptees (aadURL, aadHeader, aadBody) {
     const response = await this.component.$axios({
       url: aadURL,

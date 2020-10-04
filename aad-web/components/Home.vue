@@ -10,10 +10,7 @@
 </template>
 
 <script>
-// import { AWSHandlers } from './mixins/AWSHandlers.js'
-// import DrainAdoption from '@/components/DrainAdoption.vue'
-import DrainAdoption from '@/components/DrainAdoptionLimit.vue'
-// import DrainAdoption from '@/components/Adoption.vue'
+import DrainAdoption from '@/components/Adoption.vue'
 
 export default {
   components: {

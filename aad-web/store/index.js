@@ -23,9 +23,18 @@ export const mutations = {
   token(state, tokenText) {
     state.token = tokenText
   },
+  /*
+  attempt_expiration(state) {
+    if (state.expires_at < (new Date().getTime())/1000 ) {
+      state.token = ''
+      state.expires_at = 0
+      console.log('expired')
+    }
+  },*/
   detoken(state) {
     state.token = ''
     state.expires_at = 0
+    console.log('detokened')
   }
 }
 /*
@@ -35,12 +44,13 @@ Actions are similar to mutations, the differences being that:
 */
 export const actions = {
 
-  attempt_expire(state) {
-
-    if (state.state.expires_at > 0
-        && (state.state.expires_at < (new Date().getTime()/1000))) {
-      state.commit('detoken');
-      console.log('expired token');
+  attempt_expiration(state) {
+    if(state.state.expires_at > 0) {
+      //console.log('attempt_expiration ' + state.state.expires_at)
+      if (state.state.expires_at < (new Date().getTime()/1000)) {
+        state.commit('detoken');
+        console.log('expired token');
+      }
     }
   }
 }

@@ -1,8 +1,7 @@
-
 <template>
   <div>
-    <div v-if="adopter_token_helper.isAuthenticated()">adopter_name:  {{adopter_token_helper.getName()}}</div>
-
+    <br/>
+    <hr/>
     <GmapMap
       ref="mapRef"
       :center="settings.options.center"
@@ -11,9 +10,8 @@
       style="height: 550px"
       @dragend="doDragEnd()"
     >
-
     </GmapMap>
-
+    <hr/>
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>
@@ -40,6 +38,7 @@
   mapdrag
     ref: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 */
+import Expiration from './mixins/ExpirationMixin.js'
 
 import { gmapApi } from '~/node_modules/vue2-google-maps/src/main'
 // mixins
@@ -57,7 +56,7 @@ import { DrainTypes } from './mixins/DrainTypes.js'
 import { Utils } from './mixins/Utils.js'
 
 export default {
-
+  mixins: [Expiration],
   data () {
     return {
       page: {
@@ -66,7 +65,7 @@ export default {
       // the signin state of the adopter
       // hold the expiration interval instance
       drain_dict: new DrainDict(),
-      interval_monitor_expiration: null,
+      //interval_monitor_expiration: null,
       location:null,
       gettingLocation: false,
       errorStr:null,
@@ -103,16 +102,27 @@ export default {
   watch: {
     adopter_token: function () {
       // Objective: Give the user feedback that their signin has expired
-      // Strategy: monitor the state of adoptee's token, if no token the red symbols are set to grey
+      // Strategy: monitor the state of adoptee's token,
+      // * if no token then token is either expired or never initiatied
+      // * if no token then the red symbols are set to grey
+
       if (this.adopter_token === '') {
         this.reset_symbol()
-        
       }
     }
   },
   computed: {
-    google: gmapApi,
-
+    google: gmapApi,/*
+    expired () {
+      return this.$store.state.expires_at < new Date().getTime()/1000
+    },
+    isAuthenticated () {
+      if( this.adopter_token && !this.expired) {
+        return true
+      }
+      return false
+    },
+    */
     aad_headers() {
       // Guest Restful header
       return {
@@ -176,18 +186,24 @@ export default {
     utils () {
       return new Utils()
     }
-  },
+  }, // end computed
   beforeDestroy () {
     // Objective: Give the user feedback when signin expires
     // Strategy: Use a polling function
     // task: avoid memory leak while polling signin expiration
+
     clearInterval(this.interval_monitor_expiration)
+    this.log('beforeDestroy')
+
   },
   created () {
     // Objective: Give the user feedback when signin expires
     // Strategy: Use a polling function
     // Task: start the polling function
+
     this.pollExpiration()
+    this.log('created')
+
   },
   mounted () {
       /*
@@ -230,11 +246,11 @@ export default {
             this.loadDrains()
           })
           .catch((response) => {
-            this.feedback('Unexpected issue getting map!')
+            this.log('Unexpected issue getting map!')
           })
       })
       .catch((response) => {
-        this.feedback('Unexpected issue locating you!')
+        this.log('Unexpected issue locating you!')
       })
     },
   methods: {
@@ -252,7 +268,7 @@ export default {
     },
     */
     reset_symbol () {
-      // Objective: Give the user feedback when signin expires
+      // Objective: Give the user log when signin expires
       // Strategy: set red symbols to grey
 
       for(let drain in this.drain_dict.getData()) {
@@ -263,15 +279,19 @@ export default {
         }
       }
     },
+    /*
     pollExpiration () {
       // Objective: Give the user feedback on map when signin expires
       // Strategy: use setInterval to continously check token expiration
+      // * if expired then
+      // *    sign the user out by setting expired_at = 0 and token = ''
   		this.interval_monitor_expiration = setInterval(() => {
   			this.$store.dispatch(
-          'attempt_expire'
+          'attempt_expiration'
         )
   		}, 3000)
 	  },
+    */
     /*
     isAuthenticated () {
       // Objective: Detrmine adopter's login state
@@ -289,7 +309,9 @@ export default {
       Tasks: make copy, save, and then update symbols on success
       */
       const mapHelper = this.mapHelper
-      if (! this.adopter_token_helper.isAuthenticated()) {
+      //if (! this.adopter_token_helper.isAuthenticated()) {
+      if (! this.isAuthenticated) {
+
         return;
       }
       const _dict = this.drain_dict
@@ -297,7 +319,7 @@ export default {
       const _id = drainObj.getId()
       const _headers = this.aad_headers_authorized
       const _name = drainObj.getName()
-      // store a adoptee not yours
+      // store an adoptee not yours
       _data['type'] = this.drain_types.adoptee
       new AADHandlers(this).aadAdoptee(process.env.AAD_API_URL+'/adoptee', _headers, _data)
         .then((response) => {
@@ -310,7 +332,10 @@ export default {
             .getMarker().setIcon(image)
         })
         .catch((response) => {
-          this.feedback('Unexpected issue with adoption!')
+          //this.feedback('Unexpected issue with adoption!')
+          /* eslint-disable no-console */
+          console.log('Unexpected issue with adoption!')
+          /* eslint-enable no-console */
         }) // end of AADHandler
     },
 
@@ -320,9 +345,9 @@ export default {
       /* eslint-enable no-console */
     },
 
-    feedback (msg) {
-      this.page.feedback = msg
-    },
+    //feedback (msg) {
+    //  this.page.feedback = msg
+    //},
 
     doDragEnd () {
       /*
@@ -546,22 +571,26 @@ export default {
 
                 } // end for
                 if (counter === 0) {
-                  this.feedback('Nothing to show here!')
+                  /* eslint-disable no-console */
+                  console.log('Nothing to show here!')
+                  /* eslint-enable no-console */
                 } else {
-                  this.feedback('Showing %d more Drains!'.replace('%d', counter))
+                  /* eslint-disable no-console */
+                  console.log('Showing %d more Drains!'.replace('%d', counter))
+                  /* eslint-enable no-console */
                 }
                 //console.log('DWHandlers is '  + counter)
-
               })
               .catch((response) => {
-                this.feedback('Unexpected issue loading drains!')
+                /* eslint-disable no-console */
+                console.log('Unexpected issue loading drains!')
+                /* eslint-enable no-console */
               }) // end of DWHandlers
-
-
-
           })
           .catch((response) => {
-            this.feedback('Unexpected issue with adoptees!')
+            /* eslint-disable no-console */
+            console.log('Unexpected issue with adoptees!')
+            /* eslint-enable no-console */
           }) // end of AADHandler
     } // end loadDrains
   }

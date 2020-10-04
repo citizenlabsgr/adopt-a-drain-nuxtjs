@@ -8,10 +8,11 @@
 </template>
 
 <script>
+
 import Header from '@/components/Header'
 import Nav from '@/components/Nav'
-
 import Footer from '@/components/Footer'
+
 export default {
   components: {
     Header,
@@ -126,5 +127,33 @@ html {
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+}
+.outer-div {
+  width: 100%;
+  text-align: center;
+  /*background-color: #0666a3*/
+}
+
+.inner-div {
+  display: inline-block;
+  margin: 0 auto;
+  padding: 3px;
+  /*background-color: #8ebf42*/
+}
+.prompt {
+  text-align:left;
+  font-variant: petite-caps;
+}
+.input_ok {
+  color: #339933;
+  text-align: left;
+  font-variant: petite-caps;
+  font-size: 12px;
+}
+.input_error {
+  color: #990033;
+  text-align: left;
+  font-variant: petite-caps;
+  font-size: 12px;
 }
 </style>

@@ -7,20 +7,23 @@
         </nuxt-link>
       </li>
       <li v-if="!adopter_token_helper.isAuthenticated()">
-
-      <!--li v-if="!isAuthenticated()"-->
-        <nuxt-link to="/login">
+        <nuxt-link to="/authenticate">
           SignIn
         </nuxt-link>
       </li>
       <li v-else>
-        <nuxt-link to="/login">
+        <nuxt-link to="/authenticate">
           SignOut
         </nuxt-link>
       </li>
-      <li>
-        <nuxt-link to="/signup">
+      <li v-if="!adopter_token_helper.isAuthenticated()">
+        <nuxt-link to="/authorize">
           SignUp
+        </nuxt-link>
+      </li>
+      <li v-else>
+        <nuxt-link to="/authorize">
+          {{adopter_token_helper.getDisplayName()}}
         </nuxt-link>
       </li>
     </ul>

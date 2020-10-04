@@ -14,25 +14,7 @@ describe('Authenticate render error messages', () => {
      }
    }
  })
- it('Authenticate is good User Name Ok', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-   expect(wrapper.find("#error-name").text()).toEqual("Ok")
- })
- it('Authenticate is good Password Ok', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-   expect(wrapper.find("#error-password").text()).toBe("Ok")
-
- })
- it('is Disabled ', async () => {
-   wrapper.setData({ aadform: {name: '', password: ''} })
-   await wrapper.vm.$nextTick()
-   expect(wrapper.find("#signin").html()).toContain('disabled="disabled"')
- })
- it('is Enabled ', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-   await wrapper.vm.$nextTick()
-   expect(wrapper.find("#signin").html()).toEqual(expect.not.stringContaining("disabled"));
- })
+ 
  it('is Not Authenticated ', async () => {
    wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
    await wrapper.vm.$nextTick()

@@ -45,7 +45,7 @@ Also known as Create Adopter and Authorize
       |           |                                  |
       |        (submit-data)                         |
       .           .                                  .
-      .               .                              .
+      .               .                              .  }---- REST Call
       .                   .                          .
       ^                    |                         ^
       |                 [Create]--->(authorized)---->+
@@ -82,7 +82,7 @@ Also known as Create Adopter and Authorize
       |           |                                  |
       |        (submit-data)                         |
       .           .                                  .
-      .               .                              .
+      .               .                              .  }---- REST Call
       .                   .                          .
       ^                    |                         ^
       |                 [Update]--->(reauthorized)-->+
@@ -115,10 +115,10 @@ Also known as login or authentication
       |           |                                  |  
       |        [Conformant Submit]                   |
       |           |                                  |  
-      |        (submit authentication data)                         |
-      .           .                                  .
-      .               .                              .
-      .                   .                          .
+      |        (submit authentication data)          |
+      .           .                                  .    
+      .               .                              .   }---- REST Call
+      .                   .                          .   
       ^                   |                          ^
       |                [Sign In]-->(authenticated)-->+
       |                   |  
@@ -145,7 +145,7 @@ Also known as login or authentication
                     |   (submit adoption-data)       |
                     |           |                    |
                     .           .                    .
-                    .           .                    .
+                    .           .                    .  }---- REST Call
                     .           .                    .
                     |           |                    |
                     |     [Adoptee]-->(my-adopted)-->+
@@ -168,7 +168,7 @@ Also known as abandon
                     |           |                    |
                     |       (submit orphan-data)     |
                     .           .                    .
-                    .           .                    .
+                    .           .                    .  }---- REST Call
                     .           .                    .
                     |           |                    |
                     |     [Adoptee]-->(orphan)------>+
@@ -184,14 +184,14 @@ Also known as reauthorize
 
 ```
 WIP
-+<----[Get            Name]
++<----[      Get Name     ]
 ^        |     ^        |
 |        |     |<----[Username Feedback]
 |        |   
 |     [Conformant Submit]
 |        |
 .        .
-.        .
+.        .                                              }---- REST Call
 .        .
 |     [Send Reset Password Email]
 

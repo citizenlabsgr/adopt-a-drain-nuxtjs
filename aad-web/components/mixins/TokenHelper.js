@@ -21,7 +21,10 @@ class TokenHelper {
   getCurrentTime() {
     return new Date().getTime()/1000;
   }
-
+  getDisplayName () {
+    if (!this.token) {return undefined;}
+    return this.payload.jti;
+  }
   getExpiration () {
     if (!this.token) {return undefined;}
     return this.payload.exp;

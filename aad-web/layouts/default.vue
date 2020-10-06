@@ -144,6 +144,11 @@ html {
   text-align:left;
   font-variant: petite-caps;
 }
+.label {
+  text-align:left;
+  font-variant: petite-caps;
+
+}
 .input_ok {
   color: #339933;
   text-align: left;

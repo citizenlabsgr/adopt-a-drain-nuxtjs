@@ -1,5 +1,7 @@
 <template>
+
   <div>
+    <div>{{}}</div>
     <br/>
     <hr/>
     <GmapMap
@@ -279,29 +281,7 @@ export default {
         }
       }
     },
-    /*
-    pollExpiration () {
-      // Objective: Give the user feedback on map when signin expires
-      // Strategy: use setInterval to continously check token expiration
-      // * if expired then
-      // *    sign the user out by setting expired_at = 0 and token = ''
-  		this.interval_monitor_expiration = setInterval(() => {
-  			this.$store.dispatch(
-          'attempt_expiration'
-        )
-  		}, 3000)
-	  },
-    */
-    /*
-    isAuthenticated () {
-      // Objective: Detrmine adopter's login state
-      // Strategy: Use a fixed time in the future to mark when token expires
-      if ( this.$store.state.adopter.expires_at < new Date().getTime() ) {
-        this.$store.commit('detoken')
-      }
-      return this.$store.state.adopter.authenticated
-    },
-    */
+
     adopt_a_drain (drainObj) {
       /*
       Objective: Save adoption
@@ -309,9 +289,7 @@ export default {
       Tasks: make copy, save, and then update symbols on success
       */
       const mapHelper = this.mapHelper
-      //if (! this.adopter_token_helper.isAuthenticated()) {
       if (! this.isAuthenticated) {
-
         return;
       }
       const _dict = this.drain_dict
@@ -319,8 +297,12 @@ export default {
       const _id = drainObj.getId()
       const _headers = this.aad_headers_authorized
       const _name = drainObj.getName()
+
       // store an adoptee not yours
       _data['type'] = this.drain_types.adoptee
+      //////////
+      // handle both add and update
+      ///////
       new AADHandlers(this).aadAdoptee(process.env.AAD_API_URL+'/adoptee', _headers, _data)
         .then((response) => {
           // set local drain name
@@ -375,9 +357,13 @@ export default {
       // marker is
       const mapHelper = this.mapHelper
       const info_window = this.info_window
+      const adopt_key = this.adopter_token_helper.getKey()
       // preparing adoption infowindow
+
       let form
-      form = mapHelper.infoHelper().form(drainObj, )
+      form = mapHelper.infoHelper().form(drainObj,
+                                         this.isAuthenticated,
+                                         adopt_key )
 
       /*
       let form
@@ -483,15 +469,20 @@ export default {
             const mapHelper = this.mapHelper
             const map = mapHelper.map
             let counter = 0
+
             /////////////////
             // load adoptees
             ///////
             for (dr in response.data) {
               let drain = new Drain(response.data[dr]['adoptee'])
               let _payload = new TokenHelper(this.$store.state.token)
-              if (_payload.value('key') === drain.getKey()) {
-                // this one has been adopted by you
-                drain.setType(this.drain_types.yours)
+
+              if (_payload && drain) {
+                if (_payload.getKey() === drain.getKey()) {
+
+                  // this one has been adopted by you
+                  drain.setType(this.drain_types.yours)
+                }
               }
               this.drain_dict.add(drain) // adds if not in already
               AADHandlers_cnt++
@@ -514,13 +505,13 @@ export default {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
             }
-            //console.log('AADHandlers_cnt is ' + AADHandlers_cnt)
+
+
             //////////////
             // call the data.world service once adoptees are loaded
             /////////
             new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
               .then((response) => {
-
                 const map = mapHelper.map
                 let counter = 0
                 let dr = {}

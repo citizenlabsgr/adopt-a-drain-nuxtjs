@@ -11,8 +11,10 @@
 class Drain {
   //
   constructor (json_object) {
-    //console.log('Drain 1')
+    //console.log('Drain 1');
     this.data = json_object; //JSON.parse(JSON.stringify(json_object)); // make copy
+    //this.data['id'] = json_object['drain_id'];
+    //console.log(this.data);
     //console.log('Drain 2')
     this.marker = null;
     this.info_window = null;
@@ -30,6 +32,18 @@ class Drain {
 
   getLat() {return this.data.lat;}
   getLon() {return this.data.lon;}
+
+  merge(form) {
+    // merge form into this drain
+    // updates values
+    // adds missing values
+
+    let keys = Object.keys(form)
+    for (let key in keys) {
+      this.data[keys[key]]=form[keys[key]];
+    }
+    return this;
+  }
 
   getName() {return this.data.name;}
   setName(name) {this.data.name = name; return this;}

@@ -50,9 +50,6 @@ class TokenHelper {
     return this.token;
   }
 
-
-
-
   getKey () {
     if (!this.token) {return undefined;}
     return this.payload.key;

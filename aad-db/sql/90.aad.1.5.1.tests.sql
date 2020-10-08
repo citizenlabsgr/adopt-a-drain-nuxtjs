@@ -158,7 +158,7 @@ SELECT throws_ok(
 );
 -- UPDATE
 SELECT is (
-  aad_version_1_5_1.adoptee( 'GR_40089457', '{
+  aad_version_1_5_1.adoptee( '{
     "id":"GR_40089457",
     "name":"some opt name",
     "drain_id":"GR_40089457",

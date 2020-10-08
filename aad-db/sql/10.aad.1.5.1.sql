@@ -405,10 +405,12 @@ AS $$
   Declare _adopter_key TEXT;
 
   BEGIN
+    /***** get request values */
+
     _adopter_key := COALESCE(current_setting('request.jwt.claim.key','t'),'8a39dc33-0c6c-4b4e-bdb8-3829af311dd8');
     _jwt_role := COALESCE(current_setting('request.jwt.claim.role','t'),'editor_aad');
 
-    -- get request values
+    /***** check role */
 
     if _jwt_role != 'editor_aad' then
       _validation := '{"status":"401", "msg":"Unauthorized Token", "type":"adoptee"}'::JSONB;
@@ -418,51 +420,74 @@ AS $$
         detail = 'adoptee',
         hint = format('Not sure what to tell you. Try logging in again. _adopter_key is %s',_adopter_key);
     end if;
-    --if not(_form ? 'id') then
-      -- type stamp form and user key
-      _form := form::JSONB || format('{"type":"adoptee", "adopter_key":"%s"}', _adopter_key)::JSONB;
-      -- confirm all required attributes are in form
-      if not(_form ? 'lat' and _form ? 'lon' and _form ? 'drain_id' and _form ? 'adopter_key' ) then
-         _validation := '{"status":"400","msg":"Bad Request, missing one or more form attributes", "type":"adoptee"}'::JSONB;
-         PERFORM aad_base.event_logger(_validation);
-         RAISE sqlstate 'PT400' using
-           message = 'Bad Request',
-           detail = 'adoptee missing attribute(s).',
-           hint = 'Your form is incomplete.';
-      end if;
 
-      _form := _form::JSONB || format('{"id":"%s"}', _form ->> 'drain_id' )::JSONB;
+	/****** type stamp form and user key */
 
-      BEGIN
+	_form := form::JSONB || format('{"type":"adoptee", "adopter_key":"%s"}', _adopter_key)::JSONB;
 
-              INSERT INTO aad_base.adopt_a_drain
-                  (reg_sk, reg_data, reg_form)
-              VALUES
-              (_form ->> 'drain_id', 'adoptee', _form );
+	/****** confirm all required attributes are in form */
 
-      EXCEPTION
-          WHEN unique_violation THEN
-              _validation := '{"status":"409", "msg":"Conflict duplicate adoptee.", "type":"adoptee"}'::JSONB;
-              PERFORM aad_base.event_logger(_validation);
-              RAISE sqlstate 'PT409' using
-                message = 'Conflict',
-                detail = 'adoptee duplicate',
-                hint = 'Cannot do this twice!';
-          WHEN check_violation then
-              _validation :=  '{"status":"400", "msg":"Bad adoptee Request, validation error", "type":"adoptee"}'::JSONB;
-              PERFORM aad_base.event_logger(_validation);
-              RAISE sqlstate 'PT400' using
-                message = 'Bad Request',
-                detail = 'adoptee',
-                hint = 'Is your data formatted correctly?';
-          WHEN others then
-              _validation :=  format('{"status":"500", "msg":"Unknown adoptee insertion error", "type":"adoptee", "SQLSTATE":"%s"}',SQLSTATE)::JSONB;
-              PERFORM aad_base.event_logger(_validation);
+	if not(_form ? 'lat' and _form ? 'lon' and _form ? 'drain_id' and _form ? 'adopter_key' ) then
+		 _validation := '{"status":"400","msg":"Bad Request, missing one or more form attributes", "type":"adoptee"}'::JSONB;
+		 PERFORM aad_base.event_logger(_validation);
+		 RAISE sqlstate 'PT400' using
+		   message = 'Bad Request',
+		   detail = 'adoptee missing attribute(s).',
+		   hint = 'Your form is incomplete.';
+	end if;
+
+	BEGIN
+	   if not(_form ? 'id') then
+	       /*****  add ID  */
+	       _form := _form::JSONB || format('{"id":"%s"}', _form ->> 'drain_id' )::JSONB;
+
+	      INSERT INTO aad_base.adopt_a_drain
+	          (reg_sk, reg_data, reg_form)
+	      VALUES
+	      (_form ->> 'drain_id', 'adoptee', _form );
+	   else
+
+	     /**** remove unchangeable attributes before merging */
+		   _form := _form - 'id';
+	  	 _form := _form - 'adopter_key';
+
+		 UPDATE aad_base.adopt_a_drain
+			 set reg_form=(reg_form || _form)
+			 where reg_sk=format('adoptee#%s#%s',_adopter_key,_form ->> 'drain_id')
+			       and reg_data=_form ->> 'type';
+
+ 		 IF NOT FOUND THEN
               RAISE sqlstate 'PT500' using
                 message = 'Unidentified',
-                detail = 'adoptee',
+                detail = format('adoptee %s - %s',_adopter_key, _form ->> 'drain_id'),
                 hint = 'Did not see that comming!';
-      END;
+		 END IF;
+
+	   end if;
+
+	EXCEPTION
+	  WHEN unique_violation THEN
+	      _validation := '{"status":"409", "msg":"Conflict duplicate adoptee.", "type":"adoptee"}'::JSONB;
+	      PERFORM aad_base.event_logger(_validation);
+	      RAISE sqlstate 'PT409' using
+	        message = 'Conflict',
+	        detail = 'adoptee duplicate',
+	        hint = 'Cannot do this twice!';
+	  WHEN check_violation then
+	      _validation :=  '{"status":"400", "msg":"Bad adoptee Request, validation error", "type":"adoptee"}'::JSONB;
+	      PERFORM aad_base.event_logger(_validation);
+	      RAISE sqlstate 'PT400' using
+	        message = 'Bad Request',
+	        detail = 'adoptee',
+	        hint = 'Is your data formatted correctly?';
+	  WHEN others then
+	      _validation :=  format('{"status":"500", "msg":"Unknown adoptee upsert error", "type":"adoptee", "SQLSTATE":"%s"}',SQLSTATE)::JSONB;
+	      PERFORM aad_base.event_logger(_validation);
+	      RAISE sqlstate 'PT500' using
+	        message = 'Unidentified',
+	        detail = 'adoptee',
+	        hint = 'Did not see that comming!';
+	END;
 
     return (SELECT row_to_json(r) as result
       from (

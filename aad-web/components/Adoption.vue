@@ -1,7 +1,6 @@
 <template>
 
   <div>
-    <div>{{}}</div>
     <br/>
     <hr/>
     <GmapMap

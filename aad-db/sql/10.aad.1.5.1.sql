@@ -1,9 +1,8 @@
-/*
 \c aad_db
 --------------
 -- Environment
 --------------
--- TODO ?.?.?: adoptee delete 1.5.0
+
 -- TODO ?.?.?: When adopter is deactivated then deactivate all adoptions by that adopter
 -- TODO ?.?.?: test for active adopter record during signin. When active is false then adopter is the same as deleted.
 -- TODO 1.4.2: All adoptees are showing up with red symbol. red is for currently logged in user
@@ -49,7 +48,7 @@ select :lb_woden as lb_woden, pg_typeof(:lb_woden::JSONB) as type;
 ---------------
 -- SCHEMA: Create Schema
 ---------------
-CREATE SCHEMA if not exists aad_version_1_5_0;
+CREATE SCHEMA if not exists aad_version_1_5_1;
 
 -- CREATE EXTENSION IF NOT EXISTS pgcrypto;;
 -- CREATE EXTENSION IF NOT EXISTS pgtap;;
@@ -88,31 +87,33 @@ grant usage on schema aad_base to guest_aad;
 grant usage on schema aad_base to editor_aad;
 grant usage on schema aad_base to event_logger_role;
 
-grant usage on schema aad_version_1_5_0 to guest_aad;
-grant usage on schema aad_version_1_5_0 to editor_aad;
-grant usage on schema aad_version_1_5_0 to event_logger_role;
+grant usage on schema aad_version_1_5_1 to guest_aad;
+grant usage on schema aad_version_1_5_1 to editor_aad;
+grant usage on schema aad_version_1_5_1 to event_logger_role;
 
 ---------------
 -- SCHEMA: Set Schema Path
 ---------------
 
-SET search_path TO aad_version_1_5_0, aad_base, public;
+SET search_path TO aad_version_1_5_1, aad_base, public;
 
 ----------------
 -- TYPE: Create Types
 ----------------
-CREATE TYPE aad_version_1_5_0.woden_token AS (
+CREATE TYPE aad_version_1_5_1.woden_token AS (
   woden text
 );
-CREATE TYPE aad_version_1_5_0.jwt_token AS (
+CREATE TYPE aad_version_1_5_1.jwt_token AS (
   token text
 );
-
+--=============================================================================
+--=============================================================================
+--=============================================================================
 ------------
--- FUNCTION: Create aad_version_1_5_0.signin(form JSON)
+-- FUNCTION: Create aad_version_1_5_1.signin(form JSON)
 ------------
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_0.signin(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_1.signin(form JSON) RETURNS JSONB
 AS $$
   -- make token to execute app(JSON)
   declare rc JSONB;
@@ -223,13 +224,13 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_0.signin(JSON) to guest_aad;
+grant EXECUTE on FUNCTION aad_version_1_5_1.signin(JSON) to guest_aad;
 
 -----------------
 -- FUNCTION: Create adopter(form JSON)
 -----------------
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_0.adopter(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_1.adopter(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
   Declare _model_adopter JSONB;
@@ -348,27 +349,52 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_0.adopter(JSON) to guest_aad; -- upsert
-grant EXECUTE on FUNCTION aad_version_1_5_0.adopter(JSON) to editor_aad; -- upsert
+grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(JSON) to guest_aad; -- upsert
+grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(JSON) to editor_aad; -- upsert
 
 -----------------
 -- FUNCTION: Create adopter(id TEXT)
 -----------------
 -- convert ids to lowercase
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_0.adopter(id TEXT) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_1.adopter(id TEXT) RETURNS JSONB
 AS $$
   Select reg_form-'password' as adopter from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adopter';
 $$ LANGUAGE sql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_0.adopter(TEXT) to editor_aad; -- select
+grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(TEXT) to editor_aad; -- select
+
+
+  --=============================================================================
+  --=============================================================================
+  --=============================================================================
+
+
+
+
+
+  --------------------
+  -- FUNCTION: SELECT adoptee(id TEXT)
+  --------------------
+  CREATE OR REPLACE FUNCTION aad_version_1_5_1.adoptee(id TEXT) RETURNS JSONB
+  AS $$
+    Select reg_form from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adoptee';
+  $$ LANGUAGE sql;
+
+  -- GRANT: Grant Execute
+  grant EXECUTE on FUNCTION aad_version_1_5_1.adoptee(TEXT) to editor_aad;
+
+
+
+
+
 
 -----------------
 -- FUNCTION: Create adoptee(form JSON)
 -----------------
 -- Insert {"type":"adoptee", "drain_id":"gr12345667", "lat":42.01, "lon":-84.01}
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_0.adoptee(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_1.adoptee(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
   -- Declare _model_user JSONB;
@@ -379,27 +405,11 @@ AS $$
   Declare _adopter_key TEXT;
 
   BEGIN
+    _adopter_key := COALESCE(current_setting('request.jwt.claim.key','t'),'8a39dc33-0c6c-4b4e-bdb8-3829af311dd8');
+    _jwt_role := COALESCE(current_setting('request.jwt.claim.role','t'),'editor_aad');
 
     -- get request values
 
-    PERFORM aad_base.event_logger(
-      format('{"type":"debug","key":"%s","role":"%s"}',
-        current_setting('request.jwt.claim.key','t'),
-        current_setting('request.jwt.claim.role','t')
-      )::JSONB
-    );
-    if current_setting('request.jwt','t') = NULL
-      and current_setting('app.lb_env','t') != 'production' then
-      -- this is pgtap testing senario
-      _jwt_role := 'editor_aad';
-      _adopter_key := 'testkey1234567890';
-    else
-      _jwt_role := current_setting('request.jwt.claim.role','t');
-      _adopter_key := current_setting('request.jwt.claim.key','t');
-    end if;
-
-
-    --
     if _jwt_role != 'editor_aad' then
       _validation := '{"status":"401", "msg":"Unauthorized Token", "type":"adoptee"}'::JSONB;
       PERFORM aad_base.event_logger(_validation);
@@ -408,54 +418,51 @@ AS $$
         detail = 'adoptee',
         hint = format('Not sure what to tell you. Try logging in again. _adopter_key is %s',_adopter_key);
     end if;
-    -- type stamp form and user key
-    _form := form::JSONB || format('{"type":"adoptee", "adopter_key":"%s"}', _adopter_key)::JSONB;
+    --if not(_form ? 'id') then
+      -- type stamp form and user key
+      _form := form::JSONB || format('{"type":"adoptee", "adopter_key":"%s"}', _adopter_key)::JSONB;
+      -- confirm all required attributes are in form
+      if not(_form ? 'lat' and _form ? 'lon' and _form ? 'drain_id' and _form ? 'adopter_key' ) then
+         _validation := '{"status":"400","msg":"Bad Request, missing one or more form attributes", "type":"adoptee"}'::JSONB;
+         PERFORM aad_base.event_logger(_validation);
+         RAISE sqlstate 'PT400' using
+           message = 'Bad Request',
+           detail = 'adoptee missing attribute(s).',
+           hint = 'Your form is incomplete.';
+      end if;
 
+      _form := _form::JSONB || format('{"id":"%s"}', _form ->> 'drain_id' )::JSONB;
 
+      BEGIN
 
-    -- _validation := adoptee_validate(_form);
-    -- if _validation ->> 'status' != '200' then
-    --  PERFORM aad_base.event_logger(_validation);
-    --  return _validation;
-    -- end if;
-    -- confirm all required attributes are in form
-    if not(_form ? 'lat' and _form ? 'lon' and _form ? 'drain_id' and _form ? 'adopter_key' ) then
-       _validation := '{"status":"400","msg":"Bad Request, missing one or more form attributes", "type":"adoptee"}'::JSONB;
-       PERFORM aad_base.event_logger(_validation);
-       RAISE sqlstate 'PT400' using
-         message = 'Bad Request',
-         detail = 'adoptee missing attribute(s).',
-         hint = 'Your form is incomplete.';
-    end if;
+              INSERT INTO aad_base.adopt_a_drain
+                  (reg_sk, reg_data, reg_form)
+              VALUES
+              (_form ->> 'drain_id', 'adoptee', _form );
 
-    BEGIN
-            INSERT INTO aad_base.adopt_a_drain
-                (reg_sk, reg_data, reg_form)
-            VALUES
-            (_form ->> 'drain_id', 'adoptee', _form );
-    EXCEPTION
-        WHEN unique_violation THEN
-            _validation := '{"status":"409", "msg":"Conflict duplicate adoptee.", "type":"adoptee"}'::JSONB;
-            PERFORM aad_base.event_logger(_validation);
-            RAISE sqlstate 'PT409' using
-              message = 'Conflict',
-              detail = 'adoptee duplicate',
-              hint = 'Cannot do this twice!';
-        WHEN check_violation then
-            _validation :=  '{"status":"400", "msg":"Bad adoptee Request, validation error", "type":"adoptee"}'::JSONB;
-            PERFORM aad_base.event_logger(_validation);
-            RAISE sqlstate 'PT400' using
-              message = 'Bad Request',
-              detail = 'adoptee',
-              hint = 'Is your data formatted correctly?';
-        WHEN others then
-            _validation :=  format('{"status":"500", "msg":"Unknown adoptee insertion error", "type":"adoptee", "SQLSTATE":"%s"}',SQLSTATE)::JSONB;
-            PERFORM aad_base.event_logger(_validation);
-            RAISE sqlstate 'PT500' using
-              message = 'Unidentified',
-              detail = 'adoptee',
-              hint = 'Did not see that comming!';
-    END;
+      EXCEPTION
+          WHEN unique_violation THEN
+              _validation := '{"status":"409", "msg":"Conflict duplicate adoptee.", "type":"adoptee"}'::JSONB;
+              PERFORM aad_base.event_logger(_validation);
+              RAISE sqlstate 'PT409' using
+                message = 'Conflict',
+                detail = 'adoptee duplicate',
+                hint = 'Cannot do this twice!';
+          WHEN check_violation then
+              _validation :=  '{"status":"400", "msg":"Bad adoptee Request, validation error", "type":"adoptee"}'::JSONB;
+              PERFORM aad_base.event_logger(_validation);
+              RAISE sqlstate 'PT400' using
+                message = 'Bad Request',
+                detail = 'adoptee',
+                hint = 'Is your data formatted correctly?';
+          WHEN others then
+              _validation :=  format('{"status":"500", "msg":"Unknown adoptee insertion error", "type":"adoptee", "SQLSTATE":"%s"}',SQLSTATE)::JSONB;
+              PERFORM aad_base.event_logger(_validation);
+              RAISE sqlstate 'PT500' using
+                message = 'Unidentified',
+                detail = 'adoptee',
+                hint = 'Did not see that comming!';
+      END;
 
     return (SELECT row_to_json(r) as result
       from (
@@ -466,24 +473,21 @@ AS $$
     );
   END;
 $$ LANGUAGE plpgsql;
+
 -- GRANT: Grant Execute adoptee
-grant EXECUTE on FUNCTION aad_version_1_5_0.adoptee(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_1.adoptee(JSON) to editor_aad; -- C
 
---------------------
--- FUNCTION: Create adoptee(id TEXT)
---------------------
-CREATE OR REPLACE FUNCTION aad_version_1_5_0.adoptee(id TEXT) RETURNS JSONB
-AS $$
-  Select reg_form from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adoptee';
-$$ LANGUAGE sql;
 
--- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_0.adoptee(TEXT) to editor_aad; -- C
+  --=============================================================================
+  --=============================================================================
+  --=============================================================================
+
+
 --------------------
 -- FUNCTION: Create adoptees(JSON)
 --------------------
 -- find in boundary
-CREATE OR REPLACE FUNCTION aad_version_1_5_0.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
+CREATE OR REPLACE FUNCTION aad_version_1_5_1.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
 AS $$
 Declare _validation JSONB;
 Declare _bounds JSONB;
@@ -517,6 +521,5 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_0.adoptees(JSON) to editor_aad; -- C
-grant EXECUTE on FUNCTION aad_version_1_5_0.adoptees(JSON) to guest_aad; -- C
-*/
+grant EXECUTE on FUNCTION aad_version_1_5_1.adoptees(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_1.adoptees(JSON) to guest_aad; -- C

@@ -12,7 +12,7 @@ Keys and Tokens are never saved to the repo.
     1. get a token from the account page
 1. **[AAD API Token](https://jwt.io)** (developers can use the token provided)
     1. header is {"alg": "HS256","typ": "JWT"}
-    1. payload is {"iss": "Citizen-Labs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
+    1. payload is {"iss": "CitizenLabs","sub": "Origin","name": "Adopt-a-Drain","role": "guest_aad"}
     1. verify signature password is PASSWORDmustBEATLEAST32CHARSLONGLONG
         1. password is configured in the .env as POSTGRES_JWT_SECRET
 

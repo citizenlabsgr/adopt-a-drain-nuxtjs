@@ -10,7 +10,7 @@ exp
 */
 class TokenHelper {
   constructor (token) {
-    //console.log('Tokenhelper constr');
+    //console.log('TokenHelper constructor: (' + token + ')');
     this.token = token
     this.payload = {};
     if (token && token.split('.').length === 3) {

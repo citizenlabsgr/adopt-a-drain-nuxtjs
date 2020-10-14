@@ -2,21 +2,29 @@ import { DrainTypes } from './DrainTypes.js'
 import { Utils } from './Utils.js'
 
 class InfoHelper {
-  constructor (component) {
-    // component is the nuxt component
-    this.component = component;
-    this.types = new DrainTypes();
+  //constructor (component) {
+  constructor (tokenHelper) {
 
+    // component is the nuxt component
+    //this.component = component;
+    this.types = new DrainTypes();
     this.ignore   = 'adopter_key,lon,lat,type, drain_id';
     this.editable = 'name';
+
+    this.is_authenticated = tokenHelper.isAuthenticated();
+    //console.log('infohelper 2 ' + this.is_authenticated);
+    this.adopter_key = tokenHelper.getKey();
+    //console.log('infohelper out');
 
   }
 
   log( msg ) {
-     this.component.log(msg);
+    /* eslint-disable no-console */
+    console.log('Unexpected issue with adoption!')
+    /* eslint-enable no-console */
   }
 
-  form(drainObj, is_authenticated, adopter_key) {
+  form(drainObj) {
     // type/auth  | orphan    | adoptee &&   | adoptee &&
     //                        | adopter_id = | adopter_id !=
     //                        |--------------|---------------
@@ -24,19 +32,25 @@ class InfoHelper {
     // auth yes   | form_add  | form_edit    | form_info
     /*
     if (drainObj.getType() === 'adoptee' ) {
-      console.log('is_authenticated: ' + is_authenticated);
+      console.log('isAuthenticated: ' + isAuthenticated);
       console.log('adopter_key: ' + adopter_key);
       console.log('drainObj.getKey(): ' + drainObj.getKey())
       console.log('type: ' + drainObj.getType())
     }
     */
     let form = '';
+    //console.log(drainObj)
+    //console.log('type: ' + drainObj.getType());
     switch(drainObj.getType()){
+      case this.types.yours:
       case this.types.adoptee:
         //console.log('switch adoptee')
-
         // is yours drainObj.
-        if (is_authenticated && adopter_key === drainObj.getKey()) {
+        //console.log('this.is_authenticated: ' + this.is_authenticated);
+
+        //console.log('this.adopter_key: ' + this.adopter_key);
+        //console.log('drainObj.getKey(): ' + drainObj.getKey());
+        if (this.is_authenticated && this.adopter_key === drainObj.getKey()) {
           //console.log('yours')
           form = this._form_edit(drainObj);
         }
@@ -44,19 +58,18 @@ class InfoHelper {
           //console.log('not yours')
           form = this._form_info(drainObj);
         }
-
         break;
       case this.types.orphan:
-        if (is_authenticated) {
+        if (this.is_authenticated) {
           form = this._form_add(drainObj);
         } else {
           form = this._form_info(drainObj);
         }
         break;
-      case this.types.yours:
-          //console.log('yours')
-          form = this._form_edit(drainObj);
-      break
+      //case this.types.yours:
+      //    //console.log('yours')
+      //    form = this._form_edit(drainObj);
+      //break
       default:
         form = this._form_info(drainObj);
     }
@@ -66,7 +79,8 @@ class InfoHelper {
 
   _form_add(drainObj) {
     let form = '<info>';
-    if (this.component.adopter_token_helper.isAuthenticated()) {
+    if (this.is_authenticated ){
+
       form += 'Name Me:  <input type="text" id="nameinput" size="31" maxlength="31" value=""/>';
       form += '<button id="adoptButton" data-id="' + drainObj.getId() + '">Adopt</button>';
     } else {
@@ -82,7 +96,7 @@ class InfoHelper {
 
     form += '<div>'
     form += '<h1>'
-    form += 'Adopted by You';
+    form += 'Adopted by You x';
     form += '</h1>'
     form += '</div>';
     form += '<hr/>';
@@ -113,14 +127,30 @@ class InfoHelper {
     form += '</info>';
     return form;
   }
-
+  _getLabel(type) {
+    let rc = 'Untyped';
+    switch(type) {
+      case this.types.orphan:
+        rc = 'Orphan';
+        break;
+      case this.types.adoptee:
+        rc = 'Adoptee';
+        break;
+      case this.types.yours:
+        rc = 'Adopted by You';
+        break;
+    }
+    return rc;
+  }
   _form_info(drainObj) {
     // this is default info window
     let form = '<info>';
 
     form += '<div>';
     form += '<h1>';
-    form += drainObj.getData()['type'].charAt(0).toUpperCase() + drainObj.getData()['type'].slice(1);
+
+    // form += drainObj.getData()['type'].charAt(0).toUpperCase() + drainObj.getData()['type'].slice(1);
+    form += this._getLabel(drainObj.getType());
     form += '</h1>';
     form += '</div>';
     form += '<hr/>';
@@ -147,184 +177,16 @@ class InfoHelper {
     return form;
   }
 
-  setup_buttons() {
-    let button
-    let drainId
-    let inputValue
-
+  getButtonName() {
     if (document.getElementById('orphanButton')) {
-      button = document.getElementById('orphanButton');
-      button.focus();
-      drainId = button.getAttribute('data-id');
-      button.onclick = function () {
-          // Call deleteMarker function
-          alert('not implemented...yet');
-      };
-      return this;
+      return 'orphanButton';
     } else if (document.getElementById('adoptButton')) {
-      button = document.getElementById('adoptButton');
+      return 'adoptButton';
     } else if (document.getElementById('adoptUpdateButton')) {
-      button = document.getElementById('adoptUpdateButton')
-      //console.log(button);
+      return 'adoptUpdateButton'
     }
-    if (!button){
-      //console.log('NO BUTTON FOUND');
-      return;
-    }
-    // prep the adoption form
-    //  get name of drain
-    //  submit a copy of the drain object to the database
-    // Bind action for set title button
-    //console.log('found add button');
-    // get id
-    //console.log(button);
-    drainId = button.getAttribute('data-id');
-    const component = this.component;
-    const flds = this.editable.split(',');
-    button.onclick = function () {
-        let form = {};
-        for (let fld in flds) {
-           form[flds[fld]]= document.getElementById(flds[fld] +'input').value;
-        }
-        // Get input value and call setMarkerTitle function
-        // make copy with the marker
-        let drainObj = component.drain_dict.get(drainId);
-        drainObj.merge(form);
-        // adopter keys
-        component.adopt_a_drain(drainObj);
-        component.info_window.close();
-    };
-    //document.getElementById('nameinput').focus();
-    //console.log('add b flds[0]: ' + flds[0]);
-
-    document.getElementById(flds[0]+'input').focus();
+    return undefined;
   }
+
 }
-  /*
-  setup_buttons() {
-    let button
-    let drainId
-    let inputValue
-
-    if (document.getElementById('orphanButton')) {
-
-    } else if (document.getElementById('adoptButton')) {
-
-    }
-
-    if (document.getElementById('orphanButton')) {
-      //this.component.log('setup_buttons 2')
-      // Bind action for delete button
-      button = document.getElementById('orphanButton');
-      button.focus();
-      drainId = button.getAttribute('data-id');
-      button.onclick = function () {
-          // Call deleteMarker function
-          alert('not implemented...yet');
-      };
-    } else if (document.getElementById('adoptButton') ) {
-      // prep the adoption form
-      //  get name of drain
-      //  submit a copy of the drain object to the database
-      // Bind action for set title button
-      //console.log('found add button');
-      // get id
-      button = document.getElementById('adoptButton');
-      drainId = button.getAttribute('data-id');
-      //console.log('drainId: ' + drainId);
-      const component = this.component;
-      const flds = this.editable.split(',');
-      button.onclick = function () {
-          let form = {};
-          for (let fld in flds) {
-             //console.log('fld: ' + flds[fld]);
-             form[flds[fld]]= document.getElementById(flds[fld] +'input').value;
-          }
-          // Get input value and call setMarkerTitle function
-          // make copy with the marker
-          let drainObj = component.drain_dict.get(drainId);
-          drainObj.merge(form);
-          // console.log(drainObj.data);
-          // adopter keys
-          component.adopt_a_drain(drainObj);
-          component.info_window.close();
-      };
-      //document.getElementById('nameinput').focus();
-      //console.log('add b flds[0]: ' + flds[0]);
-
-      document.getElementById(flds[0]+'input').focus();
-    } else if (document.getElementById('adoptUpdateButton')) {
-
-      //console.log('found add button');
-      // get id
-      button = document.getElementById('adoptUpdateButton');
-      drainId = button.getAttribute('data-id');
-      //console.log('drainId: ' + drainId);
-      const component = this.component;
-      const flds = this.editable.split(',');
-      button.onclick = function () {
-          let form = {};
-          for (let fld in flds) {
-             //console.log('fld: ' + flds[fld]);
-             form[flds[fld]]= document.getElementById(flds[fld] +'input').value;
-          }
-          // Get input value and call setMarkerTitle function
-          // make copy with the marker
-          let drainObj = component.drain_dict.get(drainId);
-          drainObj.merge(form);
-          // console.log(drainObj.data);
-          // adopter keys
-          component.adopt_a_drain(drainObj);
-          component.info_window.close();
-      };
-      //document.getElementById('nameinput').focus();
-      //console.log(document.body.getElementsByTagName("*"));
-      //console.log(document.querySelectorAll("input[type=text]"));
-      //console.log('update b flds[0]: ' + flds[0]);
-
-      document.getElementById(flds[0]+'input').focus();
-    }
-    //this.component.log('setup_buttons out')
-
-    return this;
-  }
-  */
-
-/*
-google.maps.event.addListener(infowindow, 'domready', function () {
-        //console.log('hi')
-        mapHelper.log('hi')
-        let button, markerId, inputValue;
-
-        // Switch scenarii depending on infowindow contents
-        if (document.getElementById('deleteButton')) {
-
-            // Bind action for delete button
-            button = document.getElementById('deleteButton');
-            button.focus();
-            markerId = parseInt(button.getAttribute('data-id'));
-            button.onclick = function () {
-
-                // Call deleteMarker function
-                deleteMarker(markerId);
-            };
-
-
-        } else {
-          //alert('hi')
-
-            // Bind action for set title button
-            button = document.getElementById('inputButton')
-            markerId = parseInt(button.getAttribute('data-id'))
-            button.onclick = function () {
-                // Get input value and call setMarkerTitle function
-                inputValue = document.getElementById('nameinput').value
-                // setMarkerTitle(markerId, inputValue);
-            }
-
-            document.getElementById('nameinput').focus()
-
-        }
-    });
-    */
 export { InfoHelper }

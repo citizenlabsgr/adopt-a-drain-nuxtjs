@@ -38,6 +38,14 @@ class DrainDict {
     }
     return undefined
   }
+  /*
+  log() {
+    for (no in this.dict) {
+      console.log('drain ' + no)
+    }
+    return this;
+  }
+  */
 }
 
 export { DrainDict }

@@ -267,7 +267,7 @@
 | Done | 1.1.1 | Add "app" to LB_WODEN in enviroment variables (.env). LB_WODEN={"app":"Adopt-A-Drain","org":"CitizenLabs","name":"woden@citizenlabs.org","password":"a1A!aaaa"} |
 | Done | 1.1.1 | signin converts user name to lowercase |
 | Done | 1.1.1 | Id made from Email address stored as lowercase (adopt_a_drain_upsert_trigger_func) |
-| Done | 1.1.1 | adopter-token payload is now {"iss" | "Citizen-Labs","sub" | "Origin","name" | "Adopt-a-Drain","role" | "guest_aad"} |
+| Done | 1.1.1 | adopter-token payload is now {"iss" | "CitizenLabs","sub" | "Origin","name" | "Adopt-a-Drain","role" | "guest_aad"} |
 | Done | 1.1.1 | adopter-token expires in 5 minutes |
 
 

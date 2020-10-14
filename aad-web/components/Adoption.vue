@@ -113,7 +113,8 @@ export default {
     }
   },
   computed: {
-    google: gmapApi,/*
+    google: gmapApi,
+    /*
     expired () {
       return this.$store.state.expires_at < new Date().getTime()/1000
     },
@@ -194,7 +195,7 @@ export default {
     // task: avoid memory leak while polling signin expiration
 
     clearInterval(this.interval_monitor_expiration)
-    this.log('beforeDestroy')
+    //this.log('beforeDestroy')
 
   },
   created () {
@@ -203,7 +204,7 @@ export default {
     // Task: start the polling function
 
     this.pollExpiration()
-    this.log('created')
+    //this.log('created')
 
   },
   mounted () {
@@ -215,6 +216,7 @@ export default {
       * initalize the google map infowindow
       * load the drains
       */
+
       new GLHandlers(this).locateMe()
       .then((response) => {
         this.$refs.mapRef.$mapPromise
@@ -231,16 +233,21 @@ export default {
             }
             // never delete this infowindow
             this.info_window = new google.maps.InfoWindow()
-            // force a global, that, for later reference
+
+            const adopter_token_helper = this.adopter_token_helper
             const that = this
             // set up a listener and wait for the DOM to load
             // infoHelper attaches forms for the infowindow
-            google.maps.event.addListener(this.info_window, 'domready', function () {
-              let button
-              let markerId
-              let inputValue
-              const infoHelper = new InfoHelper(that).setup_buttons()
-            });
+            google.maps.event.addListener(
+              this.info_window,
+              'domready',
+              function () {
+                //console.log('domready')
+                //console.log('---- click marker ');
+
+                that.form_button_handler()
+              }
+            );
             /////////////
             // load markers
             /////////////
@@ -255,33 +262,87 @@ export default {
       })
     },
   methods: {
-    /*
-    set_markers () {
 
-      for(let drain in this.settings.drains) {
-        // turn off when outside the box
-        if (this.settings.drains[drain].type != this.drain_types.orphan) {
-          let image = this.mapHelper.markerImage(this.drain_types.adoptee)
-          this.settings.drains[drain].marker.setIcon(image);
+    form_button_handler() {
+      // Objective: Make map interactive
+      // Strategy: use markers like buttons
+      //console.log('form_button_handler 1')
+      const infoHelper = new InfoHelper(this.adopter_token_helper)
+      let button_name = infoHelper.getButtonName()
+
+      if (button_name) {
+        let button = document.getElementById(button_name)
+        let form = {};
+
+        button.focus()
+        let drainId = button.getAttribute('data-id')
+
+        switch (button.id){
+          case 'adoptUpdateButton':
+             form['id']= 'adoptee#' + this.adopter_token_helper.getKey() + '#' + drainId;
+             //console.log('form: ' + JSON.stringify(form))
+          case 'adoptButton':
+
+              const that = this;
+              const flds = infoHelper.editable.split(',');
+              button.onclick = function () {
+                // click on form in info window
+                  //console.log('---- click info window adoptButton or adoptUpdateButton button');
+                  // create a form for the info window
+
+                  for (let fld in flds) {
+                     form[flds[fld]]= document.getElementById(flds[fld] +'input').value;
+                  }
+                  //
+                  // Get input value
+                  // make copy with the marker
+                  let drainObj = that.drain_dict.get(drainId);
+                  drainObj.merge(form);
+                  // adopter keys
+                  that.adopt_a_drain(drainObj);
+                  that.info_window.close();
+                  //console.log('form_button_handler onclick out ');
+              };
+              break;
+          default:
+            button.onclick = function () {
+                // Call deleteMarker function
+                console.log('stub, not implemented...yet');
+            };
         }
       }
-
     },
-    */
+
     reset_symbol () {
       // Objective: Give the user log when signin expires
       // Strategy: set red symbols to grey
+      //
+      let infoHelper = new InfoHelper(this.adopter_token_helper)
 
       for(let drain in this.drain_dict.getData()) {
         // turn off when outside the box
-        if (this.drain_dict.get(drain).getType() != this.drain_types.orphan) {
+        if (this.drain_dict.get(drain).getType()
+                != this.drain_types.orphan) {
+          //console.log('drain: '+drain)
+          //let form = infoHelper.form(drain)
+          let form = infoHelper.form(this.drain_dict.get(drain))
           let image = this.mapHelper.markerImage(this.drain_types.adoptee)
-          this.drain_dict.get(drain).getMarker().setIcon(image);
+          this.drain_dict
+            .get(drain)
+            .setIcon(image);
+            //.setForm(form);
+            /*
+            this.drain_dict
+              .get(drain)
+              .getMarker()
+              .setIcon(image);
+            */
         }
       }
     },
 
     adopt_a_drain (drainObj) {
+      //console.log('adopt_a_drain 1')
       /*
       Objective: Save adoption
       Strategy: Use restful API to insert adoption record
@@ -296,9 +357,13 @@ export default {
       const _id = drainObj.getId()
       const _headers = this.aad_headers_authorized
       const _name = drainObj.getName()
-
+      const _infoHelper = new InfoHelper(this.adopter_token_helper)
+      const _infowindow = this.info_window
+      const _key = this.adopter_token_helper.getKey()
+      //console.log('key: ' + _key)
       // store an adoptee not yours
       _data['type'] = this.drain_types.adoptee
+      //console.log(_data)
       //////////
       // handle both add and update
       ///////
@@ -307,10 +372,15 @@ export default {
           // set local drain name
           // mark as yours
           let image = mapHelper.markerImage(this.drain_types.yours)
-          _dict.get(_id)
-            .setType(this.drain_types.yours)
+          let drain = _dict.get(_id)
+          drain.setType(this.drain_types.yours)
             .setName(_name)
+            .setKey(_key)
             .getMarker().setIcon(image)
+
+          let form = _infoHelper.form(_dict.get(_id))
+          drain.setMarkerListener(_infowindow, form)
+
         })
         .catch((response) => {
           //this.feedback('Unexpected issue with adoption!')
@@ -325,10 +395,6 @@ export default {
       console.log(msg)
       /* eslint-enable no-console */
     },
-
-    //feedback (msg) {
-    //  this.page.feedback = msg
-    //},
 
     doDragEnd () {
       /*
@@ -352,46 +418,6 @@ export default {
       this.loadDrains()
     },
 
-    setInfoWindow(marker, drainObj) {
-      // marker is
-      const mapHelper = this.mapHelper
-      const info_window = this.info_window
-      const adopt_key = this.adopter_token_helper.getKey()
-      // preparing adoption infowindow
-
-      let form
-      form = mapHelper.infoHelper().form(drainObj,
-                                         this.isAuthenticated,
-                                         adopt_key )
-
-      /*
-      let form
-
-      if (drainObj.getType() === this.drain_types.orphan) {
-
-        form = mapHelper.infoHelper().form_adopt(drainObj)
-
-      } else if (drainObj.getType() === this.drain_types.adoptee) { // DELETE
-        // DELETE
-        // check adopter key and drain key
-        if (drainObj.getKey() && this.adopter_key === drainObj.getKey() ) {
-          form =mapHelper.infoHelper().form_orphan(drainObj)
-        } else {
-          form = mapHelper.infoHelper().form_info(drainObj)
-        }
-      } else {
-        form =mapHelper.infoHelper().form_orphan(drainObj)
-      }
-      */
-      // Remember: info_window isnt defined until this event is fired,
-      //           define in mounted()
-      drainObj.setMarkerListener(google.maps.event.addListener(marker, "click", function() {
-          info_window.close()
-          info_window.setContent(form)
-          info_window.open(mapHelper.map, marker)
-      }));
-
-    },
     // Removes the markers from the map, but keeps them in the array.
 
     visualizeMarkers(centerBox) {
@@ -415,21 +441,6 @@ export default {
       }
     },
 
-    /*
-    orphan(drainObj) {
-      const _data =
-      const _headers = this.aad_headers
-        // load adoptees before getting open data
-        new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
-          .then((response) => {
-            // change marker to orphan
-
-          })
-          .catch((response) => {
-            this.feedback('Unexpected issue deleteing adoptee!')
-          }) // end of AADHandler
-    },
-    */
     loadDrains () {
       /*
       Objective: Keep from downloading all the drains at one time
@@ -439,28 +450,42 @@ export default {
       ** All Drains are stored in data.world table
 
       */
+      //console.log('loadDrains 1')
       //////////
       // common to both Handlers
       ////////////
       const mapHelper = this.mapHelper
-      const infoHelper= new InfoHelper(this)
+
+      //const infoHelper= new InfoHelper(adopter_token_helper)
+      //console.log()
+      //console.log(this.$store.state.token)
+      const infoHelper= new InfoHelper(this.adopter_token_helper)
+
       // mounted() sets the center use geolocation if possible
       // prepare seach boundary for query
       const center = mapHelper.map.get('center')
+
       let cBox = mapHelper.map.getBounds()
+
       if (!cBox) { // patch up center_box
         cBox = mapHelper.boxify( center )
       }
+
       mapHelper.setViewBox(cBox)
+
       const centerBox = mapHelper.getViewBox()
+
       ///////////////////
       // download Adoptees
       ///////////////////
       const _data = centerBox
+
       const _headers = this.aad_headers
+
         // load adoptees before getting open data
         new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
           .then((response) => {
+            //this.log('loadDrains AADHandlers 1')
             let AADHandlers_cnt = 0
             // if not in drains then add drain and marker and adopte image
             // if in drains and marker and marke.getMap() === null then marker.setMap(map)
@@ -504,14 +529,15 @@ export default {
               'Content-Type': 'application/json',
               'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
             }
-
-
             //////////////
             // call the data.world service once adoptees are loaded
             /////////
             new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
               .then((response) => {
+                //this.log('loadDrains DWHandlers 1')
+
                 const map = mapHelper.map
+                const tokenHelper = this.adopter_token_helper
                 let counter = 0
                 let dr = {}
 
@@ -537,23 +563,38 @@ export default {
                     })
                     this.drain_dict.add(_drain)
                   } // else end
+
                   const drain = _drain
                   const image = mapHelper.markerImage(drain.getType())
+                  const adopter_token_helper = this.adopter_token_helper
+                  const info_window = this.info_window
 
                   if( drain.getMarker() === null ){
                       // make marker
                     setTimeout(function () {
                        const dropAnimation = mapHelper.dropAnimation
                        const point = {lat:drain.getLat(), lng:drain.getLon() }
+                       //const adopt_key = adopter_token_helper.getKey()
                        const marker = mapHelper.marker({
                          animation: dropAnimation,
                          icon: image,
                          map:map,
                          position: point
                        })
+                       // get the form
+                       let form = new InfoHelper(adopter_token_helper).form(drain)
+
+                       // load the form to display
+                       //info_window.setContent(form)
+                       // attach a marker and info window and start listener
+
                        drain.setMarker(marker)
-                      mapHelper.component.setInfoWindow(marker, drain )
-                      //mapHelper.visualize()
+                       drain.setMarkerListener(info_window, form)
+                       /*
+                       drain.setMarker(marker,
+                                       info_window,
+                                       form)
+                       */
                      }, counter * this.settings.delay )
                   }
 
@@ -582,6 +623,8 @@ export default {
             console.log('Unexpected issue with adoptees!')
             /* eslint-enable no-console */
           }) // end of AADHandler
+          //this.log('loadDrains out')
+
     } // end loadDrains
   }
 }

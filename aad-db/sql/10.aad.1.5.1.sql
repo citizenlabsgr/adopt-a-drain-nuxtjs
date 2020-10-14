@@ -451,17 +451,17 @@ AS $$
 		   _form := _form - 'id';
 	  	 _form := _form - 'adopter_key';
 
-		 UPDATE aad_base.adopt_a_drain
-			 set reg_form=(reg_form || _form)
-			 where reg_sk=format('adoptee#%s#%s',_adopter_key,_form ->> 'drain_id')
-			       and reg_data=_form ->> 'type';
+  		 UPDATE aad_base.adopt_a_drain
+  			 set reg_form=(reg_form || _form)
+  			 where reg_sk=format('adoptee#%s#%s',_adopter_key,_form ->> 'drain_id')
+  			       and reg_data=_form ->> 'type';
 
- 		 IF NOT FOUND THEN
-              RAISE sqlstate 'PT500' using
-                message = 'Unidentified',
-                detail = format('adoptee %s - %s',_adopter_key, _form ->> 'drain_id'),
-                hint = 'Did not see that comming!';
-		 END IF;
+   		 IF NOT FOUND THEN
+                RAISE sqlstate 'PT500' using
+                  message = 'Unidentified',
+                  detail = format('adoptee %s - %s',_adopter_key, _form ->> 'drain_id'),
+                  hint = 'Did not see that comming!';
+  		 END IF;
 
 	   end if;
 

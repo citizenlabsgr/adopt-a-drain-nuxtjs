@@ -10,10 +10,10 @@
 ------------------------
 -- TESTs
 ------------------------
-/*
+
 \c aad_db;
 
-SET search_path TO aad_version_1_5_1, public;
+SET search_path TO aad_version_1_5_2, public;
 
 --------------------
 -- EVENT_LOGGER Tests
@@ -39,7 +39,7 @@ BEGIN;
       }'::JSONB
     ),
     '{"msg": "OK", "status": "200"}'::JSONB,
-    'event_logger - insert test  1_5_1'::TEXT
+    'event_logger - insert test  1_5_2'::TEXT
   );
 
   SELECT * FROM finish();
@@ -59,16 +59,16 @@ BEGIN;
   -- TEST: Test(a) adopter Insert
 
   SELECT ok (
-    aad_version_1_5_1.adopter('{
+    aad_version_1_5_2.adopter('{
       "name":  "me@someplace.com",
       "password": "a1A!aaaa"
       }'::JSON
-    )::JSONB ->> 'status' = '200','adopter - new adopter 1_5_1'
+    )::JSONB ->> 'status' = '200','adopter - new adopter 1_5_2'
   );
 
   -- duplicate adopter
--- PREPARE duplicate_adopter AS aad_version_1_5_1.adopter('{"name":  "me@someplace.com", "password": "a1A!aaaa"}'::JSON);
-PREPARE new_adopter as select aad_version_1_5_1.adopter('{"name":  "me@someplace.com", "password": "a1A!aaaa"}'::JSON);
+-- PREPARE duplicate_adopter AS aad_version_1_5_2.adopter('{"name":  "me@someplace.com", "password": "a1A!aaaa"}'::JSON);
+PREPARE new_adopter as select aad_version_1_5_2.adopter('{"name":  "me@someplace.com", "password": "a1A!aaaa"}'::JSON);
 
 SELECT throws_ok(
     'new_adopter',
@@ -93,13 +93,13 @@ BEGIN;
   SELECT plan(2);
   -- Add an adopter to test the signin
   SELECT is (
-    aad_version_1_5_1.adopter('{
+    aad_version_1_5_2.adopter('{
       "name":  "me@someplace.com",
       "password": "a1A!aaaa"
       }'::JSON
     ),
     '{"msg": "OK", "status": 200}'::JSONB,
-    'adopter - insert 200 1_5_1'::TEXT
+    'adopter - insert 200 1_5_2'::TEXT
   );
 
 -- TEST: Test(b) signin Insert
@@ -107,11 +107,11 @@ BEGIN;
 --| signin sucess | <guest> | 'event#<guid>' | 'signin' | <signin-form> |
 
 SELECT ok (
-  aad_version_1_5_1.signin('{
+  aad_version_1_5_2.signin('{
     "name":  "me@someplace.com",
     "password": "a1A!aaaa"
     }'
-  )::JSONB ? 'token','signin - 200 insert 1_5_1'
+  )::JSONB ? 'token','signin - 200 insert 1_5_2'
 );
 
 
@@ -126,25 +126,26 @@ ROLLBACK;
 
 BEGIN;
 
-  SELECT plan(5);
+  SELECT plan(4);
 
 -- TEST: Test(a) adopter Insert
 
 --| adoptee success | <request.jwt.claim.jti> | 'adoptee#<dr-asset-id>' | 'adoptee' | <adoptee-form> |
 -- INSERT
 SELECT is (
-  aad_version_1_5_1.adoptee( '{
+  aad_version_1_5_2.adoptee( '{
     "name":"some opt name",
     "drain_id":"GR_40089457",
     "lat":42.96265175640001,
-    "lon":-85.6676956307}'::JSON
+    "lon":-85.6676956307}
+    '::JSON
   ),
-  '{"msg": "OK", "status": 200}'::JSONB,
-  'adoptee - insert test 1_5_1'::TEXT
+  '{"msg": "OK", "status": 200, "data":{"id": "GR_40089457", "lat": 42.96265175640001, "lon": -85.6676956307, "name": "some opt name", "type": "adoptee", "drain_id": "GR_40089457", "adopter_key": "8a39dc33-0c6c-4b4e-bdb8-3829af311dd8"}}'::JSONB,
+  'adoptee - insert test 1_5_2'::TEXT
 );
 -- '{"name":"some opt name", "drain_id":"GR_40089457","lat":42.96265175640001,"lon":-85.6676956307}'
 -- DUPLICATE
-PREPARE new_adoptee AS select aad_version_1_5_1.adoptee( '{
+PREPARE new_adoptee AS select aad_version_1_5_2.adoptee( '{
   "name":"some opt name",
   "drain_id":"GR_40089457",
   "lat":42.96265175640001,
@@ -157,19 +158,35 @@ SELECT throws_ok(
     'We should get a unique violation for a duplicate PK'
 );
 -- UPDATE
+-- testing key "adopter_key":"8a39dc33-0c6c-4b4e-bdb8-3829af311dd8"
 SELECT is (
-  aad_version_1_5_1.adoptee( '{
+  aad_version_1_5_2.adoptee( '{
     "id":"GR_40089457",
+    "name":"abc-asd",
+    "drain_id":"GR_40089457",
+    "lat":42.96265175640001,
+    "lon":-85.6676956307,
+    "adopter_key":"8a39dc33-0c6c-4b4e-bdb8-3829af311dd8"
+    }'::JSON
+  ),
+  '{"msg": "OK", "data": {"id":"GR_40089457", "lat": 42.96265175640001, "lon": -85.6676956307, "name": "abc-asd", "type": "adoptee", "drain_id": "GR_40089457","adopter_key": "8a39dc33-0c6c-4b4e-bdb8-3829af311dd8"}, "status": 200}'::JSONB,
+  'adoptee - insert test 1_5_2'::TEXT
+);
+-- DELETE
+SELECT is (
+  aad_version_1_5_2.adoptee( '{
+    "id":"-GR_40089457",
     "name":"some opt name",
     "drain_id":"GR_40089457",
     "lat":42.96265175640001,
-    "lon":-85.6676956307}'::JSON
+    "lon":-85.6676956307,
+    "adopter_key":"8a39dc33-0c6c-4b4e-bdb8-3829af311dd8"
+    }'::JSON
   ),
-  '{"msg": "OK", "status": 200}'::JSONB,
-  'adoptee - insert test 1_5_1'::TEXT
+  '{"msg": "OK", "data": {"id": "-GR_40089457", "lat": 42.96265175640001, "lon": -85.6676956307, "name": "some opt name", "type": "adoptee", "drain_id": "GR_40089457", "adopter_key": "8a39dc33-0c6c-4b4e-bdb8-3829af311dd8"}, "status": 200}'::JSONB,
+  'adoptee - delete test 1_5_2'::TEXT
 );
 
 SELECT * FROM finish();
 
 ROLLBACK;
-*/

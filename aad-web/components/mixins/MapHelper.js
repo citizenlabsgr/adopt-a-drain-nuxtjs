@@ -1,5 +1,4 @@
 
-import { InfoHelper } from './InfoHelper.js'
 import { DrainTypes } from './DrainTypes.js'
 
 class MapHelper {
@@ -14,7 +13,7 @@ class MapHelper {
     this.set('randy', 'Y')
     this.set('center', component.$refs.mapRef.$mapObject.getCenter())
     this.view_box = {}
-    this.drainTypes = new DrainTypes()
+    //DrainTypes = new DrainTypes()
   }
 
   set(key, value) {
@@ -115,13 +114,13 @@ class MapHelper {
 
     let image = undefined
 
-    if (type === this.drainTypes.adoptee ) {
+    if (type === DrainTypes.adoptee ) {
       image = new this.component.google.maps.MarkerImage(
         '/adoptee.svg',
         size,
         origin,
         anchor);
-    } else if (type === this.drainTypes.yours) {
+    } else if (type === DrainTypes.yours) {
       image = new this.component.google.maps.MarkerImage(
         '/your-adoptee.svg',
         size,
@@ -140,9 +139,7 @@ class MapHelper {
     // Objective: Hide the details of creating a marker
     return new this.component.google.maps.Marker(form)
   }
-  infoHelper() {
-    return new InfoHelper(this.component.adopter_token_helper)
-  }
+
 
   /*
   visualize(centerBox) {

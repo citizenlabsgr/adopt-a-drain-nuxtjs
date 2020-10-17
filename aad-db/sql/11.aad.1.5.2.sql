@@ -1,4 +1,3 @@
-/*
 \c aad_db
 --------------
 -- Environment
@@ -49,7 +48,7 @@ select :lb_woden as lb_woden, pg_typeof(:lb_woden::JSONB) as type;
 ---------------
 -- SCHEMA: Create Schema
 ---------------
-CREATE SCHEMA if not exists aad_version_1_5_1;
+CREATE SCHEMA if not exists aad_version_1_5_2;
 
 -- CREATE EXTENSION IF NOT EXISTS pgcrypto;;
 -- CREATE EXTENSION IF NOT EXISTS pgtap;;
@@ -88,33 +87,33 @@ grant usage on schema aad_base to guest_aad;
 grant usage on schema aad_base to editor_aad;
 grant usage on schema aad_base to event_logger_role;
 
-grant usage on schema aad_version_1_5_1 to guest_aad;
-grant usage on schema aad_version_1_5_1 to editor_aad;
-grant usage on schema aad_version_1_5_1 to event_logger_role;
+grant usage on schema aad_version_1_5_2 to guest_aad;
+grant usage on schema aad_version_1_5_2 to editor_aad;
+grant usage on schema aad_version_1_5_2 to event_logger_role;
 
 ---------------
 -- SCHEMA: Set Schema Path
 ---------------
 
-SET search_path TO aad_version_1_5_1, aad_base, public;
+SET search_path TO aad_version_1_5_2, aad_base, public;
 
 ----------------
 -- TYPE: Create Types
 ----------------
-CREATE TYPE aad_version_1_5_1.woden_token AS (
+CREATE TYPE aad_version_1_5_2.woden_token AS (
   woden text
 );
-CREATE TYPE aad_version_1_5_1.jwt_token AS (
+CREATE TYPE aad_version_1_5_2.jwt_token AS (
   token text
 );
 --=============================================================================
 --=============================================================================
 --=============================================================================
 ------------
--- FUNCTION: Create aad_version_1_5_1.signin(form JSON)
+-- FUNCTION: Create aad_version_1_5_2.signin(form JSON)
 ------------
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_1.signin(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_2.signin(form JSON) RETURNS JSONB
 AS $$
   -- make token to execute app(JSON)
   declare rc JSONB;
@@ -225,13 +224,13 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_1.signin(JSON) to guest_aad;
+grant EXECUTE on FUNCTION aad_version_1_5_2.signin(JSON) to guest_aad;
 
 -----------------
 -- FUNCTION: Create adopter(form JSON)
 -----------------
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_1.adopter(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_2.adopter(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
   Declare _model_adopter JSONB;
@@ -350,40 +349,41 @@ AS $$
   END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(JSON) to guest_aad; -- upsert
-grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(JSON) to editor_aad; -- upsert
+grant EXECUTE on FUNCTION aad_version_1_5_2.adopter(JSON) to guest_aad; -- upsert
+grant EXECUTE on FUNCTION aad_version_1_5_2.adopter(JSON) to editor_aad; -- upsert
 
 -----------------
 -- FUNCTION: Create adopter(id TEXT)
 -----------------
 -- convert ids to lowercase
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_1.adopter(id TEXT) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_2.adopter(id TEXT) RETURNS JSONB
 AS $$
   Select reg_form-'password' as adopter from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adopter';
 $$ LANGUAGE sql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(TEXT) to editor_aad; -- select
+grant EXECUTE on FUNCTION aad_version_1_5_2.adopter(TEXT) to editor_aad; -- select
 
 
   --=============================================================================
   --=============================================================================
   --=============================================================================
-
-
-
-
+-- Patterns
+-- Insert adoptee({"<name>":"<value>","<name>":"<value"} )  ... no id
+-- Update adoptee({"id":"<value>",...}) ... id with update values
+-- Select adoptee(id TEXT)
+-- Delete adoptee({"-id":"<value>"})
 
   --------------------
   -- FUNCTION: SELECT adoptee(id TEXT)
   --------------------
-  CREATE OR REPLACE FUNCTION aad_version_1_5_1.adoptee(id TEXT) RETURNS JSONB
+  CREATE OR REPLACE FUNCTION aad_version_1_5_2.adoptee(id TEXT) RETURNS JSONB
   AS $$
     Select reg_form from aad_base.adopt_a_drain  where reg_pk=id and reg_sk='adoptee';
   $$ LANGUAGE sql;
 
   -- GRANT: Grant Execute
-  grant EXECUTE on FUNCTION aad_version_1_5_1.adoptee(TEXT) to editor_aad;
+  grant EXECUTE on FUNCTION aad_version_1_5_2.adoptee(TEXT) to editor_aad;
 
 
 
@@ -395,7 +395,7 @@ grant EXECUTE on FUNCTION aad_version_1_5_1.adopter(TEXT) to editor_aad; -- sele
 -----------------
 -- Insert {"type":"adoptee", "drain_id":"gr12345667", "lat":42.01, "lon":-84.01}
 
-CREATE OR REPLACE FUNCTION aad_version_1_5_1.adoptee(form JSON) RETURNS JSONB
+CREATE OR REPLACE FUNCTION aad_version_1_5_2.adoptee(form JSON) RETURNS JSONB
 AS $$
   Declare rc jsonb;
   -- Declare _model_user JSONB;
@@ -406,12 +406,12 @@ AS $$
   Declare _adopter_key TEXT;
 
   BEGIN
-    -- get request values
+    --***** get request values
 
     _adopter_key := COALESCE(current_setting('request.jwt.claim.key','t'),'8a39dc33-0c6c-4b4e-bdb8-3829af311dd8');
     _jwt_role := COALESCE(current_setting('request.jwt.claim.role','t'),'editor_aad');
 
-    -- check role
+    --***** check role
 
     if _jwt_role != 'editor_aad' then
       _validation := '{"status":"401", "msg":"Unauthorized Token", "type":"adoptee"}'::JSONB;
@@ -422,11 +422,11 @@ AS $$
         hint = format('Not sure what to tell you. Try logging in again. _adopter_key is %s',_adopter_key);
     end if;
 
-	-- type stamp form and user key
+	--****** type stamp form and user key
 
 	_form := form::JSONB || format('{"type":"adoptee", "adopter_key":"%s"}', _adopter_key)::JSONB;
 
-	-- confirm all required attributes are in form
+	--****** confirm all required attributes are in form
 
 	if not(_form ? 'lat' and _form ? 'lon' and _form ? 'drain_id' and _form ? 'adopter_key' ) then
 		 _validation := '{"status":"400","msg":"Bad Request, missing one or more form attributes", "type":"adoptee"}'::JSONB;
@@ -438,33 +438,34 @@ AS $$
 	end if;
 
 	BEGIN
-	   if not(_form ? 'id') then
-	       --  add ID
-	       _form := _form::JSONB || format('{"id":"%s"}', _form ->> 'drain_id' )::JSONB;
 
+	   if not(_form ? 'id') then
+	       --*****  add ID
+	       _form := _form::JSONB || format('{"id":"%s"}', _form ->> 'drain_id' )::JSONB;
 	      INSERT INTO aad_base.adopt_a_drain
 	          (reg_sk, reg_data, reg_form)
 	      VALUES
-	      (_form ->> 'drain_id', 'adoptee', _form );
+	          (_form ->> 'drain_id', 'adoptee', _form );
 	   else
 
-	     -- remove unchangeable attributes before merging 
-		   _form := _form - 'id';
-	  	 _form := _form - 'adopter_key';
+       if _form ->> 'id' != _form ->> 'drain_id' THEN
+              Delete from aad_base.adopt_a_drain
+                where reg_sk=format('adoptee#%s#%s',_adopter_key,replace(_form ->> 'id','-',''))
+                     and reg_data=_form ->> 'type';
+  	   else
+    		 UPDATE aad_base.adopt_a_drain
+    			 set reg_form=(reg_form || _form)
+    			 where reg_sk=format('adoptee#%s#%s',_adopter_key,_form ->> 'drain_id')
+    			       and reg_data=_form ->> 'type';
 
-  		 UPDATE aad_base.adopt_a_drain
-  			 set reg_form=(reg_form || _form)
-  			 where reg_sk=format('adoptee#%s#%s',_adopter_key,_form ->> 'drain_id')
-  			       and reg_data=_form ->> 'type';
-
-   		 IF NOT FOUND THEN
-                RAISE sqlstate 'PT500' using
-                  message = 'Unidentified',
-                  detail = format('adoptee %s - %s',_adopter_key, _form ->> 'drain_id'),
-                  hint = 'Did not see that comming!';
-  		 END IF;
-
-	   end if;
+     		 IF NOT FOUND THEN
+                  RAISE sqlstate 'PT500' using
+                    message = 'Unidentified A',
+                    detail = format('adoptee %s - %s',_adopter_key, _form ->> 'drain_id'),
+                    hint = 'Did not see that comming!';
+    		 END IF;
+      end if;
+     end if;
 
 	EXCEPTION
 	  WHEN unique_violation THEN
@@ -482,26 +483,33 @@ AS $$
 	        detail = 'adoptee',
 	        hint = 'Is your data formatted correctly?';
 	  WHEN others then
-	      _validation :=  format('{"status":"500", "msg":"Unknown adoptee upsert error", "type":"adoptee", "SQLSTATE":"%s"}',SQLSTATE)::JSONB;
+	      _validation :=  format('{"status":"500", "msg":"Unknown adoptee error", "type":"adoptee", "SQLSTATE":"%s"}',SQLSTATE)::JSONB;
 	      PERFORM aad_base.event_logger(_validation);
 	      RAISE sqlstate 'PT500' using
-	        message = 'Unidentified',
+	        message = format('Unidentified Issue'),
 	        detail = 'adoptee',
-	        hint = 'Did not see that comming!';
+	        hint = format('Did not see that comming!' );
 	END;
 
     return (SELECT row_to_json(r) as result
       from (
         SELECT
         200 as status,
-        'OK' as msg
+        'OK' as msg,
+        _form as data
       ) r
     );
   END;
 $$ LANGUAGE plpgsql;
 
 -- GRANT: Grant Execute adoptee
-grant EXECUTE on FUNCTION aad_version_1_5_1.adoptee(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_2.adoptee(JSON) to editor_aad; -- C
+
+
+  -----------------
+  -- FUNCTION: Delete adoptee(form JSON)
+  -----------------
+
 
 
   --=============================================================================
@@ -513,7 +521,7 @@ grant EXECUTE on FUNCTION aad_version_1_5_1.adoptee(JSON) to editor_aad; -- C
 -- FUNCTION: Create adoptees(JSON)
 --------------------
 -- find in boundary
-CREATE OR REPLACE FUNCTION aad_version_1_5_1.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
+CREATE OR REPLACE FUNCTION aad_version_1_5_2.adoptees(bounds JSON) RETURNS TABLE (adoptee jsonb)
 AS $$
 Declare _validation JSONB;
 Declare _bounds JSONB;
@@ -547,6 +555,5 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 -- GRANT: Grant Execute
-grant EXECUTE on FUNCTION aad_version_1_5_1.adoptees(JSON) to editor_aad; -- C
-grant EXECUTE on FUNCTION aad_version_1_5_1.adoptees(JSON) to guest_aad; -- C
-*/
+grant EXECUTE on FUNCTION aad_version_1_5_2.adoptees(JSON) to editor_aad; -- C
+grant EXECUTE on FUNCTION aad_version_1_5_2.adoptees(JSON) to guest_aad; -- C

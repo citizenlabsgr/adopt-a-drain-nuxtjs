@@ -21,7 +21,10 @@ class Drain {
     this.map = map;
   }
   getData() {return this.data; }
-
+  setData(json_object) {
+    this.data = json_object;
+    return this;
+  }
   getId() {return this.data.drain_id;}
 
   setId(key, drain_id) {
@@ -32,10 +35,8 @@ class Drain {
 
     return this.data.adopter_key;
   }
-  setKey(key) {
-    //console.log('setkey 1');
+  setKey(key) { // id the user
     this.data.adopter_key = key;
-    //console.log('setkey out');
     return this;
   }
   getLat() {return this.data.lat;}
@@ -67,38 +68,12 @@ class Drain {
        google.maps.event.removeListener(this.marker_listener );
     }
   }
-  /*
-  .setMarker(marker, info_window
-    .close()
-    .setContent(form)
-    .info_window.open(map, marker)
-  )
-  */
-  //setMarker(marker, info_window, form) {
-  setMarker(marker) {
+setMarker(marker) {
 
     //set marker
-    //console.log('setMarker 1')
     this.removeListener();
 
     this.marker = marker;
-    //this.info_window = info_window;
-    //const info_win =info_window;
-
-    // set listener
-    //this.setMarkerListener(info_window, form)
-    /*
-    this.marker_listener=google.maps.event.addListener(
-      marker,
-      "click",
-      function() {
-        //console.log('info_window click')
-        //console.log(info_win)
-        info_window.setContent(form)
-        info_win.open(this.map, marker)
-      });
-    */
-    //this.info_window=info_window;
 
     return this;
   }
@@ -109,10 +84,11 @@ class Drain {
     this.getMarker().setIcon(image);
     return this;
   }
-
+  /*
   setForm(form) {
     console.log('form: '+form);
   }
+  */
 
   setMarkerListener(info_window, form) {
     //console.log('setMarkerListener 1')
@@ -127,8 +103,6 @@ class Drain {
       marker,
       "click",
       function() {
-        //console.log('info_window click')
-        //console.log(info_win)
         info_win.setContent(form)
         info_win.open(this.map, marker)
       });
@@ -136,7 +110,6 @@ class Drain {
     return this;
   }
   getMarkerListener(listener) {return this.marker_listener;}
-  //setInfoWindow(info_window) {this.info_window = info_window;return this;}
 
 }
 export { Drain }

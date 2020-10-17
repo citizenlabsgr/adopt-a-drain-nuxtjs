@@ -102,6 +102,7 @@ grant select on aad_base.adopt_a_drain  to guest_aad; -- R, signin
 grant insert on aad_base.adopt_a_drain  to editor_aad; -- C
 grant update on aad_base.adopt_a_drain  to editor_aad; -- U
 grant select on aad_base.adopt_a_drain  to editor_aad; -- R
+grant delete on aad_base.adopt_a_drain  to editor_aad; -- R
 
 grant insert on aad_base.adopt_a_drain  to event_logger_role; -- C
 
@@ -263,6 +264,7 @@ insert into aad_base.adopt_a_drain  (reg_sk, reg_data, reg_form) values ( :lb_wo
   $$ LANGUAGE plpgsql;
   -- GRANT: Grant Execute
   grant EXECUTE on FUNCTION aad_base.event_logger(JSONB) to event_logger_role; -- upsert
+  grant EXECUTE on FUNCTION aad_base.event_logger(JSONB) to editor_aad; -- upsert
 
   -----------------
   -- FUNCTION: Create event_logger_validate(form JSONB)
@@ -284,6 +286,7 @@ insert into aad_base.adopt_a_drain  (reg_sk, reg_data, reg_form) values ( :lb_wo
   $$ LANGUAGE plpgsql;
   -- GRANT: Grant Execute
   grant EXECUTE on FUNCTION aad_base.event_logger_validate(JSONB) to event_logger_role; -- upsert
+  grant EXECUTE on FUNCTION aad_base.event_logger_validate(JSONB) to editor_aad; -- upsert
 
 
   ---------------------

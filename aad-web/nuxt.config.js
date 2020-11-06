@@ -28,8 +28,9 @@ export default {
   env: {
     GOOGLE_MAPS_API_KEY: process.env.GOOGLE_MAPS_API_KEY,
     DW_USER: process.env.DW_USER || 'citizenlabs',
-    DW_DRAIN_URL: process.env.DW_DRAIN_URL || 'https://api.data.world/v0/sql/citizenlabs/grb-storm-drains',
+    DW_DRAIN_URL: process.env.DW_DRAIN_URL || 'https://api.data.world/v0/sql/citizenlabs/lgrow-storm-drains-current',
     DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN,
+    DW_TABLE: process.env.DW_TABLE || 'lgrow_current',
     AAD_API_TOKEN: process.env.AAD_API_TOKEN,
     AAD_API_URL: process.env.AAD_API_URL,
     AAD_API_VERSION: process.env.AAD_API_VERSION

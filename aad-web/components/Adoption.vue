@@ -157,6 +157,7 @@ export default {
     dwBody () {
       // Objective: Separate UI and data
       // Strategy: use a bounding box as a view port to minimize
+      // example: {west: -84.3, east: -84.0, north: 42.3, south: 42.0}
       return this.settings.center_box
     },
     dwURL () {
@@ -524,7 +525,10 @@ export default {
             ///////
             this.visualizeMarkers(centerBox)
             // prepare data.world query string
-            const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
+            //const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
+
+            const queryStr = 'select * from %x where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
+              .replace('%x', process.env.DW_TABLE)
               .replace('%w', centerBox.west)
               .replace('%e', centerBox.east)
               .replace('%n', centerBox.north)
@@ -552,10 +556,14 @@ export default {
                 ////////
                 for (dr of response.data) {
 
-                  const dr_sync_id = dr['dr_sync_id']
-                  let _drain = this.drain_dict.get(dr_sync_id)
+                  let dr_asset_id = dr['dr_asset_id']
+
+                  // is drain already downloaded
+                  let _drain = this.drain_dict.get(dr_asset_id)
+
                   // turn on or add to drains
                   // turn on markers where map is null
+
                   if (! _drain) {
                     // add to drains
                     const dr_lat = dr['dr_lat']
@@ -564,7 +572,7 @@ export default {
                       type: DrainTypes.orphan ,
                       lat: dr_lat,
                       lon: dr_lon,
-                      drain_id: dr_sync_id,
+                      drain_id: dr_asset_id,
                       name: 'name me'
                     })
                     this.drain_dict.add(_drain)
@@ -574,7 +582,7 @@ export default {
                   const image = mapHelper.markerImage(drain.getType())
                   const adopter_token_helper = this.adopter_token_helper
                   const info_window = this.info_window
-
+                  //console.log('drain: ' + JSON.stringify(_drain.data))
                   if( drain.getMarker() === null ){
                       // make marker
                     setTimeout(function () {
@@ -586,6 +594,7 @@ export default {
                          map:map,
                          position: point
                        })
+                       //console.log('point: ' + JSON.stringify(point))
                        // get the form
                        let form = new InfoHelper(adopter_token_helper).form(drain)
 

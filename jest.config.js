@@ -9,6 +9,7 @@ module.exports = {
     'vue',
     'json'
   ],
+  resolver: null,    
   transform: {
     '^.+\\.js$': 'babel-jest',
     '.*\\.(vue)$': 'vue-jest'

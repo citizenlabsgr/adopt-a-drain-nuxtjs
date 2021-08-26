@@ -1,4 +1,5 @@
-FROM node:10.15.3
+FROM node:14.17.5
+# FROM node:10.15.3
 RUN echo "IN DF"
 # set target folder for app
 WORKDIR /usr/src

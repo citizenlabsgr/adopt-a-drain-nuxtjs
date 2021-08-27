@@ -11,7 +11,7 @@
 
 <script>
 import DrainAdoption from '@/components/Adoption.vue'
-
+/* istanbul ignore next */ 
 export default {
   components: {
     DrainAdoption

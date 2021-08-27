@@ -11,7 +11,7 @@
 
 <script>
 // import Banner from "@/components/Banner.vue"
-
+/* istanbul ignore next */ 
 export default {
   data () {
     return {

@@ -13,11 +13,12 @@
 <script>
 
 import Expiration from './mixins/ExpirationMixin.js'
-import { AADHandlers } from './mixins/AADHandlers.js'
-import { Constants } from './mixins/Constants.js'
+// import { AADHandlers } from './mixins/AADHandlers.js'
+// import { Constants } from './mixins/Constants.js'
 import SignUp from './SignUp.vue'
 import AccountUpd from './AccountUpd.vue'
 
+/* istanbul ignore next */ 
 export default {
   mixins: [Expiration],
   components: {

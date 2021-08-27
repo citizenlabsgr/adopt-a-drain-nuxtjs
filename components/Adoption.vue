@@ -39,6 +39,7 @@
   mapdrag
     ref: https://developer.mozilla.org/en-US/docs/Web/API/HTML_Drag_and_Drop_API
 */
+
 import Expiration from './mixins/ExpirationMixin.js'
 
 import { gmapApi } from '~/node_modules/vue2-google-maps/src/main'
@@ -55,6 +56,7 @@ import { MapHelper } from './mixins/MapHelper.js'
 import { TokenHelper } from './mixins/TokenHelper.js'
 import { Utils } from './mixins/Utils.js'
 
+/* istanbul ignore next */ 
 export default {
   mixins: [Expiration],
   data () {

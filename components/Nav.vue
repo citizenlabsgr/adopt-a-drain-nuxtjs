@@ -32,7 +32,7 @@
 
 <script>
 import { TokenHelper } from './mixins/TokenHelper.js'
-
+/* istanbul ignore next */ 
 export default {
 
   data () {

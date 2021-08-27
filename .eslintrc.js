@@ -5,6 +5,7 @@ module.exports = {
     node: true
   },
   parserOptions: {
+    requireConfigFile: false,
     parser: '@babel/eslint-parser',
     sourceType: 'module'
   },

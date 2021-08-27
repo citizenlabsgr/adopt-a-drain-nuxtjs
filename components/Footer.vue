@@ -32,6 +32,7 @@
   </nav>
 </template>
 <script>
+/* istanbul ignore next */ 
 export default {
   data () {
     return {

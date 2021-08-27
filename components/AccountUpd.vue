@@ -16,6 +16,7 @@
 export default {
 
   data () {
+    /* istanbul ignore next */ 
     return {
       page: {
         title: 'Account',

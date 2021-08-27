@@ -1,4 +1,3 @@
-
 class DrainDict {
   constructor () {
     this.dict = {};

@@ -1,5 +1,5 @@
 
-import { TokenHelper } from '../../Components/mixins/TokenHelper.js';
+import { TokenHelper } from '../../components/mixins/TokenHelper.js';
 /*
 const drain_json = {
   type: 'orphan',

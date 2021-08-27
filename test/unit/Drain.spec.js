@@ -1,5 +1,5 @@
 
-import { Drain } from '../../Components/mixins/Drain.js';
+import { Drain } from '../../components/mixins/Drain.js';
 const drain_json = {
   type: 'orphan',
   lat: 42.01,

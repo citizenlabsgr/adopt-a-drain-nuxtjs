@@ -23,14 +23,6 @@ export const mutations = {
   token(state, tokenText) {
     state.token = tokenText
   },
-  /*
-  attempt_expiration(state) {
-    if (state.expires_at < (new Date().getTime())/1000 ) {
-      state.token = ''
-      state.expires_at = 0
-      console.log('expired')
-    }
-  },*/
   detoken(state) {
     state.token = ''
     state.expires_at = 0

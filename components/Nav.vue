@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { TokenHelper } from './mixins/TokenHelper.js'
+import { TokenHelper } from '@/components/mixins/TokenHelper.js'
 /* istanbul ignore next */ 
 export default {
 
@@ -52,6 +52,9 @@ export default {
       // Objective: Give user feedback about signin status
       // Stratgey: use the adopter name stashed in adopter token
       // Strategy: use the adopter's identity key to color code drain symbols
+      // console.log('this.$store', this.$store);
+      // console.log('this.$store.state',this.$store.state);
+      // console.log('this.$store.state.token',this.$store.state.token);
 
       return new TokenHelper(this.$store.state.token)
     }

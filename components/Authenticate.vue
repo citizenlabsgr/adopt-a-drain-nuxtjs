@@ -14,11 +14,11 @@
 <script>
 
 
-import Expiration from './mixins/ExpirationMixin.js'
+import Expiration from '@/components/mixins/ExpirationMixin.js'
 
-import { Constants } from './mixins/Constants.js'
-import SignOut from './SignOut.vue'
-import SignIn from './SignIn.vue'
+// import { Constants } from './mixins/Constants.js'
+import SignOut from '@/components/SignOut.vue'
+import SignIn from '@/components/SignIn.vue'
 
 export default {
   mixins: [Expiration],

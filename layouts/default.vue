@@ -5,7 +5,6 @@
     <nuxt />
     <Footer />
   </div>
-  
 </template>
 
 <script>

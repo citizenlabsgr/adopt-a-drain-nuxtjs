@@ -1,5 +1,6 @@
 <template>
   <div class="inner-div">
+    
     <br/>
     <h1 id="title" class="title">
       {{ page.title }}
@@ -47,9 +48,12 @@
     <div>
       <div class="prompt" ><label for="password">{{meta.password.prompt}}</label></div>
       <div class="input"><input id="password" v-model="aadform.password" type="password" placeholder="secure password"></div>
-      <div id="error-password" v-for="item in status_password" :class="[is_password ? 'input_ok' : 'input_error']">
+      <div id="error-password" v-for="item in meta.password.errors"  v-bind:key="item.id" :class="[is_password ? 'input_ok' : 'input_error']">
         {{ item }}
       </div>
+      <!-- div id="error-password" v-for="item in status_password"  v-bind:key="item.id" :class="[is_password ? 'input_ok' : 'input_error']">
+        {{ item }}
+      </div -->
     </div>
     <br/>
     <p>&nbsp;</p>
@@ -66,9 +70,8 @@
 </template>
 
 <script>
-
-import { Constants } from './mixins/Constants.js'
-import { AADHandlers } from './mixins/AADHandlers.js'
+import { Constants } from '@/components/mixins/Constants.js'
+import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 // import { TokenHelper } from './mixins/TokenHelper.js'
 /* istanbul ignore next */ 
 export default {
@@ -97,10 +100,11 @@ export default {
         password :{
           prompt:"Password",
           status:"",
-          regexp: Constants.password()
+          regexp: Constants.password(),
+          errors: []
         }
       }
-      //adopter_token: this.$store.state.token
+      // adopter_token: this.$store.state.token
     }
   },
   computed: {
@@ -138,21 +142,22 @@ export default {
       let lst = [];
 
       if (!Constants.lowercase().test(this.aadform.password)) {
-        lst.push("At least 1, lowercase")
+        this.meta.password.errors.push({"id": "At least 1, lowercase"})
       }
       if (!Constants.uppercase().test(this.aadform.password)) {
-        lst.push("At least 1, uppercase")
+        this.meta.password.errors.push({"id": "At least 1, uppercase"})
       }
       if (!Constants.digit().test(this.aadform.password)) {
-        lst.push("At least 1, digit")
+        this.meta.password.errors.push({"id": "At least 1, digit"})
       }
       if (!Constants.symbol().test(this.aadform.password)) {
-        lst.push("At least 1, symbol")
+        this.meta.password.errors.push({"id": "At least 1, symbol"})
       }
       if (!Constants.eight_char().test(this.aadform.password)) {
-        lst.push("At least 8 characters")
+        this.meta.password.errors.push({"id": "At least 8 characters"})
       }
-      return (this.is_password ? ["Ok"] : lst )
+      // return (this.is_password ? ["Ok"] : lst )
+
     },
     is_username () { // true when not compliant, expects an email
       return (Constants.user_name().test(this.aadform.name.trim()))

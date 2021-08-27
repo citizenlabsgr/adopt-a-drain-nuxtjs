@@ -7,6 +7,7 @@
       {{ about.subtitle }}
     </h2>
   </div>
+  
 </template>
 
 <script>

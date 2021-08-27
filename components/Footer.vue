@@ -2,24 +2,28 @@
   <nav>
     <ul>
       <li>
-        <nuxt-link to="/opportunities">
+        Opportunities
+        <!-- nuxt-link to="/opportunities">
           Opportunities
-        </nuxt-link>
+        </!-->
       </li>
       <li>
-        <nuxt-link to="/sponsors">
+        Sponsors
+        <!-- nuxt-link to="/sponsors">
           Sponsors
-        </nuxt-link>
+        </!-->
       </li>
       <li>
-        <nuxt-link to="/stats">
+        Stats
+        <!-- nuxt-link to="/stats">
           Stats
-        </nuxt-link>
+        </!-->
       </li>
       <li>
-        <nuxt-link to="/about">
+        About
+        <!-- nuxt-link to="/about">
           About
-        </nuxt-link>
+        </!-->
       </li>
     </ul>
     <ul>

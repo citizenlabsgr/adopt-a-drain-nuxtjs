@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { TokenHelper } from './mixins/TokenHelper.js'
+import { TokenHelper } from '@/components/mixins/TokenHelper.js'
 /* istanbul ignore next */ 
 export default {
 

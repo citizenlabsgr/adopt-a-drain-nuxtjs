@@ -41,9 +41,9 @@
 
 <script>
 
-import { Constants } from './mixins/Constants.js'
-import { AADHandlers } from './mixins/AADHandlers.js'
-import { TokenHelper } from './mixins/TokenHelper.js'
+import { Constants } from '@/components/mixins/Constants.js'
+import { AADHandlers } from '@/components/mixins/AADHandlers.js'
+import { TokenHelper } from '@/components/mixins/TokenHelper.js'
 /* istanbul ignore next */ 
 export default {
 

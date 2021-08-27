@@ -12,11 +12,11 @@
 </template>
 <script>
 
-import Expiration from './mixins/ExpirationMixin.js'
+import Expiration from '@/components/mixins/ExpirationMixin.js'
 // import { AADHandlers } from './mixins/AADHandlers.js'
 // import { Constants } from './mixins/Constants.js'
-import SignUp from './SignUp.vue'
-import AccountUpd from './AccountUpd.vue'
+import SignUp from '@/components/SignUp.vue'
+import AccountUpd from '@/components/AccountUpd.vue'
 
 /* istanbul ignore next */ 
 export default {

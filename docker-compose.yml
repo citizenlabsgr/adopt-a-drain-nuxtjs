@@ -8,91 +8,75 @@
 # DONE: aad-web: Activate webservice in docker-compose.yml
 
 version: '3'
+##############
 # AAD
-# docker-compose up
-# ref: http://postgrest.org/en/v6.0/install.html#docker
-# ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
-# bash -c "npm install && npm run dev"
+##############
 services:
+  #############
+  # POSTGRES
+  # https://hub.docker.com/_/postgres
+  #########
+  db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_JWT_SECRET=${POSTGRES_JWT_SECRET}
+      - POSTGRES_API_PASSWORD=${POSTGRES_API_PASSWORD}
+      - POSTGRES_JWT_CLAIMS=${POSTGRES_JWT_CLAIMS}
+
+    #volumes:
+      # anything in initdb directory is created in the database
+      # - "./aad_db/sql-current:/docker-entrypoint-initdb.d"
+      # Uncomment this if you want to persist the data.
+      #- "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
+
+  db-api:
+    # Need to build citizenlabsgr/dev-swagger-hapi-api
+    # Find build instructions at https://github.com/citizenlabsgr/adopt-a-drain-hapi-api
+    image: citizenlabsgr/adopt-a-drain-hapi-api
+    command: >
+      sh -c "
+        while ! nc -z db 5432;
+        do
+            echo 'sleep';
+            sleep 1;
+        done;
+        echo 'Port open!';
+        npm run db-deploy;
+        npm run dev;
+      "
+    ports:
+      - 5555:5555
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - HOST=${API_HOST}
+      - PORT=${API_PORT}
+      - DATABASE_URL=${DATABASE_URL}
+      - API_TOKEN=${API_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_CLAIMS=${JWT_CLAIMS}
+    depends_on:
+      - db  
+      
   web:
-    #container_name: adopt-a-drain
     image: citizenlabsgr/adopt-a-drain
     build:
       context: ./
     command: >
-      bash -c "npm install && npm run dev"
+      sh -c "npm install && npm run dev"
     volumes:
       - ./:/usr/src
     ports:
       - "3000:3000"
-    #environment:
-    #  - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
-    #  - DW_USER=${DW_USER}
-    #  - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
-    #  - DW_DRAIN_URL=${DW_DRAIN_URL}
-    #  - AAD_API_TOKEN=${AAD_API_TOKEN}
-    #  - AAD_API_URL=${AAD_API_URL}
-    #  - AAD_API_VERSION=${AAD_API_VERSION}
-    #  - LB_ENV=${LB_ENV}
+    environment:
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+      - DW_USER=${DW_USER}
+      - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
+      - DW_DRAIN_URL=${DW_DRAIN_URL}
+    depends_on:
+      - db-api  
 
-  #############
-  # POSTGRES
-  #########
-  #db:
-
-  #  build:
-  #      context: ./aad-db
-  #      dockerfile: dockerfile-db
-  #  ports:
-  #    - "5433:5432"
-  #  environment:
-  #    - POSTGRES_DB=${POSTGRES_DB}
-  #    - POSTGRES_USER=${POSTGRES_USER}
-  #    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #    - POSTGRES_JWT_SECRET=${POSTGRES_JWT_SECRET}
-  #    - LB_GUEST_PASSWORD=${LB_GUEST_PASSWORD}
-  #    - LB_WODEN=${LB_WODEN}
-  #    - LB_ENV=${LB_ENV}
-
-  #  volumes:
-  #    # anything in initdb directory is created in the database
-  #    - "./aad-db/sql:/docker-entrypoint-initdb.d"
-
-  #    # Uncomment this if you want to persist the data.
-  #    #- "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
-  #  networks:
-  #    - postgrest-backend
-  #  restart: always
-
-  ##########
-  # POSTGRREST
-  #####
-  #api:
-
-  #  image: postgrest/postgrest:latest
-
-  #  ports:
-  #    - "3100:3000"
-
-  #  environment:
-  #    # The standard connection URI format, documented at
-  #    # https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING
-  #  - PGRST_DB_URI=postgres://authenticator:${LB_GUEST_PASSWORD}@db:5432/${POSTGRES_DB}
-  #  - PGRST_DB_SCHEMA=${PGRST_DB_SCHEMA}
-  #  - PGRST_DB_ANON_ROLE=${PGRST_DB_ANON_ROLE}
-  #  - PGRST_JWT_SECRET=${POSTGRES_JWT_SECRET}
-  #  - LB_ENV=${LB_ENV}
-
-  #  depends_on:
-  #    - db
-  #  links:
-  #    - db:db
-
-  #  networks:
-  #    - postgrest-backend
-  #  restart: always
-#networks:
-#  postgrest-backend:
-#    driver: bridge
-
-# AAD
+ 

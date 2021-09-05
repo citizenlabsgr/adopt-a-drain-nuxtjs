@@ -1,0 +1,98 @@
+# DONE: adopt-a-drain/aad-web/.env add AAD_AUTH_TOKEN
+# DONE: add AAD_AUTH_TOKEN to adopt-a-drain/aad-web/.env
+# DONE: generate a AAD_AUTH_TOKEN at https://jwt.io with {} and POSTGRES_JWT_SECRET
+# DONE: add DW_USER to adopt-a-drain/aad-web/.env
+# DONE: add DW_AUTH_TOKEN to adopt-a-drain/aad-web/.env
+# DONE: add DW_DRAIN_URL to adopt-a-drain/aad-web/.env
+# DONE: add GOOGLE_MAPS_API_KEY to adopt-a-drain/aad-web/.env
+# DONE: aad-web: Activate webservice in docker-compose.yml
+
+version: '3'
+# AAD
+# docker-compose up
+# ref: http://postgrest.org/en/v6.0/install.html#docker
+# ref: https://github.com/mattddowney/compose-postgrest/blob/master/docker-compose.yml
+# bash -c "npm install && npm run dev"
+services:
+  web:
+    #container_name: adopt-a-drain
+    image: citizenlabsgr/adopt-a-drain
+    build:
+      context: ./
+    command: >
+      bash -c "npm install && npm run dev"
+    volumes:
+      - ./:/usr/src
+    ports:
+      - "3000:3000"
+    #environment:
+    #  - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+    #  - DW_USER=${DW_USER}
+    #  - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
+    #  - DW_DRAIN_URL=${DW_DRAIN_URL}
+    #  - AAD_API_TOKEN=${AAD_API_TOKEN}
+    #  - AAD_API_URL=${AAD_API_URL}
+    #  - AAD_API_VERSION=${AAD_API_VERSION}
+    #  - LB_ENV=${LB_ENV}
+
+  #############
+  # POSTGRES
+  #########
+  #db:
+
+  #  build:
+  #      context: ./aad-db
+  #      dockerfile: dockerfile-db
+  #  ports:
+  #    - "5433:5432"
+  #  environment:
+  #    - POSTGRES_DB=${POSTGRES_DB}
+  #    - POSTGRES_USER=${POSTGRES_USER}
+  #    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+  #    - POSTGRES_JWT_SECRET=${POSTGRES_JWT_SECRET}
+  #    - LB_GUEST_PASSWORD=${LB_GUEST_PASSWORD}
+  #    - LB_WODEN=${LB_WODEN}
+  #    - LB_ENV=${LB_ENV}
+
+  #  volumes:
+  #    # anything in initdb directory is created in the database
+  #    - "./aad-db/sql:/docker-entrypoint-initdb.d"
+
+  #    # Uncomment this if you want to persist the data.
+  #    #- "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
+  #  networks:
+  #    - postgrest-backend
+  #  restart: always
+
+  ##########
+  # POSTGRREST
+  #####
+  #api:
+
+  #  image: postgrest/postgrest:latest
+
+  #  ports:
+  #    - "3100:3000"
+
+  #  environment:
+  #    # The standard connection URI format, documented at
+  #    # https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING
+  #  - PGRST_DB_URI=postgres://authenticator:${LB_GUEST_PASSWORD}@db:5432/${POSTGRES_DB}
+  #  - PGRST_DB_SCHEMA=${PGRST_DB_SCHEMA}
+  #  - PGRST_DB_ANON_ROLE=${PGRST_DB_ANON_ROLE}
+  #  - PGRST_JWT_SECRET=${POSTGRES_JWT_SECRET}
+  #  - LB_ENV=${LB_ENV}
+
+  #  depends_on:
+  #    - db
+  #  links:
+  #    - db:db
+
+  #  networks:
+  #    - postgrest-backend
+  #  restart: always
+#networks:
+#  postgrest-backend:
+#    driver: bridge
+
+# AAD

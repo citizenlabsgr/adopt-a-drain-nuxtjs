@@ -118,7 +118,7 @@ export default {
     aad_headers() {
       // Guest Restful header
       return {
-        'Authorization': 'Bearer %s'.replace('%s', process.env.AAD_API_TOKEN),
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json',
         'Content-Profile': 'aad_version_1_5_2',
         'Prefer': 'params=single-object'
@@ -493,6 +493,9 @@ export default {
       const _headers = this.aad_headers
 
         // load adoptees before getting open data
+        console.log('process.env.AAD_API_URL',process.env.AAD_API_URL);
+        console.log('header', _headers);
+        console.log('data', _data);
         new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
           .then((response) => {
             let AADHandlers_cnt = 0

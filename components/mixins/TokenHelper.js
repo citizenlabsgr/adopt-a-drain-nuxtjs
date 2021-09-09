@@ -12,7 +12,7 @@ class TokenHelper {
   constructor (token) {
     //console.log('TokenHelper constructor: (' + token + ')');
     this.token = token
-    this.payload = {};
+    this.payload = {}; // aka token payload, or the middle part of a JWT
     if (token && token.split('.').length === 3) {
       this.payload = JSON.parse(atob(token.split('.')[1]))
     }

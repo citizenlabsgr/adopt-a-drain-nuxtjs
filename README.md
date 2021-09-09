@@ -153,6 +153,9 @@ Loaded in Docker container
 
 
 
+## History 
+* Configure CORS 
+* Configure docker-compose.yml to pull and build AAD-API image from GitHUB
 
 ## License
 See [LICENSE.md](https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs/blob/trunk/LICENSE) for details.

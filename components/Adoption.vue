@@ -117,10 +117,21 @@ export default {
     google: gmapApi,
     aad_headers() {
       // Guest Restful header
+      // 'Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Content-Profile'
+      if (process.env.NODE_ENV === 'development') {
+        return {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+        'Content-Type': 'application/json'
+        }
+      } 
       return {
-        'Authorization': 'Bearer %s'.replace('%s', process.env.AAD_API_TOKEN),
+        "Accept":"",
+        'Access-Control-Allow-Origin':'http://localhost:3000',
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json',
         'Content-Profile': 'aad_version_1_5_2',
+        'If-None-Match': '',
         'Prefer': 'params=single-object'
       }
     },
@@ -388,6 +399,7 @@ export default {
 
           let image = mapHelper.markerImage(DrainTypes.orphan)
           let drain = _dict.get(_id)
+          
           // change data in buffer
           drain.setData(this.utils.copyWithout(response.data.data,["id","adopter_key"]))
                .setType(DrainTypes.orphan)
@@ -493,8 +505,10 @@ export default {
       const _headers = this.aad_headers
 
         // load adoptees before getting open data
+
         new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
           .then((response) => {
+
             let AADHandlers_cnt = 0
             // if not in drains then add drain and marker and adopte image
             // if in drains and marker and marke.getMap() === null then marker.setMap(map)
@@ -506,13 +520,16 @@ export default {
             /////////////////
             // load adoptees
             ///////
-            for (dr in response.data) {
-              let drain = new Drain(response.data[dr]['adoptee'])
-              let _payload = new TokenHelper(this.$store.state.token)
+ 
+            for (dr in response.data.selection) {
+              let drain = new Drain(response.data[dr]['adoptee']);
+              // let _payload = new TokenHelper(this.$store.state.token);
+              let _payload = new TokenHelper(process.env.AAD_API_TOKEN);
 
               if (_payload && drain) {
-                if (_payload.getKey() === drain.getKey()) {
 
+                if (_payload.getKey() === drain.getKey()) {
+                  console.log('loadDrains 3.1.3.3');
                   // this one has been adopted by you
                   drain.setType(DrainTypes.yours)
                 }
@@ -546,7 +563,6 @@ export default {
             /////////
             new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
               .then((response) => {
-
                 const map = mapHelper.map
                 const tokenHelper = this.adopter_token_helper
                 let counter = 0
@@ -621,15 +637,18 @@ export default {
                   /* eslint-enable no-console */
                 }
               })
-              .catch((response) => {
+              .catch((err) => {
                 /* eslint-disable no-console */
-                console.log('Unexpected issue loading drains!')
+                console.error('Unexpected issue loading drains!', err);
                 /* eslint-enable no-console */
               }) // end of DWHandlers
           })
-          .catch((response) => {
+          .catch((err) => {
             /* eslint-disable no-console */
-            console.log('Unexpected issue with adoptees!')
+            console.error('Unexpected issue with adoptees!');
+            console.error('err', err);
+
+            // console.error('response', response);
             /* eslint-enable no-console */
           }) // end of AADHandler
 

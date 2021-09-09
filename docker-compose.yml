@@ -19,6 +19,8 @@ services:
   db:
     image: postgres
     restart: always
+    ports:
+      - 5432:5432
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
@@ -32,11 +34,17 @@ services:
       # - "./aad_db/sql-current:/docker-entrypoint-initdb.d"
       # Uncomment this if you want to persist the data.
       #- "~/.data/aad_db/pgdata:/var/lib/postgresql/data"
-
+  #db-api:
+  #  # Need to build citizenlabsgr/dev-swagger-hapi-api
+  #  # Find build instructions at https://github.com/citizenlabsgr/adopt-a-drain-hapi-api
+  #  image: citizenlabsgr/adopt-a-drain-hapi-api
   db-api:
     # Need to build citizenlabsgr/dev-swagger-hapi-api
     # Find build instructions at https://github.com/citizenlabsgr/adopt-a-drain-hapi-api
     image: citizenlabsgr/adopt-a-drain-hapi-api
+    build:
+      context: https://github.com/citizenlabsgr/adopt-a-drain-hapi-api.git#main
+
     command: >
       sh -c "
         while ! nc -z db 5432;
@@ -76,6 +84,7 @@ services:
       - DW_USER=${DW_USER}
       - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
       - DW_DRAIN_URL=${DW_DRAIN_URL}
+      - AAD_API_TOKEN=${AAD_API_TOKEN}
     depends_on:
       - db-api  
 

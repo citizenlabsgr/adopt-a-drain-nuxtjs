@@ -118,13 +118,14 @@ export default {
     aad_headers() {
       // Guest Restful header
       // 'Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Content-Profile'
-      if (process.env.NODE_ENV === 'development') {
+      // if (process.env.NODE_ENV === 'development') {
         return {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
         }
-      } 
+      
+      /* } 
       return {
         "Accept":"",
         'Access-Control-Allow-Origin':'http://localhost:3000',
@@ -134,6 +135,7 @@ export default {
         'If-None-Match': '',
         'Prefer': 'params=single-object'
       }
+      */
     },
     aad_headers_authorized() {
       // current users header
@@ -249,6 +251,9 @@ export default {
       })
     },
   methods: {
+    setFeedback(msg) {
+      this.page.feedback = msg;
+    },
     form_init_handler() {
       // Objective: Adopt, and orphan drains
       // Strategy: overwrite a single info_window
@@ -629,11 +634,13 @@ export default {
                 } // end for
                 if (counter === 0) {
                   /* eslint-disable no-console */
-                  console.log('Nothing to show here!')
+                  // console.log('Nothing to show here!');
+                  this.setFeedback('Nothing to show here!');
                   /* eslint-enable no-console */
                 } else {
                   /* eslint-disable no-console */
-                  console.log('Showing %d more Drains!'.replace('%d', counter))
+                  // console.log('Showing %d more Drains!'.replace('%d', counter))
+                  this.setFeedback('Showing %d more Drains!'.replace('%d', counter))
                   /* eslint-enable no-console */
                 }
               })

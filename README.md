@@ -162,25 +162,7 @@ See [LICENSE.md](https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs/blob/trun
 
 [license]: https://github.com/citizenlabsgr/openbudgetgr/blob/master/LICENSE
 
-## Environment Variables
-### Docker
-API_HOST=0.0.0.0
-API_PORT=5555
-AAD_API_URL=http://0.0.0.0:5555
-# AAD_API_URL=https://api-aad-lgrow-staging.herokuapp.com
-AAD_API_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaXRpemVubGFicy1hcGkiLCJpc3MiOiJjaXRpemVubGFicyIsInN1YiI6ImNsaWVudC1hcGkiLCJ1c2VyIjoiZ3Vlc3QiLCJzY29wZSI6ImFwaV9ndWVzdCIsImtleSI6IjAifQ.P3rZzJPzyCe6X96eyHSWOL_Yt6_c8ql2mwcioI8tkFU
 
-### Heroku
-AAD_API_TOKEN
-AAD_API_URL
-DW_AUTH_TOKEN
-DW_DRAIN_URL https://api.data.world/v0/sql/citizenlabs/lgrow-storm-drains-current
-DW_USER
 
-GOOGLE_MAPS_API_KEY
-
-HOST 0.0.0.0
-NODE_ENV staging
-NPM_CONFIG_PRODUCTION false
 
 

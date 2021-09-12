@@ -7,10 +7,7 @@ if (process.env.NODE_ENV !== 'production') {
   /* eslint-enable no-console */
   require('dotenv').config()
   /* eslint-disable no-console */
-  // console.log('GOOGLE_MAPS_API_KEY: ' + process.env.GOOGLE_MAPS_API_KEY)
-  // console.log('DW_USER: process.env.DW_USER: ' + process.env.DW_USER)
-  // console.log('DW_DRAIN_URL: process.env.DW_DRAIN_URL ' + process.env.DW_DRAIN_URL)
-  // console.log('DW_AUTH_TOKEN: process.env.DW_AUTH_TOKEN ' + process.env.DW_AUTH_TOKEN)
+  
   /* eslint-enable no-console */
 } else {
   // switch to

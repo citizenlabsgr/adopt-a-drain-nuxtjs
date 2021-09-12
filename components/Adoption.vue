@@ -251,6 +251,9 @@ export default {
       })
     },
   methods: {
+    setFeedback(msg) {
+      this.page.feedback = msg;
+    },
     form_init_handler() {
       // Objective: Adopt, and orphan drains
       // Strategy: overwrite a single info_window
@@ -631,11 +634,13 @@ export default {
                 } // end for
                 if (counter === 0) {
                   /* eslint-disable no-console */
-                  console.log('Nothing to show here!')
+                  // console.log('Nothing to show here!');
+                  this.setFeedback('Nothing to show here!');
                   /* eslint-enable no-console */
                 } else {
                   /* eslint-disable no-console */
-                  console.log('Showing %d more Drains!'.replace('%d', counter))
+                  // console.log('Showing %d more Drains!'.replace('%d', counter))
+                  this.setFeedback('Showing %d more Drains!'.replace('%d', counter))
                   /* eslint-enable no-console */
                 }
               })

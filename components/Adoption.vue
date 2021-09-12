@@ -118,13 +118,14 @@ export default {
     aad_headers() {
       // Guest Restful header
       // 'Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Content-Profile'
-      if (process.env.NODE_ENV === 'development') {
+      // if (process.env.NODE_ENV === 'development') {
         return {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
         }
-      } 
+      
+      /* } 
       return {
         "Accept":"",
         'Access-Control-Allow-Origin':'http://localhost:3000',
@@ -134,6 +135,7 @@ export default {
         'If-None-Match': '',
         'Prefer': 'params=single-object'
       }
+      */
     },
     aad_headers_authorized() {
       // current users header

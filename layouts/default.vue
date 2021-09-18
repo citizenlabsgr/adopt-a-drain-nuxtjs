@@ -106,7 +106,7 @@ html {
 }
 .feedback {
   font-weight: 300;
-  font-size: 21px;
+  font-size: 18px;
   color: #526488;
   word-spacing: 5px;
   padding-bottom: 15px;
@@ -141,7 +141,7 @@ html {
   /*background-color: #8ebf42*/
 }
 .prompt {
-  text-align:left;
+  text-align:center;
   font-variant: petite-caps;
 }
 .label {
@@ -151,13 +151,13 @@ html {
 }
 .input_ok {
   color: #339933;
-  text-align: left;
+  text-align: center;
   font-variant: petite-caps;
   font-size: 12px;
 }
 .input_error {
   color: #990033;
-  text-align: left;
+  text-align: center;
   font-variant: petite-caps;
   font-size: 12px;
 }

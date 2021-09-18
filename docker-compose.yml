@@ -52,9 +52,9 @@ services:
             echo 'sleep';
             sleep 1;
         done;
-        echo 'Port open!';
+        echo 'DB Port open!';
         npm run db-deploy;
-        npm run dev;
+        npm run start;
       "
     ports:
       - 5555:5555
@@ -90,6 +90,8 @@ services:
       - DW_AUTH_TOKEN=${DW_AUTH_TOKEN}
       - DW_DRAIN_URL=${DW_DRAIN_URL}
       - AAD_API_TOKEN=${AAD_API_TOKEN}
+      - AAD_API_URL=${AAD_API_URL}
+      
     depends_on:
       - db-api  
 

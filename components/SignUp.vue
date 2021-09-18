@@ -10,7 +10,7 @@
       {{ page.subtitle }}
     </h2>
     <!-- ------------ -->
-    <!-- Display Name -->
+    <!-- Display username -->
     <!-- ------------ -->
     <div>
       <!--div class="prompt">{{meta.displayname.prompt}}</div-->
@@ -37,7 +37,7 @@
         <div class="prompt" ><label for="username">
           {{meta.username.prompt}}</label>
         </div>
-        <div class="input"><input id="username" v-model="aadform.name" placeholder="your email"></div>
+        <div class="input"><input id="username" v-model="aadform.username" placeholder="your email"></div>
         <div id="error-name" :class="[is_username ? 'input_ok' : 'input_error']">
           {{status_username}}
         </div>
@@ -48,12 +48,15 @@
     <div>
       <div class="prompt" ><label for="password">{{meta.password.prompt}}</label></div>
       <div class="input"><input id="password" v-model="aadform.password" type="password" placeholder="secure password"></div>
-      <div id="error-password" v-for="item in meta.password.errors"  v-bind:key="item.id" :class="[is_password ? 'input_ok' : 'input_error']">
-        {{ item }}
+      
+      <div id="error-password" :class="[is_password ? 'input_ok' : 'input_error']">
+          {{status_password}}
       </div>
-      <!-- div id="error-password" v-for="item in status_password"  v-bind:key="item.id" :class="[is_password ? 'input_ok' : 'input_error']">
-        {{ item }}
-      </div -->
+      
+      <div id="error-password-list" v-for="item in meta.password.errors"  v-bind:key="item.id" :class="[is_password ? 'input_ok' : 'input_error']">
+        {{ item.id }}
+      </div>
+
     </div>
     <br/>
     <p>&nbsp;</p>
@@ -65,7 +68,9 @@
         Sign Up
       </button>
     </div>
-
+    <div class="feedback">
+      {{ page.feedback }} {{ page.center }}
+    </div>
   </div>
 </template>
 
@@ -79,11 +84,12 @@ export default {
     return {
       page: {
         title: 'Sign Up',
-        subtitle: 'Because'
+        subtitle: 'Because because because',
+        feedback: ''
       },
       aadform: {
         displayname: '',
-        name: '',
+        username: '',
         password: ''
       },
       meta: {
@@ -93,7 +99,7 @@ export default {
           regexp: Constants.one_char()
         },
         username :{
-          prompt:"User Name",
+          prompt:"Email",
           status:"",
           regexp: Constants.email()
         },
@@ -108,24 +114,7 @@ export default {
     }
   },
   computed: {
-    aadHandlers () {
-      return new AADHandlers(this)
-    },
-    aadHeader () {
-      return {
-        'Authorization': 'Bearer ' + process.env.AAD_API_TOKEN,
-        'Content-Type': 'application/json',
-        'Content-Profile': process.env.AAD_API_VERSION,
-        'Prefer': 'params=single-object'
-      }
-    },
-    aadUrl () {
-      // remove just_fail in signup
-      return process.env.AAD_API_URL + '/signin'
-    },
-    aadBody () {
-      return JSON.stringify(this.aadform)
-    },
+
     isDisabled () {
       return !(this.is_password && this.is_username)
     },
@@ -135,12 +124,12 @@ export default {
     status_displayname () {
       return (this.is_displayname ? "Ok" : "Required" )
     },
-    is_password () { // true when not compliant, expects an email
+    is_password () { // true when not compliant, expects lower and upper, symbol, and number
       return (Constants.password().test(this.aadform.password.trim()))
     },
     status_password () {
-      let lst = [];
-
+      // let lst = [];
+      this.meta.password.errors=[]
       if (!Constants.lowercase().test(this.aadform.password)) {
         this.meta.password.errors.push({"id": "At least 1, lowercase"})
       }
@@ -156,35 +145,20 @@ export default {
       if (!Constants.eight_char().test(this.aadform.password)) {
         this.meta.password.errors.push({"id": "At least 8 characters"})
       }
-      // return (this.is_password ? ["Ok"] : lst )
+      return (this.is_password ? "Ok" : "Required" )
 
     },
     is_username () { // true when not compliant, expects an email
-      return (Constants.user_name().test(this.aadform.name.trim()))
+      return (Constants.user_name().test(this.aadform.username.trim()))
     },
     status_username () {
       return (this.is_username ? "Ok" : "Required")
-    },
-    aadHandlers () {
-      return new AADHandlers(this)
-    },
-    aadHeader () {
-      return {
-        'Authorization': 'Bearer ' + process.env.AAD_API_TOKEN,
-        'Content-Type': 'application/json',
-        'Content-Profile': process.env.AAD_API_VERSION,
-        'Prefer': 'params=single-object'
-      }
-    },
-    aadUrl () {
-      // remove just_fail in signup
-      return process.env.AAD_API_URL + '/adopter'
-    },
-    aadBody () {
-      return JSON.stringify(this.aadform)
     }
   }, // end of computed
   methods: {
+    setFeedback(msg) {
+      this.page.feedback = msg;
+    },
     log (msg) {
       /* eslint-disable no-console */
       console.log(msg)
@@ -198,25 +172,51 @@ export default {
     },
     onSubmit () {
       if (!this.isValidForm()) {
-        this.log('display name, email and password, please!')
+        this.setFeedback('Missing Info!')
         return undefined
       }
+      // this.aadHandlers.aadAdopter(this.aadUrl, this.aadHeader, this.aadBody)
 
-      this.aadHandlers.aadAdopter(this.aadUrl, this.aadHeader, this.aadBody)
+      const aadHeader = {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      };
+      const aadUrl = process.env.AAD_API_URL + '/signup';
+      const aadBody = JSON.stringify(this.aadform);
+      
+      new AADHandlers(this).aadAdopter(aadUrl, aadHeader, aadBody)
         .then((response) => {
           if (response.status === 200) {
-            this.log('Welcome')
+            console.log('response', response.data);
+            
+            switch(response.data.status) {
+              case '200':
+                this.log('Welcome');
+                this.setFeedback('Welcome');
+                break;
+              case '409':
+                this.log('You already have an account');
+                this.setFeedback('Email already taken!');
+                break;
+              default:
+                this.setFeedback('Not sure what just happened');
+                this.log('Not sure what just happened');
+            }
           } else {
             //this.feedBack('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
             this.log('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
           }
         })
         .catch((err) => {
+          // console.log('aadHeader',aadHeader);
+          // console.log('aadUrl',aadUrl);
+          // console.log('aadBody',aadBody);
+
           //this.feedBack('Something unexpected happened while searching (%s)!'.replace('%s', err))
-          this.log('Something unexpected happened while searching (%s)!'.replace('%s', err))
+          this.log('Something unexpected happened (%s)!'.replace('%s', err))
         })
     },
-
   }
 }
 </script>

@@ -471,9 +471,11 @@ export default {
         }
       }
     },
+    /*
 
+    */
     loadDrains () {
-
+      // console.log('loadDrains 1');
       /*
       Objective: Keep from downloading all the drains at one time
       Strategy:
@@ -485,19 +487,21 @@ export default {
       //////////
       // common to both Handlers
       ////////////
+      // console.log('loadDrains 2');
+
       const mapHelper = this.mapHelper
       const infoHelper= new InfoHelper(this.adopter_token_helper)
 
       // mounted() sets the center use geolocation if possible
       // prepare seach boundary for query
       const center = mapHelper.map.get('center')
-
+      // console.log('loadDrains 3');
       let cBox = mapHelper.map.getBounds()
 
       if (!cBox) { // patch up center_box
         cBox = mapHelper.boxify( center )
       }
-
+      // console.log('loadDrains 4');
       mapHelper.setViewBox(cBox)
 
       const centerBox = mapHelper.getViewBox()
@@ -506,14 +510,15 @@ export default {
       // download Adoptees
       ///////////////////
       const _data = centerBox
-
+      // console.log('loadDrains 5');
       const _headers = this.aad_headers
 
         // load adoptees before getting open data
-
+      // console.log('loadDrains 6');
+      // console.log('axios', this.$axios);
         new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
           .then((response) => {
-
+            // console.log('loadDrains 6.1');
             let AADHandlers_cnt = 0
             // if not in drains then add drain and marker and adopte image
             // if in drains and marker and marke.getMap() === null then marker.setMap(map)
@@ -525,7 +530,6 @@ export default {
             /////////////////
             // load adoptees
             ///////
- 
             for (dr in response.data.selection) {
               let drain = new Drain(response.data[dr]['adoptee']);
               // let _payload = new TokenHelper(this.$store.state.token);
@@ -566,8 +570,10 @@ export default {
             //////////////
             // call the data.world service once adoptees are loaded
             /////////
+            // console.log('loadDrains 7');
             new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
               .then((response) => {
+                // console.log('loadDrains 7.1');
                 const map = mapHelper.map
                 const tokenHelper = this.adopter_token_helper
                 let counter = 0

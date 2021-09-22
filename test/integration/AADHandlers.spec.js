@@ -22,7 +22,7 @@ describe('AADHandlers', () => {
       'Content-Type': 'application/json',
       'authorization': token,
       'rollback': true
-  };    
+    };    
     
     const headers = {
         authorization: token,

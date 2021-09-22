@@ -16,39 +16,26 @@ describe('SignIn render error messages', () => {
  })
  
  it('SignIn is good User Name Ok', async () => {
-  await wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-  expect(wrapper.find("#error-name").text()).toEqual("Ok")
-  expect(wrapper.find("#error-password").text()).toBe("Ok")
-
- })
- /*
- it('SignIn is good User Name Ok', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-   expect(wrapper.find("#error-name").text()).toEqual("Ok")
- })
- 
- it('SignIn is good Password Ok', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
+   await wrapper.setData({ aadform: {username: 'a@a.com', password: 'a1A!aaaa'} })
+   expect(wrapper.find("#error-name").text()).toBe("Ok")
    expect(wrapper.find("#error-password").text()).toBe("Ok")
 
  })
-*/
+
  it('is Disabled ', async () => {
-   wrapper.setData({ aadform: {name: '', password: ''} })
-   await wrapper.vm.$nextTick()
+   await wrapper.setData({ aadform: {username: '', password: ''} })
    expect(wrapper.find("#signin").html()).toContain('disabled="disabled"')
  })
 
  it('is Enabled ', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-   await wrapper.vm.$nextTick()
+   await wrapper.setData({ aadform: {username: 'a@a.com', password: 'a1A!aaaa'} })
    expect(wrapper.find("#signin").html()).toEqual(expect.not.stringContaining("disabled"));
  })
  
 
- it('is Not SignInd ', async () => {
-   wrapper.setData({ aadform: {name: 'a@a.com', password: 'a1A!aaaa'} })
-   await wrapper.vm.$nextTick()
+ it('is Not SignIn ', async () => {
+   await wrapper.setData({ aadform: {username: 'a@a.com', password: 'a1A!aaaa'} })
+   // await wrapper.vm.$nextTick()
    expect(wrapper.vm.isAuthenticated).toBeFalsy()
  })
 

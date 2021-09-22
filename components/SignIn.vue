@@ -14,7 +14,7 @@
     <!-- ------------ -->
     <div class="prompt" ><label for="username">{{meta.username.prompt}}</label></div>
     <div>
-      <input id="username" v-model="aadform.name" placeholder="email">
+      <input id="username" v-model="aadform.username" placeholder="email">
     </div>
     <div id="error-name" :class="[is_username ? 'input_ok' : 'input_error']">{{status_username}}</div>
 
@@ -36,6 +36,9 @@
         Sign In
       </button>
     </div>
+    <div class="feedback">
+      {{ page.feedback }} {{ page.center }}
+    </div>
   </div>
 </template>
 
@@ -51,10 +54,11 @@ export default {
     return {
       page: {
         title: 'Sign In',
-        subtitle: 'Because'
+        subtitle: 'Because',
+        feedback: ''
       },
       aadform: {
-        name: '',
+        username: '',
         password: ''
       },
       meta: {
@@ -74,7 +78,7 @@ export default {
   },
 
   computed: {
-
+    /*
     aadHandlers () {
       return new AADHandlers(this)
     },
@@ -93,6 +97,7 @@ export default {
     aadBody () {
       return JSON.stringify(this.aadform)
     },
+    */
     isDisabled () {
       return !(this.is_password && this.is_username)
     },
@@ -103,43 +108,63 @@ export default {
       return (this.is_password ? "Ok" : "Required")
     },
     is_username () { // true when not compliant, expects an email
-      return (Constants.user_name().test(this.aadform.name.trim()))
+      return (Constants.user_name().test(this.aadform.username.trim()))
     },
     status_username () {
       return (this.is_username ? "Ok" : "Required")
     },
   }, // end of computed
   methods: {
+    setFeedback(msg) {
+      this.page.feedback = msg;
+    },
     log (msg) {
       /* eslint-disable no-console */
       console.log(msg)
       /* eslint-enable no-console */
     },
     onSignIn () {
-      this.aadHandlers.aadSignin(this.aadUrl, this.aadHeader, this.aadBody)
-        .then((response) => {
-          if (response.status === 200) {
-            //this.feedBack('Go find a drain to adopt!')
-            this.setToken(response.data.token)
-            this.setExpiresAt(new TokenHelper(response.data.token).getExpiration())
-          } else {
-            //this.feedBack('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
-            //this.log('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
-            /* eslint-disable no-console */
-            console.log('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
-            /* eslint-enable no-console */
 
+      const aadUrl = process.env.AAD_API_URL + '/signin';
+      const aadBody = JSON.stringify(this.aadform);
+      const aadHeader = {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      };
+      new AADHandlers(this).aadSignin(aadUrl, aadHeader, aadBody)
+        .then((response) => {
+
+          if (response.status === 200) {
+
+             switch(response.data.status) {
+              case '200':
+                // console.log('Go find a drain to adopt!');
+                this.setToken(response.data.token)
+                this.setFeedback('Go find a drain to adopt!');
+                break;
+           
+              case '404':
+                console.log('No signin matching');
+                this.setFeedback('No signin matching ');
+                break;
+
+              default:
+                this.setFeedback('Not sure what just happened');
+                console.log('Not sure what just happened');
+            }
           }
+
         })
         .catch((err) => {
           this.detoken()
           if (err.message.includes('403')) {
             /* eslint-disable no-console */
-            console.log('Have you signed up?')
+            this.setFeedback('Have you signed up?')
             /* eslint-enable no-console */
           } else {
             /* eslint-disable no-console */
-            console.log('Something unexpected happened while searching (%s)!'.replace('%s', err))
+            this.setFeedback('Something unexpected happened while searching (%s)!'.replace('%s', err))
             /* eslint-enable no-console */
           }
         })

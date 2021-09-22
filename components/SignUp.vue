@@ -175,8 +175,6 @@ export default {
         this.setFeedback('Missing Info!')
         return undefined
       }
-      // this.aadHandlers.aadAdopter(this.aadUrl, this.aadHeader, this.aadBody)
-
       const aadHeader = {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
@@ -188,33 +186,29 @@ export default {
       new AADHandlers(this).aadAdopter(aadUrl, aadHeader, aadBody)
         .then((response) => {
           if (response.status === 200) {
-            console.log('response', response.data);
+            // console.log('response', response.data);
             
             switch(response.data.status) {
               case '200':
-                this.log('Welcome');
+                // this.log('Welcome');
                 this.setFeedback('Welcome');
                 break;
               case '409':
-                this.log('You already have an account');
+                // this.log('You already have an account');
                 this.setFeedback('Email already taken!');
                 break;
               default:
                 this.setFeedback('Not sure what just happened');
-                this.log('Not sure what just happened');
+                console.log('Not sure what just happened');
             }
           } else {
             //this.feedBack('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
-            this.log('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
+            console.log('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
           }
         })
         .catch((err) => {
-          // console.log('aadHeader',aadHeader);
-          // console.log('aadUrl',aadUrl);
-          // console.log('aadBody',aadBody);
-
-          //this.feedBack('Something unexpected happened while searching (%s)!'.replace('%s', err))
-          this.log('Something unexpected happened (%s)!'.replace('%s', err))
+          //this.setFeedback('Something unexpected happened while searching (%s)!'.replace('%s', err))
+          console.log('Something unexpected happened (%s)!'.replace('%s', err))
         })
     },
   }

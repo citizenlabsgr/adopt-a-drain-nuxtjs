@@ -7,10 +7,10 @@
         </nuxt-link>
       </li>
       <li v-if="!adopter_token_helper.isAuthenticated()">
-        SignIn
-        <!-- nuxt-link to="/authenticate">
+      
+        <nuxt-link to="/authenticate">
           SignIn
-        </!-->
+        </nuxt-link>
       </li>
       <li v-else>
         <nuxt-link to="/authenticate">

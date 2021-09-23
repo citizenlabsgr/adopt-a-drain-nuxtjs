@@ -111,7 +111,7 @@ export default {
       return (Constants.user_name().test(this.aadform.username.trim()))
     },
     status_username () {
-      return (this.is_username ? "Ok" : "Required")
+      return (this.is_username ? "Ok" : "Invalid")
     },
   }, // end of computed
   methods: {
@@ -140,8 +140,12 @@ export default {
              switch(response.data.status) {
               case '200':
                 // console.log('Go find a drain to adopt!');
-                this.setToken(response.data.token)
+                this.setToken(response.data.token);
+                
+                // let displayname = new TokenHelper(response.data.token).getDisplayName();
+                let displayname = this.getToken();
                 this.setFeedback('Go find a drain to adopt!');
+              
                 break;
            
               case '404':
@@ -174,6 +178,9 @@ export default {
     },
     setToken (token) {
       this.$store.commit('token', token)
+    },
+    getToken() {
+      return this.$store.state.token;
     },
     detoken () {
       this.$store.commit('detoken')

@@ -1,14 +1,32 @@
 /*
 get the payload from a jwt
 current keys:
-iss
-sub
-jti
-key
-role
-exp
+  aud: "citizenlabs-api"
+  iss: "citizenlabs"
+  sub: "client-api"
+  user: "guest"
+  scope: "api_guest"
+  key: "0"
+{
+ "aud": "citizenlabs-api"
+  "iss": "citizenlabs"
+  "sub": "client-api"
+  "user": "guest"
+  "scope": "api_guest"
+  "key": "0"
+}
+
+previous keys:
+  iss
+  sub
+  jti
+  key
+  role
+  exp
+
 */
 class TokenHelper {
+
   constructor (token) {
     //console.log('TokenHelper constructor: (' + token + ')');
     this.token = token
@@ -21,18 +39,26 @@ class TokenHelper {
   getCurrentTime() {
     return new Date().getTime()/1000;
   }
+  
   getDisplayName () {
     if (!this.token) {return undefined;}
-    return this.payload.jti;
+    return this.payload.user;
   }
-  getExpiration () {
+
+  getExpiration () { // broken
     if (!this.token) {return undefined;}
     return this.payload.exp;
   }
 
-  getRole () {
+  getRole () { // aka getScope ... deprecated
+    // if (!this.token) {return undefined;}
+    // return this.payload.scope;
+    return this.getScope();
+  }
+  
+  getScope () { // aka getRole
     if (!this.token) {return undefined;}
-    return this.payload.role;
+    return this.payload.scope;
   }
 
   getSubject () {
@@ -57,8 +83,9 @@ class TokenHelper {
 
   getName () {
     //console.log('getName')
-    if (!this.token) {return undefined;}
-    return this.payload.jti;
+    // if (!this.token) {return undefined;}
+    // return this.payload.jti;
+    return this.getDisplayName();
   }
 
   isAuthenticated () {

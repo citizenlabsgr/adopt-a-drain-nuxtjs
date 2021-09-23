@@ -1,6 +1,7 @@
 <template>
   <nav>
     <ul>
+  
       <li>
         <nuxt-link to="/">
           Home
@@ -58,6 +59,9 @@ export default {
       // console.log('this.$store.state.token',this.$store.state.token);
 
       return new TokenHelper(this.$store.state.token)
+    },
+    isAuthenticated () {
+      return new TokenHelper(this.$store.state.token).isAuthenticated();
     }
     /*
     isAuthenticated () {

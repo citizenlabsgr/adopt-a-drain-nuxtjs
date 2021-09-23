@@ -1,5 +1,6 @@
 <template>
   <div>
+    <div>{{adopter_token_helper.getDisplayName()}}</div>
     <br/>
     <hr/>
     <GmapMap

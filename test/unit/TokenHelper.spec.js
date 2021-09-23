@@ -11,7 +11,7 @@ const drain_json = {
 */
 
 describe('Token', () => {
-
+  const my_pw = 'my-secret-password-at-least-32-char-long';
   beforeEach(() => {
     // Clear all instances and calls to constructor and all methods:
     //Drain.mockClear();
@@ -20,36 +20,64 @@ describe('Token', () => {
   });
 
   it('Guest Token ', () => {
-    //const mock_token= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo';
-    //const mock_token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuTGFicyIsInN1YiI6Ik9yaWdpbiIsIm5hbWUiOiJBZG9wdC1hLURyYWluIiwicm9sZSI6Imd1ZXN0X2FhZCJ9.-qtPBLq_t76BTdV0PuGiJOiWLyx_K2dbAoW3b59EHuM';
-    const mock_token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuTGFicyIsInN1YiI6Ik9yaWdpbiIsIm5hbWUiOiJBZG9wdC1hLURyYWluIiwicm9sZSI6Imd1ZXN0X2FhZCJ9.-qtPBLq_t76BTdV0PuGiJOiWLyx_K2dbAoW3b59EHuM';
-    const tH = new TokenHelper(mock_token);
-    expect(tH.isExpired()).toEqual(false);
-    expect(tH.isAuthenticated()).toEqual(false);
-    expect(tH.getRole()).toEqual('guest_aad');
-    expect(tH.getIssuer()).toEqual('CitizenLabs');
-    expect(tH.getSubject()).toEqual('Origin');
+    const mock_claims = {
+      "aud": "citizenlabs-api",
+      "iss": "citizenlabs",
+      "sub": "adopt-a-drain-api",
+      "user": "guest",
+      "key": "0",
+      "scope": "api_guest"
+    }
 
-    expect(tH.getName()).not.toBeDefined();
-    expect(tH.getDisplayName()).not.toBeDefined();
+    const mock_token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjaXRpemVubGFicy1hcGkiLCJpc3MiOiJjaXRpemVubGFicyIsInN1YiI6ImFkb3B0LWEtZHJhaW4tYXBpIiwidXNlciI6Imd1ZXN0Iiwia2V5IjoiMCIsInNjb3BlIjoiYXBpX2d1ZXN0In0.A6RrA7u2QdCZEqBGPeFNhr1rT1npwIsq_UC5tAwsD-o';
+    const tH = new TokenHelper(mock_token);
+    // getCurrentTime
+    expect(tH.getDisplayName()).toEqual(mock_claims.user);
+    // getExpiration
     expect(tH.getExpiration()).not.toBeDefined();
-    expect(tH.getKey()).not.toBeDefined();
-
-  });
-  it('Adopter Token ', () => {
-    const mock_token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuTGFicyIsInN1YiI6IkFkb3B0LUEtRHJhaW4iLCJqdGkiOiJqQGNpdGl6ZW5sYWJzLm9yZyIsImtleSI6ImI2Y2E4MzNkLTQyMDUtNDYzYi1hZTQ2LTRmNjRmZGZlMWM3ZSIsInJvbGUiOiJlZGl0b3JfYWFkIiwiZXhwIjoxNjAyMzI5NjE0fQ.LNla6KUQY-dx8_NVOq_CD5vH2C1tfiuZBFuDH7nf1Q4';
-    const tH = new TokenHelper(mock_token);
-    expect(tH.isExpired()).toEqual(true);
+    // getRole
+    expect(tH.getRole()).toEqual(mock_claims.scope);
+    // getScope
+    expect(tH.getScope()).toEqual(mock_claims.scope);
+    // getSubject
+    expect(tH.getSubject()).toEqual(mock_claims.sub);
+    // getIssuer
+    expect(tH.getIssuer()).toEqual(mock_claims.iss);
+    // getToken
+    // getKey
+    expect(tH.getKey()).toEqual(mock_claims.key);
+    // getName deprecated use getDisplayName
+    expect(tH.getName()).toEqual(mock_claims.user);
+    // isAuthenticated
     expect(tH.isAuthenticated()).toEqual(false);
+    // isExpired
+    expect(tH.isExpired()).toEqual(false);
+    
+  });
 
-    expect(tH.getRole()).toEqual('editor_aad');
-    expect(tH.getIssuer()).toEqual('CitizenLabs');
-    expect(tH.getSubject()).toEqual('Adopt-A-Drain');
+  it('Adopter Token ', () => {
+    const mock_claims = {
+      "aud": "citizenlabs-api",
+      "iss": "citizenlabs",
+      "sub": "adopt-a-drain-api",
+      "user": "j@citizenlabs.org",
+      "key": "b6ca833d-4205-463b-ae46-4f64fdfe1c7e",
+      "scope": "editor_aad",
+      "exp": 1602329614
+    }
 
-    expect(tH.getName()).toEqual('j@citizenlabs.org');
-    //expect(tH.getDisplayName()).toEqual('');
-    expect(tH.getExpiration()).toEqual(1602329614);
-    expect(tH.getKey()).toEqual('b6ca833d-4205-463b-ae46-4f64fdfe1c7e');
+    const mock_token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjaXRpemVubGFicy1hcGkiLCJpc3MiOiJjaXRpemVubGFicyIsInN1YiI6ImFkb3B0LWEtZHJhaW4tYXBpIiwidXNlciI6ImpAY2l0aXplbmxhYnMub3JnIiwia2V5IjoiYjZjYTgzM2QtNDIwNS00NjNiLWFlNDYtNGY2NGZkZmUxYzdlIiwic2NvcGUiOiJlZGl0b3JfYWFkIiwiZXhwIjoxNjAyMzI5NjE0fQ.G9UHodq6T2eCAHWlhC0Ly5wZtnXjZYIfWk1UE02qWhA';
+    const tH = new TokenHelper(mock_token);
+
+    expect(tH.getDisplayName()).toEqual(mock_claims.user);
+    expect(tH.getExpiration()).toEqual(mock_claims.exp);
+    expect(tH.getScope()).toEqual(mock_claims.scope);
+    expect(tH.getSubject()).toEqual(mock_claims.sub);
+    expect(tH.getIssuer()).toEqual(mock_claims.iss);
+    expect(tH.getKey()).toEqual(mock_claims.key);
+    expect(tH.getName()).toEqual(mock_claims.user);
+    expect(tH.isAuthenticated()).toEqual(false);
+    expect(tH.isExpired()).toEqual(true);
 
   });
 });

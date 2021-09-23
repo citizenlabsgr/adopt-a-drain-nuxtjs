@@ -14,7 +14,8 @@ class Constants {
     return /\S+@\S+\.\S+/;
   }
   static user_name () {
-    return /\S+@\S+\.\S+/;
+    // return /\S+@\S+\.\S+/;
+    return /^[\S+]{1,64}@[\S+]{1,249}\.[\S+]{1,5}$/;
   }
   static password () {
     return /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{8,}$/;

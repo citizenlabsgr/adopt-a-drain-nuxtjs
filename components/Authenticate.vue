@@ -27,7 +27,6 @@ export default {
     SignOut
   },
 
-
   beforeDestroy () {
     // Objective: Give the user feedback when signin expires
     // Strategy: Use a polling function
@@ -35,20 +34,16 @@ export default {
 
     clearInterval(this.interval_monitor_expiration)
     this.interval_monitor_expiration=null
-    //this.log('beforeDestroy ')
+    this.log('beforeDestroy ')
   },
   created () {
     // Objective: Give the user feedback when signin expires
     // Strategy: Use a polling function
     // Task: start the polling function
-    //this.log(this.interval_monitor_expiration)
-    //this.log('created')
 
     this.pollExpiration()
-    //this.log(this.interval_monitor_expiration)
-    //this.log('created')
+  
   },
-
   methods: {
     log (msg) {
       /* eslint-disable no-console */

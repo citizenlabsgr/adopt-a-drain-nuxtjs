@@ -89,10 +89,12 @@ class TokenHelper {
   }
 
   isAuthenticated () {
+    
     // is not token
     if (!this.token) {
       return false;
     }
+
     return this.payload.exp > this.getCurrentTime();
   }
 

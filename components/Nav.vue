@@ -7,7 +7,8 @@
           Home
         </nuxt-link>
       </li>
-      <li v-if="!adopter_token_helper.isAuthenticated()">
+      
+      <li v-if="!isAuthenticated">
       
         <nuxt-link to="/authenticate">
           SignIn
@@ -18,25 +19,28 @@
           SignOut
         </nuxt-link>
       </li>
-      <li v-if="!adopter_token_helper.isAuthenticated()">
+
+      <li v-if="!isAuthenticated">
         <nuxt-link to="/authorize">
           SignUp
         </nuxt-link>
       </li>
       <li v-else>
         <nuxt-link to="/authorize">
-          {{adopter_token_helper.getDisplayName()}}
+          {{displayName}}
         </nuxt-link>
       </li>
+      
     </ul>
   </nav>
 </template>
 
 <script>
-import { TokenHelper } from '@/components/mixins/TokenHelper.js'
+import Expiration from '@/components/mixins/ExpirationMixin.js'
+
 /* istanbul ignore next */ 
 export default {
-
+  mixins: [Expiration], 
   data () {
     return {
       title: 'Sponsors',
@@ -46,31 +50,15 @@ export default {
   computed: {
     salutation () {
       if (this.$store.state.authenticated) {
-        return this.$store.state.user.name
+        return this.$store.state.user.name;
       }
-      return ''
+      return '';
     },
-    adopter_token_helper () {
-      // Objective: Give user feedback about signin status
-      // Stratgey: use the adopter name stashed in adopter token
-      // Strategy: use the adopter's identity key to color code drain symbols
-      // console.log('this.$store', this.$store);
-      // console.log('this.$store.state',this.$store.state);
-      // console.log('this.$store.state.token',this.$store.state.token);
-
-      return new TokenHelper(this.$store.state.token)
-    },
-    isAuthenticated () {
-      return new TokenHelper(this.$store.state.token).isAuthenticated();
+    
+    displayName () {
+      return this.$store.state.payload.user;
     }
-    /*
-    isAuthenticated () {
-      if (this.$store.state.adopter.expires_at < new Date().getTime()) {
-        this.$store.commit('detoken')
-      }
-      return this.$store.state.adopter.authenticated
-    },
-    */
+
   }
 }
 </script>

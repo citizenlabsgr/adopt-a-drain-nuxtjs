@@ -72,6 +72,7 @@ services:
       # In dev, the HEROKU_API_KEY can be set to anything
       # In GitHub secrets, set HEROKU_API_KEY to actual value from heroku
       - HEROKU_API_KEY=${HEROKU_API_KEY}
+      - API_TOKEN_TIMEOUT=${API_TOKEN_TIMEOUT}
 
     depends_on:
       - db  

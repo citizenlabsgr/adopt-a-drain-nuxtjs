@@ -82,7 +82,6 @@
 <script>
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-// import { TokenHelper } from './mixins/TokenHelper.js'
 /* istanbul ignore next */ 
 export default {
   data () {
@@ -195,11 +194,9 @@ export default {
             
             switch(response.data.status) {
               case '200':
-                // this.log('Welcome');
                 this.setFeedback('Welcome');
                 break;
               case '409':
-                // this.log('You already have an account');
                 this.setFeedback('Email already taken!');
                 break;
               default:
@@ -207,13 +204,11 @@ export default {
                 console.log('Not sure what just happened');
             }
           } else {
-            //this.feedBack('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
             console.log('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
           }
         })
         .catch((err) => {
-          //this.setFeedback('Something unexpected happened while searching (%s)!'.replace('%s', err))
-          console.log('Something unexpected happened (%s)!'.replace('%s', err))
+          console.error('Something unexpected happened (%s)!'.replace('%s', err))
         })
     },
   }

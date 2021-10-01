@@ -68,11 +68,7 @@
         Sign Up
       </button>
     </div>
-    <div>
-      <button id="update" class="button" @click="onSubmit ()" :disabled="isDisabled">
-        Update
-      </button>
-    </div> 
+    
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>

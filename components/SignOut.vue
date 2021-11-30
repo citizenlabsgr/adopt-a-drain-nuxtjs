@@ -28,7 +28,6 @@ export default {
   },
   watch: {
     adopter_token: function () {
-      console.log('watch SignOut adopter_token')
       this.$store.commit('attempt_expiration')
     },
   },

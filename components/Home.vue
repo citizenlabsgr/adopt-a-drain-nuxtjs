@@ -11,6 +11,8 @@
 
 <script>
 import DrainAdoption from '@/components/Adoption.vue'
+// import HeaderSmall from '@/components/HeaderSmall.vue'
+
 /* istanbul ignore next */ 
 export default {
   components: {

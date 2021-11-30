@@ -19,13 +19,13 @@ Adoption
     |    settings                      |
     |                                  |
   watch                                |
-+-->|    adopter_token --(expired)->+  |
++-->+    adopter_token --(expired)->+  |
 |   |                               |  |
 |  computed                         |  |
 |   |    google                     |  |
 |   |    aad_headers                |  |
 |   |    aad_headers_authorized     |  |
-+---|    adopter_token ----------+  |  |
++---+    adopter_token ----------+  |  |
     |    adopter_token_helper <--+  |  |
     |    dwHandlers                 |  |
     |    dwGuestHeader              |  |

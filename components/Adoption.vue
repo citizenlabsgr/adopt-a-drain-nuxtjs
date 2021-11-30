@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div>{{adopter_token_helper.getDisplayName()}}</div>
     <br/>
     <hr/>
     <GmapMap
@@ -105,39 +104,27 @@ export default {
   watch: {
     adopter_token: function () {
       // Objective: Give the user feedback that their signin has expired
-      // Strategy: monitor the state of adoptee's token,
+      // Strategy: monitor the state of adopter's token,
       // * if no token then token is either expired or never initiatied
       // * if no token then the red symbols are set to grey
-
-      if (this.adopter_token === '') {
+      
+      /*
+      if (!this.adopter_token) {
+        // if this.adopter_token changes reset the symbols
         this.reset_symbol()
       }
+      */
+      if (this.adopter_token === '') {
+        // if this.adopter_token changes reset the symbols
+        this.reset_symbol()
+      }
+      console.log('### monitor token')
+
     }
   },
   computed: {
     google: gmapApi,
-    aad_headers() {
-      // Guest Restful header
-      // 'Accept', 'Authorization', 'Content-Type', 'If-None-Match', 'Content-Profile'
-      // if (process.env.NODE_ENV === 'development') {
-        return {
-        "Accept":"application/json",
-        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
-        'Content-Type': 'application/json'
-        }
-      
-      /* } 
-      return {
-        "Accept":"",
-        'Access-Control-Allow-Origin':'http://localhost:3000',
-        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
-        'Content-Type': 'application/json',
-        'Content-Profile': 'aad_version_1_5_2',
-        'If-None-Match': '',
-        'Prefer': 'params=single-object'
-      }
-      */
-    },
+
     aad_headers_authorized() {
       // current users header
       return {
@@ -147,16 +134,14 @@ export default {
         'Prefer': 'params=single-object'
       }
     },
-    adopter_token () {
-      // need for watch
-      return this.$store.state.token
-    },
+
     adopter_token_helper () {
       // Objective: Give user feedback about signin status
       // Stratgey: use the adopter name stashed in adopter token
       // Strategy: use the adopter's identity key to color code drain symbols
       return new TokenHelper(this.adopter_token)
     },
+    
     dwHandlers () {
       // Objective: Separate UI and data
       // Strategy: use class to encapsulate restful call to data.world
@@ -261,7 +246,9 @@ export default {
       //           make a state specific form
       //           make buttons on the fly
       let button_names = ['orphanButton','adoptButton','adoptUpdateButton']
-      const infoHelper = new InfoHelper(this.adopter_token_helper)
+      // const infoHelper = new InfoHelper(this.adopter_token_helper)
+
+      const infoHelper = new InfoHelper(new TokenHelper(this.adopter_token))
 
       for (let i in button_names) {
         let button_name = button_names[i]
@@ -278,18 +265,26 @@ export default {
             case 'adoptButton':
                 const flds = infoHelper.editable.split(',');
                 button.onclick = function () {
+                  // console.log('adoptButton 1');
                     // click on form in info window
                     // create a form for the info window
                     for (let fld in flds) {
                        form[flds[fld]]= document.getElementById(flds[fld] +'input').value;
                     }
+                    // console.log('adoptButton 2');
+
                     // Get input value
                     // make copy with the marker
                     let drainObj = that.drain_dict.get(drainId);
+                    // console.log('adoptButton 3 form ', form);
 
                     drainObj.merge(form);
+                    // console.log('adoptButton 4 drain ',drainObj);
+
                     // adopter keys
                     that.adopt_a_drain(drainObj);
+                    // console.log('adoptButton 5');
+
                     that.info_window.close();
                 };
                 break;
@@ -343,40 +338,65 @@ export default {
         return;
       }
       const _dict = this.drain_dict
-      const _data = drainObj.getData()
       const _id = drainObj.getId()
-      const _headers = this.aad_headers_authorized
       const _name = drainObj.getName()
       const _infoHelper = new InfoHelper(this.adopter_token_helper)
       const _infowindow = this.info_window
-      const _key = this.adopter_token_helper.getKey()
-      // store an adoptee not yours
-      _data['type'] = DrainTypes.adoptee
+      const owner = this.adopter_token_helper.getKey()
+
+      const aadData = drainObj.getData()
+      // 'Bearer %s'.replace('%s', this.adopter_token)
+      const aadHeader = {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${this.adopter_token}`,
+        'Content-Type': 'application/json'
+      };
+      // 
+      aadData['type'] = DrainTypes.adoptee
       //////////
       // handle both add and update
       ///////
-      new AADHandlers(this).aadAdoptee(process.env.AAD_API_URL+'/adoptee', _headers, _data)
-        .then((response) => {
+      
+      const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
+
+      new AADHandlers(this).aadAdopteePost(
+        aadUrl, 
+        aadHeader, 
+        aadData
+        ).then((response) => {
+
           // returns the new or updated version
           // grab it and update the buffer
           // get your marker
+         
           let image = mapHelper.markerImage(DrainTypes.yours)
           let drain = _dict.get(_id)
+          switch(response.data.status){
+            case '200':
+     
+              drain.merge(response.data.insertion.form);
+              
+              drain.setType(DrainTypes.yours)
+                .getMarker().setIcon(image);
+                    
+              let form = _infoHelper.form(_dict.get(_id));
 
-          drain.merge(response.data.data)
-          drain.setType(DrainTypes.yours)
-            .getMarker().setIcon(image)
-
-          let form = _infoHelper.form(_dict.get(_id))
-          drain.setMarkerListener(_infowindow, form)
+                drain.setMarkerListener(_infowindow, form)
+              break;
+            case '409':
+              console.log('Duplicate'); 
+              break;
+            default: 
+              throw new Error('Bad Adoption');    
+          }
 
         })
         .catch((response) => {
-          //this.feedback('Unexpected issue with adoption!')
           /* eslint-disable no-console */
-          console.log('Unexpected issue with adoption!')
+          console.error('Unexpected issue with adoption!');
           /* eslint-enable no-console */
         }) // end of AADHandler
+        
     },
     orphan_a_drain (drainObj) {
       /*
@@ -417,7 +437,7 @@ export default {
         .catch((response) => {
           //this.feedback('Unexpected issue with adoption!')
           /* eslint-disable no-console */
-          console.log('Unexpected issue with deletion!')
+          console.error('Unexpected issue with deletion!')
           /* eslint-enable no-console */
         }) // end of AADHandler
 
@@ -476,19 +496,17 @@ export default {
 
     */
     loadDrains () {
-      // console.log('loadDrains 1');
       /*
       Objective: Keep from downloading all the drains at one time
       Strategy:
       * Limit the number of drains to those that fall within a rectangle in middle of map screen
-      ** Adoptees are stored in
+      ** Adoptees are stored in application DB
       ** All Drains are stored in data.world table
-
+      put adoptees in cache 
       */
       //////////
       // common to both Handlers
       ////////////
-      // console.log('loadDrains 2');
 
       const mapHelper = this.mapHelper
       const infoHelper= new InfoHelper(this.adopter_token_helper)
@@ -496,13 +514,11 @@ export default {
       // mounted() sets the center use geolocation if possible
       // prepare seach boundary for query
       const center = mapHelper.map.get('center')
-      // console.log('loadDrains 3');
       let cBox = mapHelper.map.getBounds()
 
       if (!cBox) { // patch up center_box
         cBox = mapHelper.boxify( center )
       }
-      // console.log('loadDrains 4');
       mapHelper.setViewBox(cBox)
 
       const centerBox = mapHelper.getViewBox()
@@ -510,16 +526,24 @@ export default {
       ///////////////////
       // download Adoptees
       ///////////////////
-      const _data = centerBox
-      // console.log('loadDrains 5');
-      const _headers = this.aad_headers
+      // const _data = centerBox
+      // const _data = JSON.parse(JSON.stringify(centerBox));
+      const aadData = JSON.parse(JSON.stringify(centerBox));
 
-        // load adoptees before getting open data
-      // console.log('loadDrains 6');
-      // console.log('axios', this.$axios);
-        new AADHandlers(this).aadAdoptees(process.env.AAD_API_URL+'/adoptees', _headers, _data)
+      const aadUrl = `${process.env.AAD_API_URL}/adoptee/mbr`;
+
+      const aadHeader = {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      };
+      // load adoptees before getting open data
+
+        new AADHandlers(this).aadAdopteeGetMBR(
+          aadUrl, 
+          aadHeader, 
+          aadData)
           .then((response) => {
-            // console.log('loadDrains 6.1');
             let AADHandlers_cnt = 0
             // if not in drains then add drain and marker and adopte image
             // if in drains and marker and marke.getMap() === null then marker.setMap(map)
@@ -527,24 +551,34 @@ export default {
             const mapHelper = this.mapHelper
             const map = mapHelper.map
             let counter = 0
-
+            
             /////////////////
             // load adoptees
             ///////
+            
             for (dr in response.data.selection) {
-              let drain = new Drain(response.data[dr]['adoptee']);
-              // let _payload = new TokenHelper(this.$store.state.token);
-              let _payload = new TokenHelper(process.env.AAD_API_TOKEN);
+              //  let drain = new Drain(response.data.selection[dr])
 
-              if (_payload && drain) {
+              let drain = new Drain()
+                                .setData(response.data.selection[dr].form)
+                                .setKey(response.data.selection[dr].owner);
+              // console.log('drain ',response.data.selection[dr] );
+              // let _payload = new TokenHelper(process.env.AAD_API_TOKEN); // who is looking at symbols
 
+              let _payload = new TokenHelper(this.adopter_token);
+              // console.log('payload',_payload);
+              if (_payload.getKey() && drain) {
+                // console.log('_payload',_payload.getKey());
+                // console.log('key     ', drain.getKey());
                 if (_payload.getKey() === drain.getKey()) {
-                  console.log('loadDrains 3.1.3.3');
                   // this one has been adopted by you
                   drain.setType(DrainTypes.yours)
                 }
-              }
-              this.drain_dict.add(drain) // adds if not in already
+              } 
+              // console.log('Not mine', _payload.getKey());
+              
+              this.drain_dict.add(drain) // adds if not in cache already
+              
               AADHandlers_cnt++
             } // for
 
@@ -553,7 +587,6 @@ export default {
             ///////
             this.visualizeMarkers(centerBox)
             // prepare data.world query string
-            //const queryStr = 'select * from grb_drains where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
 
             const queryStr = 'select * from %x where (dr_lon > %w and dr_lon < %e) and (dr_lat > %s and dr_lat < %n)'
               .replace('%x', process.env.DW_TABLE)
@@ -571,10 +604,11 @@ export default {
             //////////////
             // call the data.world service once adoptees are loaded
             /////////
-            // console.log('loadDrains 7');
-            new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, headers, data)
+            // [Merge adoptees and drains]
+            new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, 
+                                          headers, 
+                                          data)
               .then((response) => {
-                // console.log('loadDrains 7.1');
                 const map = mapHelper.map
                 const tokenHelper = this.adopter_token_helper
                 let counter = 0
@@ -584,9 +618,8 @@ export default {
                 // load orphans, marker, and set infowindow
                 ////////
                 for (dr of response.data) {
-
+                  
                   let dr_asset_id = dr['dr_asset_id']
-
                   // is drain already downloaded
                   let _drain = this.drain_dict.get(dr_asset_id)
 
@@ -597,7 +630,7 @@ export default {
                     // add to drains
                     const dr_lat = dr['dr_lat']
                     const dr_lon = dr['dr_lon']
-                    _drain = new Drain({
+                    _drain = new Drain().setData({
                       type: DrainTypes.orphan ,
                       lat: dr_lat,
                       lon: dr_lon,
@@ -611,7 +644,6 @@ export default {
                   const image = mapHelper.markerImage(drain.getType())
                   const adopter_token_helper = this.adopter_token_helper
                   const info_window = this.info_window
-                  //console.log('drain: ' + JSON.stringify(_drain.data))
                   if( drain.getMarker() === null ){
                       // make marker
                     setTimeout(function () {
@@ -623,7 +655,6 @@ export default {
                          map:map,
                          position: point
                        })
-                       //console.log('point: ' + JSON.stringify(point))
                        // get the form
                        let form = new InfoHelper(adopter_token_helper).form(drain)
 
@@ -641,12 +672,10 @@ export default {
                 } // end for
                 if (counter === 0) {
                   /* eslint-disable no-console */
-                  // console.log('Nothing to show here!');
                   this.setFeedback('Nothing to show here!');
                   /* eslint-enable no-console */
                 } else {
                   /* eslint-disable no-console */
-                  // console.log('Showing %d more Drains!'.replace('%d', counter))
                   this.setFeedback('Showing %d more Drains!'.replace('%d', counter))
                   /* eslint-enable no-console */
                 }
@@ -659,10 +688,8 @@ export default {
           })
           .catch((err) => {
             /* eslint-disable no-console */
-            console.error('Unexpected issue with adoptees!');
-            console.error('err', err);
+            console.error('Unexpected issue with adoptees!', err);
 
-            // console.error('response', response);
             /* eslint-enable no-console */
           }) // end of AADHandler
 
@@ -675,3 +702,4 @@ export default {
 <style scoped>
 
 </style>
+

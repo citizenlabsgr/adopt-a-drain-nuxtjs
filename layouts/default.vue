@@ -18,6 +18,13 @@ export default {
     Header,
     Nav,
     Footer
+  },
+  methods: {
+    addAdopter(adoptee) {
+      
+      console.log('default addAdopter stop ')
+      // this.$emit('add-adopter', adoptee)
+    }
   }
 }
 </script>
@@ -81,7 +88,7 @@ html {
   align-items: center;
   text-align: center;
 }
-.title {
+title {
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   display: block;
@@ -90,6 +97,17 @@ html {
   color: #35495e;
   letter-spacing: 1px;
 }
+.title {
+  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  display: block;
+  font-weight: 300;
+  font-size: 30px;
+  color: #35495e;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
 .subtitle {
   font-weight: 300;
   font-size: 21px;

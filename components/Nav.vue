@@ -4,10 +4,10 @@
   
       <li>
         <nuxt-link to="/">
-          Home
+          Map
         </nuxt-link>
       </li>
-      <li v-if="!adopter_token_helper.isAuthenticated()">
+      <li v-if="!isAuthenticated">
       
         <nuxt-link to="/authenticate">
           SignIn
@@ -18,14 +18,15 @@
           SignOut
         </nuxt-link>
       </li>
-      <li v-if="!adopter_token_helper.isAuthenticated()">
-        <nuxt-link to="/authorize">
-          SignUp
+      
+      <li v-if="isAuthenticated">
+        <nuxt-link to="/account">
+        Account
         </nuxt-link>
       </li>
       <li v-else>
-        <nuxt-link to="/authorize">
-          {{adopter_token_helper.getDisplayName()}}
+        <nuxt-link to="/account">
+        SignUp
         </nuxt-link>
       </li>
     </ul>
@@ -33,10 +34,11 @@
 </template>
 
 <script>
-import { TokenHelper } from '@/components/mixins/TokenHelper.js'
+// import { Token Helper } from '@/components/mixins/Token Helper.js'
+import Expiration from '@/components/mixins/ExpirationMixin.js'
 /* istanbul ignore next */ 
 export default {
-
+  mixins: [Expiration],
   data () {
     return {
       title: 'Sponsors',
@@ -46,10 +48,12 @@ export default {
   computed: {
     salutation () {
       if (this.$store.state.authenticated) {
-        return this.$store.state.user.name
+        return `xxx this.$store.state.user.name ${this.Authenticated}`
+        // return this.$store.state.user.name
       }
       return ''
-    },
+    }
+    /*
     adopter_token_helper () {
       // Objective: Give user feedback about signin status
       // Stratgey: use the adopter name stashed in adopter token
@@ -58,13 +62,14 @@ export default {
       // console.log('this.$store.state',this.$store.state);
       // console.log('this.$store.state.token',this.$store.state.token);
 
-      return new TokenHelper(this.$store.state.token)
+      return new Token Helper(this.$store.state.token)
     },
-    isAuthenticated () {
-      return new TokenHelper(this.$store.state.token).isAuthenticated();
+    is Authenticated () {
+      return new Token Helper(this.$store.state.token).is Authenticated();
     }
+    */
     /*
-    isAuthenticated () {
+    is Authenticated () {
       if (this.$store.state.adopter.expires_at < new Date().getTime()) {
         this.$store.commit('detoken')
       }

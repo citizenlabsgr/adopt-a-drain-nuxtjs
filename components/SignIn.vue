@@ -43,13 +43,13 @@
 </template>
 
 <script>
-
+import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-import { TokenHelper } from '@/components/mixins/TokenHelper.js'
+// import { Token Helper } from '@/components/mixins/Token Helper.js'
 /* istanbul ignore next */ 
 export default {
-
+  mixins: [Expiration],
   data () {
     return {
       page: {
@@ -78,26 +78,7 @@ export default {
   },
 
   computed: {
-    /*
-    aadHandlers () {
-      return new AADHandlers(this)
-    },
-    aadHeader () {
-      return {
-        'Authorization': 'Bearer ' + process.env.AAD_API_TOKEN,
-        'Content-Type': 'application/json',
-        'Content-Profile': process.env.AAD_API_VERSION,
-        'Prefer': 'params=single-object'
-      }
-    },
-    aadUrl () {
-      // remove just_fail in signup
-      return process.env.AAD_API_URL + '/signin'
-    },
-    aadBody () {
-      return JSON.stringify(this.aadform)
-    },
-    */
+    
     isDisabled () {
       return !(this.is_password && this.is_username)
     },
@@ -126,31 +107,33 @@ export default {
     onSignIn () {
 
       const aadUrl = process.env.AAD_API_URL + '/signin';
-      const aadBody = JSON.stringify(this.aadform);
+      // const aadBody = JSON.stringify(this.aadform);
+      const aadBody = this.aadform;
+
       const aadHeader = {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
       };
-      new AADHandlers(this).aadSignin(aadUrl, aadHeader, aadBody)
-        .then((response) => {
+
+      new AADHandlers(this).aadSignin(
+          aadUrl, 
+          aadHeader, 
+          aadBody
+        ).then((response) => {
 
           if (response.status === 200) {
 
              switch(response.data.status) {
               case '200':
-                // console.log('Go find a drain to adopt!');
                 this.setToken(response.data.token);
-                
-                // let displayname = new TokenHelper(response.data.token).getDisplayName();
-                let displayname = this.getToken();
                 this.setFeedback('Go find a drain to adopt!');
-              
+                this.$router.push('/');
                 break;
            
               case '404':
                 console.log('No signin matching');
-                this.setFeedback('No signin matching ');
+                this.setFeedback('Unable to find ');
                 break;
 
               default:
@@ -169,23 +152,22 @@ export default {
           } else {
             /* eslint-disable no-console */
             this.setFeedback('Something unexpected happened while searching (%s)!'.replace('%s', err))
+
             /* eslint-enable no-console */
           }
         })
     },
-    setExpiresAt(time) {
-      this.$store.commit('expires_at', time)
+    detoken () {
+      this.$store.commit('detoken')
     },
-    setToken (token) {
-      this.$store.commit('token', token)
+    /*
+    setExpiresAt(time) {
+      this.$store.commit('expires _at', time)
     },
     getToken() {
       return this.$store.state.token;
     },
-    detoken () {
-      this.$store.commit('detoken')
-    }
-
+    */
   }
 }
 </script>

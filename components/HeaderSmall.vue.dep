@@ -1,0 +1,26 @@
+<template>
+
+    <div>
+       XXXXXX
+    </div>
+  
+</template>
+
+<script>
+export default {
+  name: 'HeaderSmall',
+  props: {
+    title: {
+      type: String,
+      default: 'Pass title name'
+    }
+  }
+}
+</script>
+
+<style scoped>
+.band {
+  width: 100%;
+
+}
+</style>

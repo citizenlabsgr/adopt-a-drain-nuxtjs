@@ -1,5 +1,6 @@
 <template>
   <div class="band">
+    <div>isAuthenticated: {{isAuthenticated}}</div>
     <!-- Step 1 Sign In -->
     <div v-if="!isAuthenticated" class="outer-div"> <!-- Sign In-->
       <SignIn />

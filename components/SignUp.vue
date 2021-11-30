@@ -13,7 +13,6 @@
     <!-- Display username -->
     <!-- ------------ -->
     <div>
-      <!--div class="prompt">{{meta.displayname.prompt}}</div-->
       <div class="prompt" >
         <label for="displayname">{{meta.displayname.prompt}}</label>
       </div>
@@ -68,11 +67,7 @@
         Sign Up
       </button>
     </div>
-    <div>
-      <button id="update" class="button" @click="onSubmit ()" :disabled="isDisabled">
-        Update
-      </button>
-    </div> 
+ 
     <div class="feedback">
       {{ page.feedback }} {{ page.center }}
     </div>
@@ -82,6 +77,7 @@
 <script>
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
+
 // import { TokenHelper } from './mixins/TokenHelper.js'
 /* istanbul ignore next */ 
 export default {
@@ -177,18 +173,37 @@ export default {
     },
     onSubmit () {
       if (!this.isValidForm()) {
+        // this.setFeedback('Missing Info!')
+        return undefined
+      }
+      // this.data_form.displayname = displayname ;
+      console.log('SignUp onSubmit emit data upward to page ')
+      console.log(this.aadform);
+      const newAdopter = JSON.parse(JSON.stringify(this.aadform))
+      console.log('newAdopter',newAdopter)
+      this.$emit('add-adopter', newAdopter)
+      console.log('SignUp out')
+    },
+    
+   /*
+    onSubmit () {
+      // [Validate user inputs]
+      if (!this.isValidForm()) {
         this.setFeedback('Missing Info!')
         return undefined
       }
+      // [Setup Authorization]
       const aadHeader = {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
       };
+      // [Assemble Route and User data]
       const aadUrl = process.env.AAD_API_URL + '/signup';
       const aadBody = JSON.stringify(this.aadform);
-      
-      new AADHandlers(this).aadAdopter(aadUrl, aadHeader, aadBody)
+
+      // [Store new user data]
+      new AADHandlers(this).aadAdopterPost(aadUrl, aadHeader, aadBody)
         .then((response) => {
           if (response.status === 200) {
             // console.log('response', response.data);
@@ -205,6 +220,7 @@ export default {
               default:
                 this.setFeedback('Not sure what just happened');
                 console.log('Not sure what just happened');
+                console.log('response', response.data);
             }
           } else {
             //this.feedBack('Whoa, I did not see this comming (%s)!'.replace('%s', response.status))
@@ -216,6 +232,8 @@ export default {
           console.log('Something unexpected happened (%s)!'.replace('%s', err))
         })
     },
+    */
+
   }
 }
 </script>

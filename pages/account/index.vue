@@ -79,9 +79,9 @@ export default {
           }
         })
         .catch((err) => {
-          console.log('add adopter 2 aadUrl', aadUrl)      
-          console.log('add adopter 2 aadHeader', aadHeader)
-          console.log('add adopter 2 adopter', adopter)
+          console.error('add adopter 2 aadUrl', aadUrl)      
+          console.error('add adopter 2 aadHeader', aadHeader)
+          // console.log('add adopter 2 adopter', adopter)
           console.log('Something unexpected happened (%s)!'.replace('%s', err))
         })
         
@@ -106,7 +106,7 @@ export default {
                 console.log('Thanks for the update');
                 
                 if (this.payload.user !== response.data.updation.form.username) {
-                  console.log('Force logout');
+                  // [Force logout];
                   this.$store.commit('detoken');
                   this.$router.push('signin');
                 }
@@ -115,21 +115,19 @@ export default {
                 console.log('You already have an account');
                 break;
               default:
-                console.log('Not sure what just happened');
-                console.log('  response', response.data);
-                console.log('put adopter 2 aadUrl', aadUrl);
-                console.log('put adopter 2 aadHeader', aadHeader);
-                console.log('put adopter 2 form', form);
+                console.error('Not sure what just happened');
+                console.error('  response', response.data);
+                console.error('put adopter 2 aadUrl', aadUrl);
+                console.error('put adopter 2 aadHeader', aadHeader);
             }
           } else {
             console.log('Whoa, I did not see that comming (%s)!'.replace('%s', response.status));
           }
         })
         .catch((err) => {
-          console.log('put adopter 2 aadUrl', aadUrl);      
-          console.log('put adopter 2 aadHeader', aadHeader);
-          console.log('put adopter 2 form', form);
-          console.log('Something unexpected happened (%s)!'.replace('%s', err));
+          console.error('put adopter 2 aadUrl', aadUrl);      
+          console.error('put adopter 2 aadHeader', aadHeader);
+          console.error('Something unexpected happened (%s)!'.replace('%s', err));
         })
       
     }

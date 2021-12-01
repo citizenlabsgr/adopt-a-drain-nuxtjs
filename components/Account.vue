@@ -193,9 +193,6 @@ computed: {
       const owner = claims.key;
       // form.id = this.getId();
       console.log('  (upsert, owner, id, form) -->');
-      console.log('   owner = ',this.owner);
-      console.log('   id    = ',this.id);
-      console.log('   form  = ',form);
 
       this.$emit('upsert', this.owner, this.id, form);
     },

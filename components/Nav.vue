@@ -1,13 +1,16 @@
 <template>
   <nav>
     <ul>
-  
-      <li>
+      <li v-if="isAuthenticated">
         <nuxt-link to="/">
-          Home
+          Adopt
         </nuxt-link>
       </li>
-      
+      <li v-else>
+        <nuxt-link to="/">
+          Adoptions
+        </nuxt-link>
+      </li>
       <li v-if="!isAuthenticated">
       
         <nuxt-link to="/authenticate">
@@ -19,46 +22,31 @@
           SignOut
         </nuxt-link>
       </li>
-
-      <li v-if="!isAuthenticated">
-        <nuxt-link to="/authorize">
-          SignUp
+      
+      <li v-if="isAuthenticated">
+        <nuxt-link to="/account">
+        Account
         </nuxt-link>
       </li>
       <li v-else>
-        <nuxt-link to="/authorize">
-          {{displayName}}
+        <nuxt-link to="/account">
+        SignUp
         </nuxt-link>
       </li>
-      
     </ul>
   </nav>
 </template>
 
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'
-
 /* istanbul ignore next */ 
 export default {
-  mixins: [Expiration], 
+  mixins: [Expiration],
   data () {
     return {
       title: 'Sponsors',
       subtitle: 'We can\'t do this alone.'
     }
-  },
-  computed: {
-    salutation () {
-      if (this.$store.state.authenticated) {
-        return this.$store.state.user.name;
-      }
-      return '';
-    },
-    
-    displayName () {
-      return this.$store.state.payload.user;
-    }
-
   }
 }
 </script>

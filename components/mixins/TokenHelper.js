@@ -15,7 +15,6 @@ current keys:
   "scope": "api_guest"
   "key": "0"
 }
-
 previous keys:
   iss
   sub
@@ -39,7 +38,7 @@ class TokenHelper {
   getCurrentTime() {
     return new Date().getTime()/1000;
   }
-  
+
   getDisplayName () {
     if (!this.token) {return undefined;}
     return this.payload.user;
@@ -55,7 +54,7 @@ class TokenHelper {
     // return this.payload.scope;
     return this.getScope();
   }
-  
+
   getScope () { // aka getRole
     if (!this.token) {return undefined;}
     return this.payload.scope;
@@ -89,12 +88,10 @@ class TokenHelper {
   }
 
   isAuthenticated () {
-    
     // is not token
     if (!this.token) {
       return false;
     }
-
     return this.payload.exp > this.getCurrentTime();
   }
 

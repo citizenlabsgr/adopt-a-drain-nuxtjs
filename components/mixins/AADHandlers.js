@@ -8,7 +8,8 @@ class AADHandlers {
     // component is the nuxt component
     this.component = component;
   }
-  async aadAdoptee (aadURL, aadHeader, aadBody) {
+  async aadAdopteePost (aadURL, aadHeader, aadBody) {
+
     const response = await this.component.$axios({
       url: aadURL,
       method: 'post',
@@ -16,15 +17,26 @@ class AADHandlers {
       data: aadBody });
     return response
   }
-  async aadAdoptees (aadURL, aadHeader, aadBody) {
+  
+
+  async aadAdopteeGetMBR (aadURL, aadHeader, aadBody) {
+    // aadURL    string
+    // aadHeader object
+    // aadBody   object
+
+    // aadBody is MBR, {"north":<N.N>,"south":<N.N>,"west":<N.N>,"east":<N.N> }
+    // aadHeader has Authorization
+    // inject MBR into aadHeader
+
     const response = await this.component.$axios({
       url: aadURL,
       method: 'post',
       headers: aadHeader,
-      data: aadBody });
+      data: aadBody});
     return response
   }
-  async aadAdopter (aadURL, aadHeader, aadBody) {
+
+  async aadAdopterPost (aadURL, aadHeader, aadBody) {
     // New user
     const response = await this.component.$axios({
       url: aadURL,
@@ -33,8 +45,34 @@ class AADHandlers {
       data: aadBody });
     return response
   }
+
+  async aadAdopterGet (aadURL, aadHeader, aadBody) {
+    // existing user
+
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'post',
+      headers: aadHeader,
+      data: aadBody });
+    return response
+  }
+
+  async aadAdopterPut (aadURL, aadHeader, aadBody) {
+    // existing user
+
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'put',
+      headers: aadHeader,
+      data: aadBody });
+    return response
+  }
+
   async aadSignin (aadURL, aadHeader, aadBody) {
- 
+    // aadURL    string
+    // aadHeader object
+    // aadBody   object
+
     const response = await this.component.$axios({
       url: aadURL,
       method: 'post',

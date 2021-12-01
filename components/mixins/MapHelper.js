@@ -15,7 +15,6 @@ class MapHelper {
     this.view_box = {}
     //DrainTypes = new DrainTypes()
   }
-
   set(key, value) {
     this.component.settings.options[key] = value
   }
@@ -121,18 +120,21 @@ class MapHelper {
         origin,
         anchor);
     } else if (type === DrainTypes.yours) {
+
       image = new this.component.google.maps.MarkerImage(
         '/your-adoptee.svg',
         size,
         origin,
         anchor);
     } else {
+
       image = new this.component.google.maps.MarkerImage(
         '/orphan.svg',
         size,
         origin,
         anchor);
     }
+
     return image
   }
   marker( form ) {

@@ -43,12 +43,13 @@
 </template>
 
 <script>
-
+import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-/* istanbul ignore next */ 
+// import { Token Helper } from '@/components/mixins/Token Helper.js'
+/* istanbul ignore next */
 export default {
-
+  mixins: [Expiration],
   data () {
     return {
       page: {
@@ -72,11 +73,12 @@ export default {
           regexp: Constants.password()
         }
       }
+      //adopter_token: this.$store.state.token
     }
   },
 
   computed: {
-    
+
     isDisabled () {
       return !(this.is_password && this.is_username)
     },
@@ -90,7 +92,7 @@ export default {
       return (Constants.user_name().test(this.aadform.username.trim()))
     },
     status_username () {
-      return (this.is_username ? "Ok" : "Required")
+      return (this.is_username ? "Ok" : "Invalid")
     },
   }, // end of computed
   methods: {
@@ -103,34 +105,35 @@ export default {
       /* eslint-enable no-console */
     },
     onSignIn () {
-      // [set expiration timeout for token with default of 1800 seconds]
-      const apiTimeout = process.env.API_TOKEN_TIMEOUT || 1800;
-      const apiDebug = process.env.APIDEBUG || false;
-      const apiTest = process.env.APITEST || false;
+
       const aadUrl = process.env.AAD_API_URL + '/signin';
-      const aadBody = JSON.stringify(this.aadform);
+      // const aadBody = JSON.stringify(this.aadform);
+      const aadBody = this.aadform;
+
       const aadHeader = {
-        "Content-Type": 'application/json',
-        "Authorization": `Bearer ${process.env.AAD_API_TOKEN}`,
         "Accept":"application/json",
-        "apitimeout": apiTimeout
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+        'Content-Type': 'application/json'
       };
 
-      new AADHandlers(this).aadSignin(aadUrl, aadHeader, aadBody)
-        .then((response) => {
+      new AADHandlers(this).aadSignin(
+          aadUrl,
+          aadHeader,
+          aadBody
+        ).then((response) => {
 
           if (response.status === 200) {
 
              switch(response.data.status) {
               case '200':
                 this.setToken(response.data.token);
-     
-                console.log('Signed In true');
+                this.setFeedback('Go find a drain to adopt!');
+                this.$router.push('/');
                 break;
-           
+
               case '404':
-                console.log('User not found');
-                this.setFeedback('User not found ');
+                console.log('No signin matching');
+                this.setFeedback('Unable to find ');
                 break;
 
               default:
@@ -149,25 +152,22 @@ export default {
           } else {
             /* eslint-disable no-console */
             this.setFeedback('Something unexpected happened while searching (%s)!'.replace('%s', err))
+
             /* eslint-enable no-console */
           }
         })
     },
-    setExpiresAt(time) {
-      this.$store.commit('expires_at', time)
+    detoken () {
+      this.$store.commit('detoken')
     },
-    setToken (token) {
-      this.$store.commit('token', token)
-      this.$store.commit('payload', token)
-      this.$store.commit('expires_at', this.$store.state.payload.exp)
+    /*
+    setExpiresAt(time) {
+      this.$store.commit('expires _at', time)
     },
     getToken() {
       return this.$store.state.token;
     },
-    detoken () {
-      this.$store.commit('detoken')
-    }
-
+    */
   }
 }
 </script>

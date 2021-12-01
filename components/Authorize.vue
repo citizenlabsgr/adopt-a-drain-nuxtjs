@@ -1,31 +1,30 @@
 <template>
   <div class="band">
+    xxx
+    <div>isAuthenticated: {{isAuthenticated}}</div>
     <!-- Step 1 Sign Up -->
     <div v-if="!isAuthenticated" class="outer-div">
-      <SignUp />
+      <SignUp @add-adopter="addAdopter" />
     </div>
     <!-- Step 2 Sign Out-->
     <div v-else class="outer-div" >
-      <AccountUpd />
+    
     </div>
   </div>
 </template>
 <script>
 
 import Expiration from '@/components/mixins/ExpirationMixin.js'
-// import { AADHandlers } from './mixins/AADHandlers.js'
-// import { Constants } from './mixins/Constants.js'
+
 import SignUp from '@/components/SignUp.vue'
-import AccountUpd from '@/components/AccountUpd.vue'
 
 /* istanbul ignore next */ 
 export default {
   mixins: [Expiration],
   components: {
-    SignUp,
-    AccountUpd
-  },
+    SignUp
 
+  },
 
   beforeDestroy () {
     // Objective: Give the user feedback when signin expires
@@ -50,6 +49,10 @@ export default {
     //  console.log(msg)
     //  /* eslint-enable no-console */
     //}
+    addAdopter(adoptee) { 
+      // pass new adopter up to authorize/index 
+      this.$emit('add-adopter', adoptee)
+    }
   } // end of methods
 }
 </script>

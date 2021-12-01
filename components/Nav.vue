@@ -11,6 +11,7 @@
           Adoptions
         </nuxt-link>
       </li>
+      
       <li v-if="!isAuthenticated">
       
         <nuxt-link to="/authenticate">

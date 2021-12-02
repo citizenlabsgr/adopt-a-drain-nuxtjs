@@ -124,16 +124,6 @@ export default {
   computed: {
     google: gmapApi,
 
-    aad_headers_authorized() {
-      // current users header
-      return {
-        'Authorization': 'Bearer %s'.replace('%s', this.adopter_token),
-        'Content-Type': 'application/json',
-        'Content-Profile': 'aad_version_1_5_2',
-        'Prefer': 'params=single-object'
-      }
-    },
-
     adopter_token_helper () {
       // Objective: Give user feedback about signin status
       // Stratgey: use the adopter name stashed in adopter token
@@ -242,8 +232,11 @@ export default {
     form_init_handler() {
       // Objective: Adopt, and orphan drains
       // Strategy: overwrite a single info_window
+      //           called when user clicks on map drain symbol
+      //           initializes the buttons in current info window
       //           make a state specific form
       //           make buttons on the fly
+      //           apply functions to buttons
       let button_names = ['orphanButton','adoptButton','adoptUpdateButton']
       // const infoHelper = new InfoHelper(this.adopter_token_helper)
 
@@ -251,6 +244,7 @@ export default {
 
       for (let i in button_names) {
         let button_name = button_names[i]
+        
         if (document.getElementById(button_name)) {
           let button = document.getElementById(button_name)
           let form = {};
@@ -260,11 +254,16 @@ export default {
 
           switch (button.id){
             case 'adoptUpdateButton':
-               form['id']=drainId;
+                
+                console.log('[Set id to drainId]');
+
+               form['id']=drainId; // {id:<drainId>}
             case 'adoptButton':
+                console.log('[Add adopt button handler]');
                 const flds = infoHelper.editable.split(',');
                 button.onclick = function () {
-                  // console.log('adoptButton 1');
+                    console.log('[Adopt]');
+                    // console.log('adoptButton 1');
                     // click on form in info window
                     // create a form for the info window
                     for (let fld in flds) {
@@ -288,11 +287,15 @@ export default {
                 };
                 break;
             case 'orphanButton':
+                  console.log('[Add orphan button handler]');
 
                   button.onclick = function () {
-                    let drainObj = that.drain_dict.get(drainId);
+                    console.log('[Orphan]');
 
+                    let drainObj = that.drain_dict.get(drainId);
                     that.orphan_a_drain(drainObj);
+                    // that.$emit('delete', this.owner, this.id, form);
+
                     that.info_window.close();
                   }
 
@@ -363,7 +366,6 @@ export default {
         aadHeader, 
         aadData
         ).then((response) => {
-
           // returns the new or updated version
           // grab it and update the buffer
           // get your marker
@@ -380,7 +382,8 @@ export default {
                     
               let form = _infoHelper.form(_dict.get(_id));
 
-                drain.setMarkerListener(_infowindow, form)
+              drain.setMarkerListener(_infowindow, form);
+
               break;
             case '409':
               console.log('Duplicate'); 
@@ -398,6 +401,7 @@ export default {
         
     },
     orphan_a_drain (drainObj) {
+      console.log('    -- (drain) -->');
       /*
       Objective: Orphan a drain , remove an adoption
       Strategy: Use restful API to remove adoptee record
@@ -413,22 +417,31 @@ export default {
       const _data = this.utils.copyDeletable(drainObj.getData())
       const _dict = this.drain_dict
       const _infowindow = this.info_window
-      const _headers = this.aad_headers_authorized
+      const aadHeader = {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${this.adopter_token}`,
+        'Content-Type': 'application/json'
+      };
       const _id = drainObj.getId()
-      const _infoHelper = new InfoHelper(this.adopter_token_helper)
+      
+      const _infoHelper = new InfoHelper(this.adopter_token_helper);
+      const owner = this.payload.key ;
+      
+      const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${_id}`;
 
-      new AADHandlers(this).aadAdoptee(process.env.AAD_API_URL+'/adoptee', _headers, _data)
+      new AADHandlers(this).aadAdopteeDelete(aadUrl, aadHeader)
         .then((response) => {
           // set local drain name
           // mark as yours
-
           let image = mapHelper.markerImage(DrainTypes.orphan)
           let drain = _dict.get(_id)
-          
+
           // change data in buffer
-          drain.setData(this.utils.copyWithout(response.data.data,["id","adopter_key"]))
+         
+          drain.setData(this.utils.copyWithout(response.data.deletion.form,["id","adopter_key"]))
                .setType(DrainTypes.orphan)
                .setIcon(image)
+
           drain.setMarkerListener(_infowindow,
                                   _infoHelper.form(drain))
 
@@ -436,10 +449,13 @@ export default {
         .catch((response) => {
           //this.feedback('Unexpected issue with adoption!')
           /* eslint-disable no-console */
-          console.error('Unexpected issue with deletion!')
+          console.error('Unexpected issue with deletion!');
+          console.error('aadUrl    ', aadUrl);
+          console.error('aadHeader ', aadHeader);
+          console.log('response ', response);
+
           /* eslint-enable no-console */
         }) // end of AADHandler
-
     },
     log (msg) {
       /* eslint-disable no-console */

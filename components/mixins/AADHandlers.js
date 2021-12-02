@@ -17,7 +17,14 @@ class AADHandlers {
       data: aadBody });
     return response
   }
-  
+  async aadAdopteeDelete (aadURL, aadHeader) {
+
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'delete',
+      headers: aadHeader});
+    return response
+  }
 
   async aadAdopteeGetMBR (aadURL, aadHeader, aadBody) {
     // aadURL    string

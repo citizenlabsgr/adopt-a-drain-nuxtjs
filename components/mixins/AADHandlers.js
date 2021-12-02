@@ -46,14 +46,14 @@ class AADHandlers {
     return response
   }
 
-  async aadAdopterGet (aadURL, aadHeader, aadBody) {
+  async aadAdopterGet (aadURL, aadHeader) {
     // existing user
+    // /adopter/owner/id
 
     const response = await this.component.$axios({
       url: aadURL,
-      method: 'post',
-      headers: aadHeader,
-      data: aadBody });
+      method: 'get',
+      headers: aadHeader});
     return response
   }
 

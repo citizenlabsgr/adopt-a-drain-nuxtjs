@@ -1,6 +1,5 @@
 <template>
   <div class="band">
-    <div>isAuthenticated: {{isAuthenticated}}</div>
     <!-- Step 1 Sign In -->
     <div v-if="!isAuthenticated" class="outer-div"> <!-- Sign In-->
       <SignIn />
@@ -13,7 +12,6 @@
   </div>
 </template>
 <script>
-
 
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 

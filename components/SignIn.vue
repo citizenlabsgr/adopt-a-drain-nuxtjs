@@ -132,8 +132,12 @@ export default {
                 break;
 
               case '404':
-                console.log('No signin matching');
-                this.setFeedback('Unable to find ');
+                console.log('User not found!');
+                // console.log('aadUrl ', aadUrl);
+                // console.log('aadHeader ', aadHeader);
+                // console.log('aadBody ', aadBody);
+                // console.log('response ', response);
+                this.setFeedback('User not found!');
                 break;
 
               default:

@@ -44,11 +44,12 @@
     <!-- ------------ -->
     <!-- Password -->
     <!-- ------------ -->
-    <div>
+    <div v-if="!isAuthenticated">
       <div class="prompt" ><label for="password">
         Password</label>
       </div>
       <div class="input"><input id="password" v-model="form.password" type="password" placeholder="secure password"></div>
+      <!-- div class="input"><input id="password" v-model="form.password" type="password" placeholder="secure password" :disabled="isAuthenticated"></div -->
       
       <div id="error-password" :class="[is_password ? 'input_ok' : 'input_error']">
           {{status_password}}
@@ -76,9 +77,12 @@
 </template>
 
 <script>
+import atob from 'atob'
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
+import { AADHandlers } from '@/components/mixins/AADHandlers.js'
+
 
 export default {
   name: 'Account',  
@@ -137,8 +141,19 @@ computed: {
       return this.page.subtitle[0]
     },
     isDisabled () {
+      let rc = false;
+      if (this.isAuthenticated) {
+          rc = (this.is_username && this.is_displayname);
+      } else {
+          rc = (this.is_password && this.is_username && this.is_displayname);
+      }
+      return !rc;
+    },
+    /*
+    isDisabled () {
       return !(this.is_password && this.is_username && this.is_displayname)
     },
+    */
     is_displayname () {
       return (this.meta.displayname.regexp.test(this.form.displayname.trim()))
     },
@@ -178,35 +193,75 @@ computed: {
 
     onSubmit (e) {
       console.log('[onSubmit]');
-      console.log('currnent token', this.payload.user );
+      // console.log('currnent token', this.payload.user );
       const original_id = this.payload;
       if (!this.isValidForm()) {
         // this.setFeedback('Missing Info!')
         return undefined
       }
-      // this.form.displayname = displayname ;
-      // console.log('onSubmit emit data upward to page')
       const form = JSON.parse(JSON.stringify(this.form)) // copy
-      // const claims = JSON.parse(atob(token.split('.')[1]));
       const claims = this.payload;
-      // console.log('upsert payload', this.payload);
       const owner = claims.key;
-      // form.id = this.getId();
       console.log('  (upsert, owner, id, form) -->');
-      console.log('   owner = ',this.owner);
-      console.log('   id    = ',this.id);
-      console.log('   form  = ',form);
+      // console.log('   owner = ',this.owner);
+      // console.log('   id    = ',this.id);
+      // console.log('   form  = ',form);
 
       this.$emit('upsert', this.owner, this.id, form);
     },
     isValidForm () {
       if (this.form.displayname.length ===0 ) {
-        return false
+        return false;
       }
-      return true
+      return true;
     }
     
   },
+  mounted() {
+    this.$nextTick(function () {
+        // console.log('MOUNTED');
+        this.form.displayname = '';
+        this.form.username = '';
+        this.form.password = '';
+        if (this.isAuthenticated) {
+          const owner = this.payload.key;
+          const id = this.payload.user;
+          const aadUrl = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`; 
+          const aadHeader = {
+             "Accept":"application/json",
+             'Authorization': `Bearer ${this.adopter_token}`,
+             'Content-Type': 'application/json'
+          };
+
+          new AADHandlers(this).aadAdopterGet(aadUrl, aadHeader)
+            .then((response) => {
+              if (response.status === 200) {
+                switch(response.data.status) {
+                  case '200':
+                    console.log('Ok, gotcha!');
+                    // this.$router.push('authenticate');
+                    this.form.displayname = response.data.selection[0].form.displayname;
+                    this.form.username = response.data.selection[0].form.username;
+                    this.form.password = '';
+                    break;
+                  default:
+                    console.error('Not sure what just happened');
+                    console.error('response', response.data);
+                }
+              } else {
+                console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
+              }
+            })
+            .catch((err) => {
+              console.error('add adopter 2 aadUrl', aadUrl)      
+              console.error('add adopter 2 aadHeader', aadHeader)
+              // console.log('add adopter 2 adopter', adopter)
+              console.error('Something unexpected happened (%s)!'.replace('%s', err))
+            })
+          
+      }
+    })
+  }
   
 }
 </script>

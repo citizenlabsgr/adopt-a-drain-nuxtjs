@@ -4,6 +4,8 @@
   </section>
 </template>
 <script>
+import atob from 'atob'
+
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import Account from '@/components/Account.vue'
@@ -71,18 +73,18 @@ export default {
                 console.log('You already have an account');
                 break;
               default:
-                console.log('Not sure what just happened');
-                console.log('response', response.data);
+                console.error('Not sure what just happened');
+                console.error('response', response.data);
             }
           } else {
-            console.log('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
+            console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
           }
         })
         .catch((err) => {
-          console.log('add adopter 2 aadUrl', aadUrl)      
-          console.log('add adopter 2 aadHeader', aadHeader)
-          console.log('add adopter 2 adopter', adopter)
-          console.log('Something unexpected happened (%s)!'.replace('%s', err))
+          console.error('add adopter 2 aadUrl', aadUrl)      
+          console.error('add adopter 2 aadHeader', aadHeader)
+          console.error('add adopter 2 adopter', adopter)
+          console.error('Something unexpected happened (%s)!'.replace('%s', err))
         })
         
     },
@@ -97,6 +99,7 @@ export default {
       const aadUrl = `/adopter/${owner}/${id}`;
 
       console.log('   (url, header, form) -->');
+      delete form['password'];
       new AADHandlers(this).aadAdopterPut(aadUrl, aadHeader, form)
         .then((response) => {
           if (response.status === 200) {
@@ -108,28 +111,28 @@ export default {
                 if (this.payload.user !== response.data.updation.form.username) {
                   console.log('Force logout');
                   this.$store.commit('detoken');
-                  this.$router.push('signin');
+                  this.$router.push('authenticate');
                 }
                 break;
               case '409':
                 console.log('You already have an account');
                 break;
               default:
-                console.log('Not sure what just happened');
-                console.log('  response', response.data);
-                console.log('put adopter 2 aadUrl', aadUrl);
-                console.log('put adopter 2 aadHeader', aadHeader);
-                console.log('put adopter 2 form', form);
+                console.error('Not sure what just happened');
+                console.error('  response', response.data);
+                console.error('put adopter 2 aadUrl', aadUrl);
+                console.error('put adopter 2 aadHeader', aadHeader);
+                // console.error('put adopter 2 form', form);
             }
           } else {
-            console.log('Whoa, I did not see that comming (%s)!'.replace('%s', response.status));
+            console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status));
           }
         })
         .catch((err) => {
-          console.log('put adopter 2 aadUrl', aadUrl);      
-          console.log('put adopter 2 aadHeader', aadHeader);
-          console.log('put adopter 2 form', form);
-          console.log('Something unexpected happened (%s)!'.replace('%s', err));
+          console.error('put adopter 2 aadUrl', aadUrl);      
+          console.error('put adopter 2 aadHeader', aadHeader);
+          console.error('put adopter 2 form', form);
+          console.error('Something unexpected happened (%s)!'.replace('%s', err));
         })
       
     }

@@ -1,4 +1,4 @@
-// import atob from 'atob';
+import atob from 'atob';
 
 export default {
   //data: () => ({

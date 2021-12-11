@@ -37,7 +37,6 @@
     </ul>
   </nav>
 </template>
-
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 /* istanbul ignore next */ 

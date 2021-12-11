@@ -19,14 +19,14 @@ Adoption
     |    settings                      |
     |                                  |
   watch                                |
-+-->|    adopter_token --(expired)->+  |
++-->|    current_token --(expired)->+  |
 |   |                               |  |
 |  computed                         |  |
 |   |    google                     |  |
 |   |    aad_headers                |  |
 |   |    aad_headers_authorized     |  |
-+---|    adopter_token ----------+  |  |
-    |    adopter_token_helper <--+  |  |
++---|    current_token ----------+  |  |
+    |    current_token_helper <--+  |  |
     |    dwHandlers                 |  |
     |    dwGuestHeader              |  |
     |    dwBody                     |  |

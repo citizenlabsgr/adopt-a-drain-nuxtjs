@@ -13,7 +13,6 @@
 <script>
 
 import Expiration from '@/components/mixins/ExpirationMixin.js'
-
 import SignUp from '@/components/SignUp.vue'
 
 /* istanbul ignore next */ 

@@ -1,17 +1,13 @@
 import atob from 'atob';
 
 export default {
-  //data: () => ({
-  //  interval_monitor_expiration: null
-  //}),
   data () {
     return {
       interval_monitor_expiration: null
-    }
+    };
   },
   methods: {
-    setToken(token) {
-      // console.log('expiration setToken ')
+    setCurrentToken(token) {
       this.$store.commit('token', token);
     },
     pollExpiration () {
@@ -21,60 +17,78 @@ export default {
         this.$store.dispatch(
           'attempt_expiration'
         );
-      }, 3000)
-
+        // console.log('polling expiration');
+      }, 3000);
     }
-    // setExpiresAt (exp_time) {
-    //   return this.$store.state.expires_at(exp_time)
-    // }
-
   },
   computed: {
-    adopter_token () {
-      return  this.$store.state.token
+    current_token () {
+      return  this.$store.state.token;
     },
     payload () {
-
-      if (!this.adopter_token) {
-        // console.log(' process.env.AAD_API_TOKEN)', process.env.AAD_API_TOKEN);
-        // throw Error('Payload missing token!');
-        return JSON.parse(atob(process.env.AAD_API_TOKEN.split('.')[1]))
-      }
-      else if (this.adopter_token.split('.').length !== 3) {
-        throw Error('Payload bad token')
-      }
-      return JSON.parse(atob(this.adopter_token.split('.')[1]))
+      try {
+        if (!this.current_token || this.adopter === '') {
+          return JSON.parse(atob(process.env.AAD_API_TOKEN.split('.')[1]));
+        }
+        return JSON.parse(atob(this.current_token.split('.')[1]));
+      } catch (err) {
+        throw new Error('Bad Payload');
+      } 
     },
     displayname () {
-        return this.payload.user
+      try {
+        return this.payload.user;
+      } catch(err) {
+        throw new Error('Bad user', err);
+      }  
     },
     key () {
-      return this.payload.key
+      
+      try {
+        return this.payload.key;
+      } catch(err) {
+        throw new Error('Bad key', err);
+      } 
     },
     scope () {
-      return this.payload.scope
+      
+      try {
+        return this.payload.scope;
+      } catch(err) {
+        throw new Error('Bad scope', err);
+      } 
     },
     sub () {
-      return this.payload.sub
+      try {
+        return this.payload.sub;
+      } catch(err) {
+        throw new Error('Bad sub', err);
+      } 
     },
     exp () {
-        return this.payload.exp
-    },
-    expired () {
-
-      if (this.adopter_token) {
-        return this.exp < new Date().getTime()/1000
-      }
-      return true
+      try {
+        if (!this.payload.exp) {
+          return 0;
+        }
+        return this.payload.exp;
+      } catch(err) {
+        throw new Error('Bad exp', err);
+      } 
     },
     isAuthenticated () {
-      if( this.adopter_token && !this.expired) {
-        return true
-      }
-      return false
+
+     try {
+      return ( this.current_token && this.exp > 0) ;
+     } catch (err) {
+      throw new Error('Bad current_token or exp', err);
+     } 
     },
     username () {
-      return this.payload.user
+      try {
+        return this.payload.user
+      } catch(err) {
+        throw new Error('Bad user', err);
+      }
     }
   }
 

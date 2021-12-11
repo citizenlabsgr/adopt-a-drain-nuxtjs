@@ -18,7 +18,6 @@ import Expiration from '@/components/mixins/ExpirationMixin.js'
 // import { Constants } from './mixins/Constants.js'
 import SignOut from '@/components/SignOut.vue'
 import SignIn from '@/components/SignIn.vue'
-
 export default {
   mixins: [Expiration],
   components: {

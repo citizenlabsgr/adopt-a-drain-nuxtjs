@@ -23,12 +23,12 @@ export default {
         title: 'SignOut',
         subtitle: 'Sign Out'
       },
-      adopter_token: this.$store.state.token
+      current_token: this.$store.state.token
     }
   },
   watch: {
-    adopter_token: function () {
-      console.log('watch SignOut adopter_token')
+    current_token: function () {
+      console.log('watch SignOut current_token')
       this.$store.commit('attempt_expiration')
     },
   },

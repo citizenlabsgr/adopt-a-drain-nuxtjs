@@ -114,7 +114,7 @@ export default {
           errors: []
         }
       }
-      // adopter_token: this.$store.state.token
+      // current_token: this.$store.state.token
     }
   },
   computed: {

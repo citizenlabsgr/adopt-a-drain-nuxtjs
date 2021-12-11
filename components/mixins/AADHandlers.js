@@ -17,6 +17,15 @@ class AADHandlers {
       data: aadBody });
     return response
   }
+  async aadAdopteePut (aadURL, aadHeader, aadBody) {
+
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'put',
+      headers: aadHeader,
+      data: aadBody });
+    return response
+  }
   async aadAdopteeDelete (aadURL, aadHeader) {
 
     const response = await this.component.$axios({

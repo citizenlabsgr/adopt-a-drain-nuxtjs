@@ -1,8 +1,7 @@
 var atob = require('atob');
 
 export const state = () => ({
-  token: '',
-  expires_at: 0,
+  token: false,
   payload: {user:'guest', exp: 0}
 })
 /*
@@ -14,24 +13,20 @@ https://vuex.vuejs.org/guide/getters.html
 The only way to actually change state in a Vuex store is by committing a mutation.
 Cannot call mutation handlers directly.
 how to call mutations
-store.commit('expires_at', time_int)
 store.commit('token', token_str)
 store.commit('detoken')
 */
 export const mutations = {
-  expires_at(state, time) {
-    state.expires_at = time
-  },
+
   token(state, tokenText) {
     state.token = tokenText
-  },
-  payload(state, tokenText) {
-    state.payload = JSON.parse(atob(state.token.split('.')[1]));
+    state.payload = JSON.parse(atob(tokenText.split('.')[1]));
+    // state.payload.exp = state.payload.exp - 1775
+    
   },
   detoken(state) {
-    state.token = ''
-    state.expires_at = 0
-    state.payload = {user:'guest', exp: 0}
+    state.token = false
+    state.payload = JSON.parse(JSON.stringify({user:'guest', exp: 0}))
     console.log('detokened')
   }
 }
@@ -43,15 +38,9 @@ Actions are similar to mutations, the differences being that:
 export const actions = {
 
   attempt_expiration(state) {
-    // console.log('attempt_expiration 1');
-    // console.log('attempt_expiration 2',state.state.expires_at)
-    if(state.state.expires_at > 0) {
-      // console.log('attempt_expiration 3');
-
-      // console.log('attempt_expiration ' + state.state.expires_at)
-      if (state.state.expires_at < (new Date().getTime()/1000)) {
+    if(state.state.payload.exp > 0) {
+      if (0 > (state.state.payload.exp - (new Date().getTime()/1000)) ) {
         state.commit('detoken');
-        console.log('expired token');
       }
     }
   }

@@ -16,9 +16,8 @@
 {"lat": 42.9688029487, "lon": -85.6761931983, "name": "abc", "type": "adoptee", "drain_id": "GR_40107671", "adopter_key": "4fb6f893-5def-4cba-8953-a22bfe3bc043"}
 */
 class Drain {
-  constructor (id, data) {
-    this.id = id;
-    this.data=data;
+  constructor () {
+    this.data=false;
     this.key=false;
     this.marker = null;
     this.info_window = null;

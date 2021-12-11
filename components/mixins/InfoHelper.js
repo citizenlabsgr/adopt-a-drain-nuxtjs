@@ -3,12 +3,13 @@ import { Utils } from './Utils.js'
 
 class InfoHelper {
   //constructor (component) {
-  constructor (tokenHelper) {
+  constructor (authenticated) {
     // component is the nuxt component
     this.ignore   = 'adopter_key,lon,lat,type, drain_id';
     this.editable = 'name';
-    this.tokenHelper = tokenHelper;
-    //this.adopter_key = tokenHelper.getKey();
+    // console.log('A authenticated ', authenticated);
+    this.authenticated = authenticated;
+    
   }
 
   log( msg ) {
@@ -23,26 +24,21 @@ class InfoHelper {
     //                        |--------------|---------------
     // auth no    | form_info | form_info    | form_info
     // auth yes   | form_add  | form_edit    | form_info
-
     let form = '';
-    //console.log(drainObj)
-    //console.log('type: ' + drainObj.getType());
+    // console.log(drainObj)
+    // console.log('form type: ' + drainObj.getType());
     switch(drainObj.getType()){
       case DrainTypes.yours:
+        // console.log('identified yours');
+        form = this._form_edit(drainObj);
+        break;
       case DrainTypes.adoptee:
-        //console.log('switch adoptee')
-        // is yours drainObj.
-        if (this.tokenHelper.isAuthenticated() && this.tokenHelper.getKey() === drainObj.getKey()) {
-          //console.log('yours')
-          form = this._form_edit(drainObj);
-        }
-        else {
-          //console.log('not yours')
+      
           form = this._form_info(drainObj);
-        }
+        
         break;
       case DrainTypes.orphan:
-        if (this.tokenHelper.isAuthenticated()) {
+        if (this.authenticated) {
           form = this._form_add(drainObj);
         } else {
           form = this._form_info(drainObj);
@@ -56,8 +52,9 @@ class InfoHelper {
   }
 
   _form_add(drainObj) {
+    // console.log('_form_add 1');
     let form = '<info>';
-    if (this.tokenHelper.isAuthenticated() ){
+    if (this.authenticated ){
       form += 'Name Me:  <input type="text" id="nameinput" size="31" maxlength="31" value=""/>';
       form += '<button id="adoptButton" data-id="' + drainObj.getId() + '">Adopt</button>';
     } else {
@@ -68,6 +65,8 @@ class InfoHelper {
   }
 
   _form_edit(drainObj) {
+    // console.log('_form_edit 1');
+
     // this is default info window
     let form = '<info>';
 

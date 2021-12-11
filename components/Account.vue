@@ -83,7 +83,6 @@ import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 
-
 export default {
   name: 'Account',  
   mixins: [Expiration],
@@ -192,8 +191,7 @@ computed: {
   methods: {
 
     onSubmit (e) {
-      console.log('[onSubmit]');
-      // console.log('currnent token', this.payload.user );
+      // [onSubmit]
       const original_id = this.payload;
       if (!this.isValidForm()) {
         // this.setFeedback('Missing Info!')
@@ -202,10 +200,7 @@ computed: {
       const form = JSON.parse(JSON.stringify(this.form)) // copy
       const claims = this.payload;
       const owner = claims.key;
-      console.log('  (upsert, owner, id, form) -->');
-      // console.log('   owner = ',this.owner);
-      // console.log('   id    = ',this.id);
-      // console.log('   form  = ',form);
+      //  (upsert, owner, id, form) -->
 
       this.$emit('upsert', this.owner, this.id, form);
     },
@@ -219,7 +214,6 @@ computed: {
   },
   mounted() {
     this.$nextTick(function () {
-        // console.log('MOUNTED');
         this.form.displayname = '';
         this.form.username = '';
         this.form.password = '';
@@ -229,7 +223,7 @@ computed: {
           const aadUrl = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`; 
           const aadHeader = {
              "Accept":"application/json",
-             'Authorization': `Bearer ${this.adopter_token}`,
+             'Authorization': `Bearer ${this.current_token}`,
              'Content-Type': 'application/json'
           };
 
@@ -238,7 +232,7 @@ computed: {
               if (response.status === 200) {
                 switch(response.data.status) {
                   case '200':
-                    console.log('Ok, gotcha!');
+                    // console.log('Ok, found ya!');
                     // this.$router.push('authenticate');
                     this.form.displayname = response.data.selection[0].form.displayname;
                     this.form.username = response.data.selection[0].form.username;
@@ -246,15 +240,15 @@ computed: {
                     break;
                   default:
                     console.error('Not sure what just happened');
-                    console.error('response', response.data);
+                    // console.error('response', response.data);
                 }
               } else {
                 console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
               }
             })
             .catch((err) => {
-              console.error('add adopter 2 aadUrl', aadUrl)      
-              console.error('add adopter 2 aadHeader', aadHeader)
+              // console.error('aadUrl', aadUrl)      
+              // console.error('aadHeader', aadHeader)
               // console.log('add adopter 2 adopter', adopter)
               console.error('Something unexpected happened (%s)!'.replace('%s', err))
             })

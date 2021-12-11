@@ -41,12 +41,10 @@
     </div>
   </div>
 </template>
-
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-// import { Token Helper } from '@/components/mixins/Token Helper.js'
 /* istanbul ignore next */
 export default {
   mixins: [Expiration],
@@ -73,7 +71,6 @@ export default {
           regexp: Constants.password()
         }
       }
-      //adopter_token: this.$store.state.token
     }
   },
 
@@ -126,11 +123,10 @@ export default {
 
              switch(response.data.status) {
               case '200':
-                this.setToken(response.data.token);
+                this.setCurrentToken(response.data.token);
                 this.setFeedback('Go find a drain to adopt!');
                 this.$router.push('/');
                 break;
-
               case '404':
                 console.log('User not found!');
                 // console.log('aadUrl ', aadUrl);
@@ -163,15 +159,7 @@ export default {
     },
     detoken () {
       this.$store.commit('detoken')
-    },
-    /*
-    setExpiresAt(time) {
-      this.$store.commit('expires _at', time)
-    },
-    getToken() {
-      return this.$store.state.token;
-    },
-    */
+    }
   }
 }
 </script>

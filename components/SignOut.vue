@@ -34,7 +34,8 @@ export default {
   },
   methods: {
     onSignOut () {
-      this.$store.commit('detoken')
+      this.$store.commit('detoken');
+      this.$router.push('/'); // goto map
     }
   }
 }

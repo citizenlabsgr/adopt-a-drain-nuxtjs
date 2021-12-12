@@ -125,7 +125,7 @@ export default {
               case '200':
                 this.setCurrentToken(response.data.token);
                 this.setFeedback('Go find a drain to adopt!');
-                this.$router.push('/');
+                this.$router.push('/'); // goto map
                 break;
               case '404':
                 console.log('User not found!');

@@ -28,13 +28,14 @@ export default {
   },
   watch: {
     current_token: function () {
-      console.log('watch SignOut current_token')
-      this.$store.commit('attempt_expiration')
+      console.log('watch SignOut current_token');
+      this.$store.commit('attempt_expiration');
     },
   },
   methods: {
     onSignOut () {
-      this.$store.commit('detoken')
+      this.$store.commit('detoken');
+      this.$router.push('/'); // to map
     }
   }
 }

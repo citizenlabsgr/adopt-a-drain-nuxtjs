@@ -1,4 +1,5 @@
-// import atob from 'atob';
+// namespace prefix Adoptee is Adpt
+
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import { DrainTypes } from '@/components/mixins/DrainTypes.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
@@ -12,16 +13,16 @@ export default {
   },
 
   methods: {
-    getData() {
+    getDataAdpt() { 
         return this.local_dictionary;
     },
-    setDatum(formContainer) {
+    setDatumAdpt(formContainer) {
         if (!formContainer.data) {
             throw new Error('Object missing data attribute!');
         }
         this.local_dictionary[formContainer.id]=formContainer;
     },
-    getDatum(id) {
+    getDatumAdpt(id) {
         // returns a object that contains id and data
         return this.local_dictionary[id];
     },
@@ -31,7 +32,7 @@ export default {
        id is '0' or identity value 
        formContainer is object/class wrapper that has id and data
     */
-    upsert(token, owner, id, formContainer){
+    upsertAdpt(token, owner, id, formContainer){
 
         if (!formContainer.data) {
             throw new Error('Object must contain data attribute!');
@@ -40,12 +41,17 @@ export default {
             throw new Error('Object must contain id attribute!');
         }
         if (id === '0') {
-            this.insert(token, owner, formContainer);
+            this.insertAdpt(token, owner, formContainer);
         } else {
-            this.update(token, owner, id, formContainer);
+            this.updateAdpt(token, owner, id, formContainer);
         }
     },
-    remove(token, owner, id) {
+    /*
+       delete
+       owner is the owner identity value
+       id is identity value 
+    */
+    deleteAdpt(token, owner, id) {
         // console.log('delete ', owner, id);
         const atoken = token;
         const aid = id;
@@ -69,7 +75,7 @@ export default {
             // set local drain name
             // mark as yours
             let image = mapHelper.markerImage(DrainTypes.orphan);
-            let drain = this.getDatum(aid);
+            let drain = this.getDatumAdpt(aid);
             // change data in buffer
             
             drain.setData(this.utils.copyWithout(response.data.deletion.form,["id","adopter_key"]))
@@ -90,7 +96,7 @@ export default {
         }) // end of AADHandler
         
     },
-    insert(token, owner, formContainer) {
+    insertAdpt(token, owner, formContainer) {
          // [Setup Authorization]
         const atoken = token;
         const aadHeader = {
@@ -122,7 +128,7 @@ export default {
 
             switch(response.data.status){
                 case '200':
-                    let drain = this.getDatum(id);
+                    let drain = this.getDatumAdpt(id);
                     drain.merge(response.data.insertion.form);
 
                     drain.setType(DrainTypes.yours)
@@ -149,7 +155,7 @@ export default {
             }) // end of AADHandler
 
     },
-    update(token, owner, id, formContainer){
+    updateAdpt(token, owner, id, formContainer){
         // console.log('update ', owner, id, formContainer);
 
         const atoken = token;
@@ -181,7 +187,7 @@ export default {
 
                 switch(response.data.status){
                     case '200':
-                        let drain = this.getDatum(aid);
+                        let drain = this.getDatumAdpt(aid);
                         drain.merge(response.data.updation.form);
                         drain.setType(DrainTypes.yours)
                             .getMarker().setIcon(image);

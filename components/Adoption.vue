@@ -40,7 +40,7 @@
 */
 
 import Expiration from '@/components/mixins/ExpirationMixin.js'
-import APIHandler from '@/components/mixins/APIHandler.js'
+import AdptHandler from '@/components/mixins/AdptHandler.js'
 
 import { gmapApi } from '@/node_modules/vue2-google-maps/src/main'
 
@@ -57,7 +57,7 @@ import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
 /* istanbul ignore next */ 
 export default {
-  mixins: [Expiration,APIHandler],
+  mixins: [Expiration,AdptHandler],
   data () {
     return {
       page: {
@@ -250,12 +250,12 @@ export default {
                   }
                   // Get input value
                   // make copy with the marker
-                  let drainObj = that.getDatum(drainId);
+                  let drainObj = that.getDatumAdpt(drainId);
 
                   drainObj.merge(form);
 
                   // adopter keys
-                  that.upsert(that.current_token, owner, drainId, drainObj);
+                  that.upsertAdpt(that.current_token, owner, drainId, drainObj);
 
                   that.info_window.close();
                 }
@@ -271,10 +271,10 @@ export default {
                     // Get input value
                     // make copy with the marker
                  
-                    let drainObj = that.getDatum(drainId);
+                    let drainObj = that.getDatumAdpt(drainId);
                     drainObj.merge(form);
 
-                    that.upsert(that.current_token, owner, '0', drainObj);
+                    that.upsertAdpt(that.current_token, owner, '0', drainObj);
                     
                     that.info_window.close();
                 };
@@ -284,8 +284,8 @@ export default {
 
                   button.onclick = function () {
 
-                    let drainObj = that.getDatum(drainId);
-                    that.remove(that.current_token,owner, drainObj.id);
+                    let drainObj = that.getDatumAdpt(drainId);
+                    that.deleteAdpt(that.current_token,owner, drainObj.id);
                     that.info_window.close();
                   }
 
@@ -306,9 +306,9 @@ export default {
       
       let infoHelper = new InfoHelper(this.isAuthenticated);
       const map = this.mapHelper.map
-      for(let i in this.getData()) {
+      for(let i in this.getDataAdpt()) {
         // turn off when outside the box
-        let drain = this.getData()[i];
+        let drain = this.getDataAdpt()[i];
         this.info_window.close();
         switch(drain.getType()) {
           case DrainTypes.adoptee: 
@@ -364,8 +364,8 @@ export default {
       //  Strategy: disable and remove markers not found in the centerBox
       this.info_window.close();
       let drain ;
-      for(let i in this.getData()) {
-        drain = this.getData()[i];
+      for(let i in this.getDataAdpt()) {
+        drain = this.getDataAdpt()[i];
 
         // turn off when outside the box
         if (
@@ -379,7 +379,7 @@ export default {
           drain.hideMarker()
 
           // remove drain from dictionary ... this does not delete from db
-          delete this.getData()[drain.id]
+          delete this.getDataAdpt()[drain.id]
 
         }
       }
@@ -460,7 +460,7 @@ export default {
                   drain.setType(DrainTypes.yours)
                 }
               } 
-              this.setDatum(drain);
+              this.setDatumAdpt(drain);
 
               AADHandlers_cnt++
             } // for
@@ -503,7 +503,7 @@ export default {
                   let dr = response.data[i];
                   let dr_asset_id = dr['dr_asset_id']
                   // is drain already downloaded
-                  let _drain = this.getDatum(dr_asset_id);
+                  let _drain = this.getDatumAdpt(dr_asset_id);
                   // turn on or add to drains
                   // turn on markers where map is null
                   if (! _drain) {
@@ -517,7 +517,7 @@ export default {
                       drain_id: dr_asset_id,
                       name: 'name me'
                     })
-                    this.setDatum(_drain);
+                    this.setDatumAdpt(_drain);
                   } // else end
 
                   const drain = _drain

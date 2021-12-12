@@ -57,7 +57,7 @@ export default {
 
         // [Assemble Route]
         const _infowindow = this.info_window;
-        const aadUrl = `/adoptee/${owner}/${id}`;
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
     
         let mapHelper = new MapHelper(this);
         const infoHelper = new InfoHelper(true);
@@ -102,7 +102,7 @@ export default {
         // [Assemble Route]
         const ainfowindow = this.info_window;
         const id = formContainer.id;
-        const aadUrl = `/adoptee/${owner}`;
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
         const aadData = formContainer.data;
 
         aadData['type'] = DrainTypes.adoptee
@@ -162,7 +162,7 @@ export default {
             'Content-Type': 'application/json'
         };
         // [Assemble Route]
-        const aadUrl = `/adoptee/${owner}/${id}`;
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
         const aadData = formContainer.data ;
         // never store type = DrainTypes.yours change to .adoptee
         aadData.type = DrainTypes.adoptee;

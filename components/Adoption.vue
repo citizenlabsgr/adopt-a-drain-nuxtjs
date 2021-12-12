@@ -460,7 +460,6 @@ export default {
                   drain.setType(DrainTypes.yours)
                 }
               } 
-
               this.setDatum(drain);
 
               AADHandlers_cnt++

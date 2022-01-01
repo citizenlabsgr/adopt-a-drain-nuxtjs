@@ -89,12 +89,16 @@ html {
   font-size: 30px;
   color: #35495e;
   letter-spacing: 1px;
+    padding-bottom: 15px;
+
 }
 .subtitle {
   font-weight: 300;
   font-size: 21px;
   color: #526488;
   word-spacing: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
   padding-bottom: 15px;
 }
 .description {
@@ -119,6 +123,7 @@ html {
 }
 .links {
   padding-top: 15px;
+  font-weight: 200 ;
 }
 .center {
   margin: 0;
@@ -141,8 +146,9 @@ html {
   /*background-color: #8ebf42*/
 }
 .prompt {
-  text-align:center;
+  text-align:left;
   font-variant: petite-caps;
+  padding:5px;
 }
 .label {
   text-align:left;
@@ -151,14 +157,21 @@ html {
 }
 .input_ok {
   color: #339933;
-  text-align: center;
+  text-align: left;
   font-variant: petite-caps;
   font-size: 12px;
+  padding:5px;
 }
 .input_error {
   color: #990033;
-  text-align: center;
+  text-align: left;
   font-variant: petite-caps;
   font-size: 12px;
+  padding-left:5px;
+}
+.list-item {
+  list-style-type:none;
+  margin:0;
+  padding:0;
 }
 </style>

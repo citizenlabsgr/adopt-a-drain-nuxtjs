@@ -68,7 +68,7 @@ export default {
             switch(response.data.status) {
               case '200':
                 // console.log('Welcome');
-                this.$router.push('authenticate');
+                // this.$router.push('authenticate');
                 break;
               case '409':
                 console.log('You already have an account');

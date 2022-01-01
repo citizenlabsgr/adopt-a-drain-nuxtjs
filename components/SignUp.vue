@@ -163,11 +163,6 @@ export default {
     setFeedback(msg) {
       this.page.feedback = msg;
     },
-    log (msg) {
-      /* eslint-disable no-console */
-      console.log(msg)
-      /* eslint-enable no-console */
-    },
     isValidForm () {
       if (this.aadform.displayname.length ===0 ) {
         return false
@@ -190,7 +185,6 @@ export default {
       new AADHandlers(this).aadAdopter(aadUrl, aadHeader, aadBody)
         .then((response) => {
           if (response.status === 200) {
-            // console.log('response', response.data);
             
             switch(response.data.status) {
               case '200':
@@ -201,10 +195,10 @@ export default {
                 break;
               default:
                 this.setFeedback('Not sure what just happened');
-                console.log('Not sure what just happened');
+                console.error('Not sure what just happened');
             }
           } else {
-            console.log('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
+            console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
           }
         })
         .catch((err) => {

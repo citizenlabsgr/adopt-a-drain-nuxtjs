@@ -232,8 +232,6 @@ computed: {
               if (response.status === 200) {
                 switch(response.data.status) {
                   case '200':
-                    // console.log('Ok, found ya!');
-                    // this.$router.push('authenticate');
                     this.form.displayname = response.data.selection[0].form.displayname;
                     this.form.username = response.data.selection[0].form.username;
                     this.form.password = '';
@@ -247,9 +245,6 @@ computed: {
               }
             })
             .catch((err) => {
-              // console.error('aadUrl', aadUrl)      
-              // console.error('aadHeader', aadHeader)
-              // console.log('add adopter 2 adopter', adopter)
               console.error('Something unexpected happened (%s)!'.replace('%s', err))
             })
           

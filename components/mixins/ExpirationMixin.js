@@ -8,7 +8,17 @@ export default {
   },
   methods: {
     setCurrentToken(token) {
-      this.$store.commit('token', token);
+      console.log(`
+             (token)
+                |
+             [setCurrentToken]
+                |   
+      `);
+      try {
+        this.$store.commit('token', token);
+      } catch(err) {
+        console.error('setCurrentToken ', err);
+      }
     },
     pollExpiration () {
       // Objective: Give the user feedback on map when signin expires
@@ -17,9 +27,11 @@ export default {
         this.$store.dispatch(
           'attempt_expiration'
         );
-        // console.log('polling expiration');
       }, 3000);
-    }
+    },
+    detoken () {
+        this.$store.commit('detoken')
+      }
   },
   computed: {
     current_token () {
@@ -76,11 +88,10 @@ export default {
       } 
     },
     isAuthenticated () {
-
      try {
       return ( this.current_token && this.exp > 0) ;
      } catch (err) {
-      throw new Error('Bad current_token or exp', err);
+      throw new Error('isAuthenticated: Bad current_token or exp', err);
      } 
     },
     username () {

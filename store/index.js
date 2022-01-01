@@ -2,7 +2,7 @@ var atob = require('atob');
 
 export const state = () => ({
   token: false,
-  payload: {user:'guest', exp: 0}
+  payload: {user:'guest', exp: 0, key: false}
 })
 /*
 You can think of them as computed properties for stores. Like computed properties, a getter's result is cached based on its dependencies, and will only re-evaluate when some of its dependencies have changed.
@@ -26,8 +26,8 @@ export const mutations = {
   },
   detoken(state) {
     state.token = false
-    state.payload = JSON.parse(JSON.stringify({user:'guest', exp: 0}))
-    console.log('detokened')
+    state.payload = JSON.parse(JSON.stringify({user:'guest', exp: 0, key: false}))
+    console.log('            [detokened]')
   }
 }
 /*

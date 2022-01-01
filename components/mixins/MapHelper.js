@@ -143,28 +143,7 @@ class MapHelper {
   }
 
 
-  /*
-  visualize(centerBox) {
-    //  Objective: minimize the number of drains in the application at one time
-    //  Strategy: disable markers not found in the centerBox
-
-    for(let drain_id in this.drain_dict.getData()) {
-      // turn off when outside the box
-      if (
-        centerBox.north < this.drain_dict.get(drain_id).getLat() ||
-        centerBox.south > this.drain_dict.get(drain_id).getLat() ||
-        centerBox.west > this.drain_dict.get(drain_id).getLon() ||
-        centerBox.east < this.drain_dict.get(drain_id).getLon()
-      ) {
-        this.drain_dict.get(drain_id).hideMarker();
-      } else {
-        console.log(this.mapHelper.map)
-        console.log(this.drain_dict.get(drain_id))
-        this.drain_dict.get(drain_id).showMarker(this.mapHelper.map);
-      }
-    }
-  }
-  */
+  
 
 }
 export { MapHelper }

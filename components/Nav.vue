@@ -14,17 +14,15 @@
         </li>
          <li v-if="!isAuthenticated">
           
-            <SignIn />
+            <u><SignIn /></u>
           
         </li>
         <li v-else>
         
-            <SignOut />
+            <u><SignOut /></u>
 
         </li>
 
-
-        
         <li v-if="isAuthenticated">
           <nuxt-link to="/account">
           Account
@@ -39,8 +37,6 @@
     </nav>
 </div>
 
-
-  
 </template>
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'

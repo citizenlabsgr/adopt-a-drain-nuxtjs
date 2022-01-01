@@ -8,7 +8,6 @@
     </section>
   </div>
 </template>
-
 <script>
 import DrainAdoption from '@/components/Adoption.vue'
 /* istanbul ignore next */ 
@@ -16,25 +15,7 @@ export default {
   components: {
     DrainAdoption
   },
-  data () {
-    return {
-      submitStatus: 'PENDING',
-      page: {
-        title: 'Adopt a Drain',
-        subtitle: 'Type a word!'
-      }
-    }
-  },
-  methods: {
-    log (msg) {
-      /* eslint-disable no-console */
-      console.log(msg)
-      /* eslint-enable no-console */
-    },
-    feedBack (msg) {
-      this.page.subtitle = msg
-    }
-  }
+  
 }
 </script>
 

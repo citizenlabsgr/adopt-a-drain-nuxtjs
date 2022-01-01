@@ -43,7 +43,6 @@ export default {
   methods: {
     //log (msg) {
     //  /* eslint-disable no-console */
-    //  console.log(msg)
     //  /* eslint-enable no-console */
     //}
     addAdopter(adoptee) { 

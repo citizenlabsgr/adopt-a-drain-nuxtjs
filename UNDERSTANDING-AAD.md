@@ -19,7 +19,7 @@ Document is a block of text, formatted with Markdown, and accessible to the appl
 | Signin            | Authenticate an adopter with AAD | signin |
 | Update Adopter    | Update an adopter's personal identity information | adopter |
 | Adoption    | Adopt an orphaned drain | adoptee |
-| Abandon     | Orphan a previously adopted drain | ???? |
+| Orphan     | Orphan a previously adopted drain | ???? |
 
 ## Helper Processes
 | Process | Description |  Method |
@@ -41,7 +41,10 @@ Adopt-a-Drain <----> AAD API <------------------------------------
                                               \     \     Adoptees API-EP
                                                \     Adoptee API-EP
                                                 Adopter API-EP
-
+[Adoption[Expiration,AdptHandler]] 
+[Nav [Expiration,SignInMixin]]
+[ModalSignIn]
+[ModalSignOut]
 ```
 
 ### AAD API

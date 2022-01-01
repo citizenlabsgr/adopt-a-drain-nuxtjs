@@ -1,49 +1,62 @@
 <template>
-  <nav>
-    <ul>
-      <li v-if="isAuthenticated">
-        <nuxt-link to="/">
-          Adopt
-        </nuxt-link>
-      </li>
-      <li v-else>
-        <nuxt-link to="/">
-          Adoptions
-        </nuxt-link>
-      </li>
-      
-      <li v-if="!isAuthenticated">
-      
-        <nuxt-link to="/authenticate">
-          SignIn
-        </nuxt-link>
-      </li>
-      <li v-else>
-        <nuxt-link to="/authenticate">
-          SignOut
-        </nuxt-link>
-      </li>
-      
-      <li v-if="isAuthenticated">
-        <nuxt-link to="/account">
-        Account
-        </nuxt-link>
-      </li>
-      <li v-else>
-        <nuxt-link to="/account">
-        SignUp
-        </nuxt-link>
-      </li>
-    </ul>
-  </nav>
+<div>
+      <nav>
+      <ul>
+        <li v-if="isAuthenticated">
+          <nuxt-link to="/">
+            Adopt
+          </nuxt-link>
+        </li>
+        <li v-else>
+          <nuxt-link class="" to="/">
+            Adoptions
+          </nuxt-link>
+        </li>
+         <li v-if="!isAuthenticated">
+          
+            <SignIn />
+          
+        </li>
+        <li v-else>
+        
+            <SignOut />
+
+        </li>
+
+
+        
+        <li v-if="isAuthenticated">
+          <nuxt-link to="/account">
+          Account
+          </nuxt-link>
+        </li>
+        <li v-else>
+          <nuxt-link to="/account">
+          SignUp
+          </nuxt-link>
+        </li>
+      </ul>
+    </nav>
+</div>
+
+
+  
 </template>
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'
+import SignIn from '@/components/SignIn'
+import SignOut from '@/components/SignOut'
+
 /* istanbul ignore next */ 
 export default {
   mixins: [Expiration],
+  components: {
+    SignIn,
+    SignOut
+  },
   data () {
     return {
+      
       title: 'Sponsors',
       subtitle: 'We can\'t do this alone.'
     }

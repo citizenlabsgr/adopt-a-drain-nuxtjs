@@ -31,14 +31,10 @@ export default {
     },
     detoken () {
         this.$store.commit('detoken')
-      }
-  },
-  computed: {
-    current_token () {
-      return  this.$store.state.token;
     },
     payload () {
       try {
+        
         if (!this.current_token || this.adopter === '') {
           return JSON.parse(atob(process.env.AAD_API_TOKEN.split('.')[1]));
         }
@@ -46,7 +42,13 @@ export default {
       } catch (err) {
         throw new Error('Bad Payload');
       } 
+    }
+  },
+  computed: {
+    current_token () {
+      return  this.$store.state.token;
     },
+   
     displayname () {
       try {
         return this.payload.user;

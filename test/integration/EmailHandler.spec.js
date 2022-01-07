@@ -16,8 +16,8 @@ describe("Email Handler Mixin", () => {
     }
   });
   // dependent on SignIn so cant test value here
-  it("getTo returns guest when not signed in and guest token is set", () => {
-    expect(wrapper.vm.getTo()).toBe('guest');
+  it("getTo returns false when NOT signed in and guest token is NOT set", () => {
+    expect(wrapper.vm.getTo()).toBe(false);
   });
   // dependent on EMAIL_SOURCE in .env
   it("getFrom returns email when EMAIL_SOURCE is set", () => {

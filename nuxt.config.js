@@ -1,5 +1,6 @@
 // import pkg from './package'
 // TODO: add AAD_API_VERSION to environment
+console.log('[nuxt.config.js]');
 if (process.env.NODE_ENV !== 'production') {
   process.env.DEPLOY_ENV = ''
   /* eslint-disable no-console */
@@ -30,7 +31,9 @@ export default {
     DW_TABLE: process.env.DW_TABLE || 'lgrow_current',
     AAD_API_TOKEN: process.env.AAD_API_TOKEN,
     AAD_API_URL: process.env.AAD_API_URL,
-    AAD_API_VERSION: process.env.AAD_API_VERSION
+    AAD_API_VERSION: process.env.AAD_API_VERSION,
+    EMAIL_TOKEN: process.env.EMAIL_TOKEN || false,
+    EMAIL_SOURCE: process.env.EMAIL_SOURCE || false
   },
   /*
   ** Headers of the page

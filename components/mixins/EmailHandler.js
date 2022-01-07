@@ -11,8 +11,18 @@ export default {
       },
       
       getTo() {
-         return this.payload().user;
+         // return this.payload().user;
          // return this.username() || false;
+         if (!process.env.EMAIL_TOKEN) {
+            return false;
+         }
+         if (!process.env.EMAIL_SOURCE) {
+            return false;
+         }
+         if (!this.payload) {
+            return false;
+         }
+         return this.payload().user;
       },
       
       sendEmail(token, from, to, subject, message) {

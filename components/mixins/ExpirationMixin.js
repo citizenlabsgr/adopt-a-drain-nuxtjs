@@ -1,4 +1,5 @@
 import atob from 'atob';
+import { runCLI } from 'jest';
 
 export default {
   data () {
@@ -33,15 +34,19 @@ export default {
         this.$store.commit('detoken')
     },
     payload () {
+      let rc = false;
       try {
         
         if (!this.current_token || this.adopter === '') {
-          return JSON.parse(atob(process.env.AAD_API_TOKEN.split('.')[1]));
+          rc =  JSON.parse(atob(process.env.AAD_API_TOKEN.split('.')[1]));
+        } else {
+          rc = JSON.parse(atob(this.current_token.split('.')[1]));
         }
-        return JSON.parse(atob(this.current_token.split('.')[1]));
       } catch (err) {
         throw new Error('Bad Payload');
-      } 
+      } finally {
+        return rc;
+      }
     }
   },
   computed: {

@@ -1,6 +1,6 @@
 // import pkg from './package'
 // TODO: add AAD_API_VERSION to environment
-console.log('[nuxt.config.js]');
+
 if (process.env.NODE_ENV !== 'production') {
   process.env.DEPLOY_ENV = ''
   /* eslint-disable no-console */

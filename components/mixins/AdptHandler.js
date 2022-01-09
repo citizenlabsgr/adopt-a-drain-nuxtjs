@@ -1,5 +1,4 @@
 // namespace prefix Adoptee is Adpt
-
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import { DrainTypes } from '@/components/mixins/DrainTypes.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
@@ -9,7 +8,6 @@ import { DWHandlers } from '@/components/mixins/DWHandlers.js'
 import { OrphanDatum } from './DatumOrphan'
 import { AdopteeDatum } from './DatumAdoptee'
 import { YoursDatum } from './DatumYours'
-
 export default {
   data () {
     return {
@@ -397,7 +395,9 @@ export default {
                 |
              (aadUrl, aadHeader, centerBox)
                 |
-             [aadAdopteeGetMBR]
+             [Adoptee Request]   
+                .
+                .
                 .
         `);
         const mapHelper = new MapHelper(this); 
@@ -418,12 +418,13 @@ export default {
                 /////////////////
                 // load adoptees
                 ///////
-             console.log(`     
+             console.log(` 
+                .    
                 .
                 .   
-             (response)
+             (adoptee response)
                 |
-             [Cache data] <--- [selection] <----------- +
+             [Cache Data] <--- [selection] <----------- +
                 |                 |                     |
                 |              (datum)                  |
                 |                 |                     |
@@ -486,7 +487,9 @@ export default {
                 console.log(`
              (DW_DRAIN_URL, dwHeaders, dwData)
                 |
-             [dwDrains]
+             [Request Drains]
+                .
+                .
                 .
                 `);
                 //////////
@@ -497,7 +500,8 @@ export default {
                     console.log(`   
                 .
                 .
-             (response)
+                .
+             (drain response)
                 |
              [data] <----------- +
                 |                |

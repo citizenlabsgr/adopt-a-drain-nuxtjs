@@ -49,8 +49,7 @@ import { gmapApi } from '@/node_modules/vue2-google-maps/src/main'
 // mixins
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import AdptHandler from '@/components/mixins/AdptHandler.js'
-import SignIn from '@/components/SignIn'
-
+// import SignIn from '@/components/SignIn'
 // classes
 import { DWHandlers } from '@/components/mixins/DWHandlers.js'
 import { GLHandlers } from '@/components/mixins/GLHandlers.js'
@@ -59,13 +58,12 @@ import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
 
 /* istanbul ignore next */ 
-
 export default {
   name: 'adoption',
   mixins: [Expiration,AdptHandler],
-  components: {
-    SignIn
-  },
+  // components: {
+  //  SignIn
+  // },
   data () {
     return {
       // isSignInVisible: false,
@@ -174,29 +172,37 @@ export default {
       * load the drains
       */
       console.log(`
-      [mounted]
-        |
-      [locateMe]  
-        .
+        (*)
+         |
+      [mounted Adoption]
+         |
+      [Location Request]  
+         .
+         .
+         .
       `);
       new GLHandlers(this).locateMe()
       .then((response) => {
         console.log(`
-        .
-        .
-      (response)
-        |  
+         .
+         .
+         .
+      (location response)
+         |  
       (location)
-        |
-      [$mapPromise] 
-        .
+         |
+      [Map Request] 
+         .
+         .
+         .
       `);
         this.$refs.mapRef.$mapPromise
           .then((map) => {
             console.log(`  
-        .
-        .
-      (map)
+         .
+         .
+         .
+      (map response)
          |
       [Center the Map at (location)]
          |

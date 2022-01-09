@@ -12,6 +12,11 @@
             Adoptions
           </nuxt-link>
         </li>
+        <li>
+          
+            <u><Communities /></u>
+          
+        </li>
          <li v-if="!isAuthenticated">
           
             <u><SignIn /></u>
@@ -40,15 +45,16 @@
 </template>
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'
+import Communities from '@/components/Communities'
 import SignIn from '@/components/SignIn'
 import SignOut from '@/components/SignOut'
-
 /* istanbul ignore next */ 
 export default {
   mixins: [Expiration],
   components: {
     SignIn,
-    SignOut
+    SignOut,
+    Communities
   },
   data () {
     return {

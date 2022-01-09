@@ -25,6 +25,15 @@ class DWHandlers {
       data: dwBody })
     return response
   }
+
+  async dwCommunityList (dwURL, dwHeader, dwBody) {
+    const response = await this.component.$axios({
+      url: dwURL,
+      method: 'post',
+      headers: dwHeader,
+      data: dwBody })
+    return response
+  }
 }
 
 export { DWHandlers }

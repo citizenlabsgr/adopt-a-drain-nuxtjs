@@ -178,10 +178,11 @@ export default {
     // Strategy: Use a polling function
     // Task: start the polling function
     this.pollExpiration();
-    
-    // adds the event listener function that will handle the event
+    // Objective: Make it easier to position maps on participating community
+    // Strategy: intercept community click with event listener
     this.$nuxt.$on('click-go-point', (lon, lat) => {
       this.panTo(lon, lat);
+      this.loadData();
     });
   },
   mounted () {
@@ -499,10 +500,9 @@ export default {
       const is_auth = this.isAuthenticated;
       const mapHelper = this.mapHelper;
 
-      // const infoHelper= new InfoHelper(is_auth);
       // mounted() sets the center use geolocation if possible
       // prepare seach boundary for query
-      const center = mapHelper.map.get('center')
+      const center = mapHelper.map.get('center');
 
       let cBox = mapHelper.map.getBounds();
 
@@ -512,11 +512,9 @@ export default {
 
       this.setViewBox(cBox);
 
-      const centerBox = this.getViewBox()
+      const centerBox = this.getViewBox();
 
       this.loadAdpt(centerBox);
-
-      // this.showSymbols();
 
     } // end loadData
   

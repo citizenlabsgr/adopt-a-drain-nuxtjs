@@ -34,6 +34,14 @@ class AADHandlers {
       headers: aadHeader});
     return response
   }
+  async aadAdopteeGet (aadURL, aadHeader) {
+
+    const response = await this.component.$axios({
+      url: aadURL,
+      method: 'get',
+      headers: aadHeader});
+    return response
+  }
 
   async aadAdopteeGetMBR (aadURL, aadHeader, aadBody) {
     // aadURL    string

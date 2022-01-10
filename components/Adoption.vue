@@ -182,6 +182,7 @@ export default {
     // adds the event listener function that will handle the event
     this.$nuxt.$on('click-go-point', (lon, lat) => {
       this.panTo(lon, lat);
+      this.loadData();
     });
   },
   mounted () {

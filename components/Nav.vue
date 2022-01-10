@@ -5,9 +5,7 @@
       <ul>
         
         <li v-if="isAuthenticated">
-          <nuxt-link to="/">
-            Adopt
-          </nuxt-link>
+          <u><MyAdoptees /></u>
         </li>
         <li v-else>
           <nuxt-link class="" to="/">
@@ -47,6 +45,7 @@
 </template>
 <script>
 import Expiration from '@/components/mixins/ExpirationMixin.js'
+import MyAdoptees from '@/components/MyAdoptees'
 import Communities from '@/components/Communities'
 import SignIn from '@/components/SignIn'
 import SignOut from '@/components/SignOut'
@@ -56,6 +55,7 @@ export default {
   components: {
     SignIn,
     SignOut,
+    MyAdoptees,
     Communities
   },
   data () {

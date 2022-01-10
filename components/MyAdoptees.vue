@@ -3,55 +3,56 @@
     <!--button type="button" class="btn" @click="showModal()">
       SignIn
     </button -->
-    <a @click="showModal()">Communities</a>
-    <ModalCommunities
+    <a @click="showModal()">My Adoptees</a>
+    <ModalMyAdoptees
       v-show="isModalVisible"
       @close="closeModal"
     >
-      <template v-slot:header>Communities</template>
+      <template v-slot:header>My Adoptees</template>
       <template v-slot:sub-title>Because, because</template>
       <template v-slot:body>
         <ul>
-          <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}}</a></li>
+          <!--li v-for="item in getMyAdopteeList(current_token, payload.key)"><a @click="onClickGoPoint(item.form.lon,item.form.lat)">{{item.form.name}}</a></li-->
+          <li v-for="item in my_adoptee_list"><a @click="onClickGoPoint(item.form.lon,item.form.lat)">{{item.form.name}}</a></li>
         </ul>
 
       </template>
       <template v-slot:footer>
-        Communities
+        My Adoptees
       </template>
-    </ModalCommunities>
+    </ModalMyAdoptees>
 
   </div>
 </template>
 <script>
 
 import Expiration from '@/components/mixins/ExpirationMixin.js'
-// import { Constants } from '@/components/mixins/Constants.js'
-import DataWorld from '@/components/mixins/DataWorldMixin.js'
+import AdptHandler from '@/components/mixins/AdptHandler.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
 
 // Modals
-import ModalCommunities from '@/components/Modal.vue'
+import ModalMyAdoptees from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, DataWorld, GoogleMapMixin],
+  mixins: [Expiration, AdptHandler, GoogleMapMixin],
   components: {
-    ModalCommunities,
+    ModalMyAdoptees,
   },
   data () {
     return {
-      name: "Communities",
-      isModalVisible:false
+      name: "MyAdoptees",
+      isModalVisible:false,
+      my_adoptee_list: []
     }
   },
   mounted () {
     console.log(`
         (*)
          |
-      [mounted Communities]
+      [mounted MyAdoptees]
          |`);
 
-      this.loadCommunityList();
+      this.loadMyAdopteeList(this.current_token, this.payload.key)
   },
   methods: {
     onClickGoPoint(lon, lat) {

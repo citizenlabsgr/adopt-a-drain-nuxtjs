@@ -19,7 +19,7 @@ export default {
         delay: 20,
         counter: 0,
         info_window: null,
-        map:null
+        map: null
     }
   },
 
@@ -309,7 +309,9 @@ export default {
             }
         }
     },
-    
+    getMap() {
+        return this.map;
+    },
     setMap(map){
       this.map = map;
     },

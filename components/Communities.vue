@@ -2,7 +2,7 @@
   <div>
     <!--button type="button" class="btn" @click="showModal()">
       SignIn
-    </button --> 
+    </button -->
     <a @click="showModal()">Communities</a>
     <ModalCommunities
       v-show="isModalVisible"
@@ -12,11 +12,9 @@
       <template v-slot:sub-title>Because, because</template>
       <template v-slot:body>
         <ul>
-          <li v-for="item in getCommunityList()">{{item.name}}</li>
+          <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}}</a></li>
         </ul>
-        <!-- button id="signin" class="button" @click="onSignIn ()" :disabled="isDisabled()">
-          SignIn
-        </button -->
+
       </template>
       <template v-slot:footer>
         Communities
@@ -30,12 +28,13 @@
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import DataWorld from '@/components/mixins/DataWorldMixin.js'
+import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
 
 // Modals
 import ModalCommunities from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, DataWorld],
+  mixins: [Expiration, DataWorld, GoogleMapMixin],
   components: {
     ModalCommunities,
   },
@@ -56,6 +55,10 @@ export default {
       this.loadCommunityList();
   },
   methods: {
+    onClickGoPoint(lon, lat) {
+      // this.panTo(lon,lat);
+      this.$nuxt.$emit('click-go-point',lon, lat);
+    },
     showModal() {
       this.isModalVisible=true;
     },

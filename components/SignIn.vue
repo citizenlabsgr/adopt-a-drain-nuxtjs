@@ -37,8 +37,6 @@
         SignIn
       </template>
     </ModalSignIn>
-
-   
   </div>
 </template>
 <script>

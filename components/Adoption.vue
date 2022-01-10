@@ -49,6 +49,7 @@ import { gmapApi } from '@/node_modules/vue2-google-maps/src/main'
 // mixins
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import AdptHandler from '@/components/mixins/AdptHandler.js'
+
 // import SignIn from '@/components/SignIn'
 // classes
 import { DWHandlers } from '@/components/mixins/DWHandlers.js'
@@ -56,11 +57,11 @@ import { GLHandlers } from '@/components/mixins/GLHandlers.js'
 import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
-
+import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
 /* istanbul ignore next */ 
 export default {
   name: 'adoption',
-  mixins: [Expiration,AdptHandler],
+  mixins: [Expiration,AdptHandler,GoogleMapMixin],
   // components: {
   //  SignIn
   // },
@@ -150,17 +151,38 @@ export default {
       return new Utils()
     }
   }, // end computed
+  /*
+    created() {
+    // adds the event listener function that will handle the event
+    this.$nuxt.$on('userLoggedIn', () => {
+      console.log('User logged in!')
+      // do something...
+      this.loggedIn = true
+    })
+  }
+  beforeDestroy() {
+    // removes event listener
+    this.$nuxt.$off('userLoggedIn')
+  },
+   */
   beforeDestroy () {
     // Objective: Give the user feedback when signin expires
     // Strategy: Use a polling function
     // task: avoid memory leak while polling signin expiration
-    clearInterval(this.interval_monitor_expiration)
+    clearInterval(this.interval_monitor_expiration);
+    // removes event listener
+    this.$nuxt.$off('click-go-point');
   },
   created () {
     // Objective: Give the user feedback when signin expires
     // Strategy: Use a polling function
     // Task: start the polling function
-    this.pollExpiration()
+    this.pollExpiration();
+    
+    // adds the event listener function that will handle the event
+    this.$nuxt.$on('click-go-point', (lon, lat) => {
+      this.panTo(lon, lat);
+    });
   },
   mounted () {
       /*
@@ -254,6 +276,7 @@ export default {
     // onToggleAll() {
     //  this.toggle AuthorizedDatum(this.isAuthenticated);
     // },
+  
     onAdopt(datumId) {
       console.log(`
       [onAdopt]
@@ -427,7 +450,6 @@ export default {
                     that.onOrphan(drainId);
                     // onOrphan;
                   }
-
                   break;
             default:
               button.onclick = function () {

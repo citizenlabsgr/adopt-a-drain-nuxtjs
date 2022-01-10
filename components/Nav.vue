@@ -1,7 +1,9 @@
 <template>
 <div>
       <nav>
+      
       <ul>
+        
         <li v-if="isAuthenticated">
           <nuxt-link to="/">
             Adopt

@@ -8,6 +8,9 @@ import { DWHandlers } from '@/components/mixins/DWHandlers.js'
 import { OrphanDatum } from './DatumOrphan'
 import { AdopteeDatum } from './DatumAdoptee'
 import { YoursDatum } from './DatumYours'
+/*
+to use load
+*/
 export default {
   data () {
     return {
@@ -19,7 +22,8 @@ export default {
         delay: 20,
         counter: 0,
         info_window: null,
-        map: null
+        map: null,
+        // my_adoptee_list: []
     }
   },
 
@@ -556,7 +560,100 @@ export default {
                 console.error('Unexpected issue with adoptees!', err);
                 // eslint-enable no-console 
             }); //    
-    } // loadAdpt
-    
+    }, // loadAdpt
+    loadMyAdopteeList(token, owner) {
+        // token is a user token
+        // owner is key value
+        // to persist the list add my_adoptee_list to your component's data section
+        console.log(`
+             (owner)
+                |
+             [loadMyAdpt]
+                |
+             (aadUrl, aadHeader, aadData)
+                |
+             [My Adoptee Request]   
+                .
+                .
+                .
+        `);
+        const aadAuthentecated = this.isAuthenticated;
+        // const aadData = JSON.parse(JSON.stringify(centerBox));
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
+
+        const aadHeader = {
+            "Accept":"application/json",
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+        new AADHandlers(this).aadAdopteeGet(
+            aadUrl, 
+            aadHeader)
+            .then((response) => {
+                let save = false;
+                if (this.my_adoptee_list) {
+                  save = true;
+                }
+                // console.log('save ', save);
+                // console.log('response ', response.data.selection);
+                for (let i in response.data.selection) {
+                    // console.log('i ', response.data.selection[i]);
+                    if (save) {
+                        this.my_adoptee_list.push(response.data.selection[i]);
+                    } 
+                }
+            })
+            .catch((err) => {
+                // eslint-disable no-console 
+                console.error('Unexpected issue with adoptee list!', err);
+                // eslint-enable no-console 
+            }); 
+    },
+    /*
+    getMyAdopteeList(token, owner) {
+        // token is a user token
+        // owner is key value
+        
+        console.log(`
+             (owner)
+                |
+             [loadMyAdpt]
+                |
+             (aadUrl, aadHeader, aadData)
+                |
+             [My Adoptee Request]   
+                .
+                .
+                .
+        `);
+        const aadAuthentecated = this.isAuthenticated;
+        // const aadData = JSON.parse(JSON.stringify(centerBox));
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
+
+        const aadHeader = {
+            "Accept":"application/json",
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+
+        new AADHandlers(this).aadAdopteeGet(
+            aadUrl, 
+            aadHeader)
+            .then((response) => {
+                console.log('response ', response.data.selection);
+                for (let i in response.data.selection) {
+                    //console.log('i ', response.data.selection[i]);
+                    this.my_adoptee_list.push(response.data.selection[i]);
+                }
+            })
+            .catch((err) => {
+                // eslint-disable no-console 
+                console.error('Unexpected issue with adoptee list!', err);
+                // eslint-enable no-console 
+            }); 
+         
+        return this.my_adoptee_list;
+    }
+    */
   }
 }

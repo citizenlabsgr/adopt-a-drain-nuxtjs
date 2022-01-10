@@ -1,9 +1,6 @@
 <template>
   <div id="home" class="band">
     <section class="section-map">
-      <!-- Authenticate v-if="!authorized"/-->
-      <!-- MapAdopt v-if="authorized" / -->
-      <!-- DrainAdoption v-if="authorized" / -->
       <DrainAdoption />
     </section>
   </div>
@@ -14,8 +11,7 @@ import DrainAdoption from '@/components/Adoption.vue'
 export default {
   components: {
     DrainAdoption
-  },
-  
+  }
 }
 </script>
 

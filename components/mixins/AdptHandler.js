@@ -173,6 +173,7 @@ export default {
                         this.setDatumAdpt(new YoursDatum(id, data, ownerKey, this));
                         
                         this.getDatumAdpt(id).show(this.map);
+                        // this.refreshMyAdopteeList(atoken, ownerKey) ;
                         break;
                     case '409':
                         console.log('Duplicate'); 
@@ -593,12 +594,63 @@ export default {
                 let save = false;
                 if (this.my_adoptee_list) {
                   save = true;
+                  this.my_adoptee_list.length = 0;
+                }
+                for (let i in response.data.selection) {
+                    if (save) {
+                        this.my_adoptee_list.push(response.data.selection[i].form);
+                    } 
+                }
+            })
+            .catch((err) => {
+                // eslint-disable no-console 
+                console.error('Unexpected issue with adoptee list!', err);
+                // eslint-enable no-console 
+            }); 
+    },
+    /*
+    refresh MyAdopteeList(token, owner) {
+        // token is a user token
+        // owner is key value
+        // to persist the list add my_adoptee_list to your component's data section
+        console.log(`
+             (owner)
+                |
+             [loadMyAdpt]
+                |
+             (aadUrl, aadHeader, aadData)
+                |
+             [My Adoptee Request]   
+                .
+                .
+                .
+        `);
+        // console.log('refreshMyAdopteeList token ', token);
+        // console.log('refreshMyAdopteeList owner ', owner);
+        
+        const aadAuthentecated = this.isAuthenticated;
+        // const aadData = JSON.parse(JSON.stringify(centerBox));
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
+
+        const aadHeader = {
+            "Accept":"application/json",
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+        new AADHandlers(this).aadAdopteeGet(
+            aadUrl, 
+            aadHeader)
+            .then((response) => {
+                let save = false;
+                if (this.my_adoptee_list) {
+                  save = true;
+                  this.my_adoptee_list.length = 0;
                 }
                 // console.log('save ', save);
-                // console.log('response ', response.data.selection);
+                console.log('aadAdopteeGet response ', response.data.selection);
                 for (let i in response.data.selection) {
-                    // console.log('i ', response.data.selection[i]);
                     if (save) {
+                        console.log('i ', response.data.selection[i]);
                         this.my_adoptee_list.push(response.data.selection[i]);
                     } 
                 }
@@ -609,6 +661,7 @@ export default {
                 // eslint-enable no-console 
             }); 
     },
+    */
     /*
     getMyAdopteeList(token, owner) {
         // token is a user token

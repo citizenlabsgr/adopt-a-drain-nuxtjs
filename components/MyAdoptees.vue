@@ -13,7 +13,7 @@
       <template v-slot:body>
         <ul>
           <!--li v-for="item in getMyAdopteeList(current_token, payload.key)"><a @click="onClickGoPoint(item.form.lon,item.form.lat)">{{item.form.name}}</a></li-->
-          <li v-for="item in my_adoptee_list"><a @click="onClickGoPoint(item.form.lon,item.form.lat)">{{item.form.name}}</a></li>
+          <li v-for="item in my_adoptee_list"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}}</a></li>
         </ul>
 
       </template>
@@ -45,14 +45,28 @@ export default {
       my_adoptee_list: []
     }
   },
+  /*
+  beforeDestroy () {
+    this.$nuxt.$off('refresh-my-adoptees-list');
+  },
+  created () {
+    //this.$nuxt.$on('refresh-my-adoptees-list', () => {
+      //console.log('MyAdoptees refresh-my-adoptees-list');
+      // this.loadMyAdopteeList(this.current_token, this.payload.key)
+
+    //});
+  },
+  */
   mounted () {
-    console.log(`
+    
+    // this.$nextTick(function () {
+      console.log(`
         (*)
          |
       [mounted MyAdoptees]
          |`);
-
-      this.loadMyAdopteeList(this.current_token, this.payload.key)
+      // this.loadMyAdopteeList(this.current_token, this.payload.key);
+    //}
   },
   methods: {
     onClickGoPoint(lon, lat) {
@@ -60,6 +74,7 @@ export default {
     },
     showModal() {
       this.isModalVisible=true;
+      this.loadMyAdopteeList(this.current_token, this.payload.key);
     },
     closeModal() {
       // set all dialog to closed/false

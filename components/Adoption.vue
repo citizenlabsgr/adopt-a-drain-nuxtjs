@@ -184,6 +184,9 @@ export default {
       this.panTo(lon, lat);
       this.loadData();
     });
+    // this.$nuxt.$on('refresh-my-adoptees-list', (lon, lat) => {
+    //  console.log('Adoption refresh-my-adoptees-list');
+    // });
   },
   mounted () {
       /*
@@ -316,6 +319,8 @@ export default {
       this.upsertAdpt(this.current_token, owner, '0', datum);
 
       this.info_window.close();
+
+      this.$nuxt.$emit('refresh-my-adoptees-list');
     },
     onSave(datumId) {
       console.log(`
@@ -351,6 +356,7 @@ export default {
       // adopter keys
       this.upsertAdpt(this.current_token, owner, datumId, datum);
       this.info_window.close();
+      this.$nuxt.$emit('refresh-my-adoptees-list');
     },
     onOrphan(datumId) {
       console.log(`
@@ -362,7 +368,7 @@ export default {
       let drainObj = this.getDatumAdpt(datumId);
       this.deleteAdpt(this.current_token, owner, drainObj.id);
       this.info_window.close();
-       
+      this.$nuxt.$emit('refresh-my-adoptees-list'); 
     },
     onSignIn() {
        console.log(`

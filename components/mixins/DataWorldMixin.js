@@ -13,7 +13,7 @@ export default {
       return this.communities
     },
     loadCommunityList() {
-      //// 
+      ////
       // pull data.world parameters together
       const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
       .replace('%x', process.env.DW_TABLE);
@@ -23,29 +23,29 @@ export default {
       'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
       }
 
-      console.log(`    
+      console.log(`
       (DW_DRAIN_URL, dwHeaders, dwData)
-         |   
+         |
       [dwCommunityList]
          .
          .
-         .   
+         .
       `);
       // [request dataworld]
       // if (this.list.length===0) {
         new DWHandlers(this).dwCommunityList(
-          process.env.DW_DRAIN_URL, 
-          headers, 
+          process.env.DW_DRAIN_URL,
+          headers,
           data)
           .then((response) => {
 
-              console.log(`        
+              console.log(`
            .
            .
            .
         (dwCommunityList response)
            |
-        [Process Response] <--- + 
+        [Process Response] <--- +
            |                    |`);
               ///////////////
               // load community
@@ -61,16 +61,16 @@ export default {
                 this.communities.push({name: jur, count: cnt, lat: lat, lon:lon});
 
               } // end for
-              console.log(`        (community-list)         
+              console.log(`        (community-list)
            |
-           =   
-              `); 
+           =
+              `);
           })
           .catch((err) => {
-                // eslint-disable no-console 
+                // eslint-disable no-console
                 console.error('Unexpected issue loading community list!', err);
-                // eslint-enable no-console  
-          }); // end of DWHandlers      
+                // eslint-enable no-console
+          }); // end of DWHandlers
       // } // if
     }
   }

@@ -1,29 +1,34 @@
 <template>
   <nav>
     <ul>
+    <li>
+      <nuxt-link to="/tou">
+        Terms of Use
+      </nuxt-link>
+    </li>
       <li>
         Opportunities
         <!-- nuxt-link to="/opportunities">
           Opportunities
-        </!-->
+        </nuxt-link -->
       </li>
       <li>
         Sponsors
         <!-- nuxt-link to="/sponsors">
           Sponsors
-        </!-->
+        </nuxt-link -->
       </li>
       <li>
         Stats
         <!-- nuxt-link to="/stats">
           Stats
-        </!-->
+        </nuxt-link -->
       </li>
       <li>
         About
         <!-- nuxt-link to="/about">
           About
-        </!-->
+        </nuxt-link -->
       </li>
     </ul>
     <ul>
@@ -36,7 +41,7 @@
   </nav>
 </template>
 <script>
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 export default {
   data () {
     return {

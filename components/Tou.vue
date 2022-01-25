@@ -8,36 +8,26 @@
 <script>
 
 import Expiration from '@/components/mixins/ExpirationMixin.js'
-import DataWorld from '@/components/mixins/DataWorldMixin.js'
+// import DataWorld from '@/components/mixins/DataWorldMixin.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
-
+import TouMixin from '@/components/mixins/TouMixin.js'
+import CommunityMixin from '@/components/mixins/CommunityMixin.js';
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, DataWorld, GoogleMapMixin],
+  mixins: [Expiration, CommunityMixin, GoogleMapMixin, TouMixin],
 
   data () {
     return {
       name: 'Terms of Use',
-      renderedHtml: '',
-      stack: [],
-      markdown: [
-      '# Terms of Use',
-      '### Adopt a Drain Grand River',
-      'Website Terms of Use Agreement',
-      '### 1. Acceptance of Terms of Use',
-      'Grand Valley Metro Council (GVMC) and the sponsoring jurisdictions of ',
-      '[[communities]]',
-      'provides the Adopt-a-Drain program ("AAD") to you subject to the following Terms of Use Agreement ("Agreement") which may be updated by us from time to time without notice to you. By accessing and using AAD, you accept and agree to be bound by the terms and provision of this Agreement.',
-
-      ]
+      renderedHtml: ''
     }
   },
   watch: {
     communities: function () {
       // Objective: Wait for document to load
       // Strategy: load communities and document using rest in mount() then wait for data to show.
-      this.render();
-      this.replace();
+      // this.render();
+      // this.replace();
     }
   },
   mounted () {
@@ -47,16 +37,30 @@ export default {
       [mounted Terms of Use]
          |`);
 
-      // this.ldC();
-      this.loadCommunityList();
-      console.log('done loaded');
-      // this.render();
-      // this.replace();
+      this.requestTou()
+        .then((response) => {
+          this.processTou(response);
+          this.requestCommunityList()
+            .then((response) => {
+               this.processCommunityList(response);
+               this.renderedHtml = this.renderTou();
+               this.replace();
+            })
+            .catch((err) => {
+              console.error('Tou B mount ', err);
+            });
+        })
+        .catch((err) => {
+          console.error('Tou A mount ', err);
+        });
 
   },
   methods: {
     replace() {
       this.renderedHtml = this.renderedHtml.replace('[[communities]]', this.renderCommunity());
+    },
+    renderTou(){
+      return this.getTou();
     },
     renderCommunity() {
       let rc = '<ul>';
@@ -69,48 +73,6 @@ export default {
 
       return rc;
     },
-    render() {
-      let ex = '';
-      let ln = '';
-      for (let i in this.markdown){
-        ln = this.markdown[i];
-        if (this.stack.length > 0) {
-          if (!ln.startsWith('* ')) {
-            ex = this.stack.pop();
-          }
-        }
-        if (ln.startsWith('# ')) {
-           this.renderedHtml += `<h1>${ln.replace('#','')}</h1>`;
-        }
-        else if (ln.startsWith('## ')) {
-          this.renderedHtml +=  `<h2>${ln.replace('##','')}</h2>`;
-        }
-        else if (ln.startsWith('### ')) {
-          this.renderedHtml +=  `<h3>${ln.replace('###','')}</h3>`;
-        }
-        else if (ln.startsWith('#### ')) {
-          this.renderedHtml +=  `<h4>${ln.replace('####','')}</h4>`;
-        }
-        else if (ln.startsWith('##### ')) {
-          this.renderedHtml +=  `<h5>${ln.replace('#####','')}</h5>`;
-        }
-        else if (ln.startsWith('###### ')) {
-          this.renderedHtml +=  `<h6>${ln.replace('######','')}</h6>`;
-        }
-        else if (ln.startsWith('* ')) {
-          if (this.stack.length === 0) {
-            this.stack.push('</ul>')
-            this.renderedHtml += '<ul>'
-          }
-          this.renderedHtml += `<li>${ln.replace('*','')}</li>`;
-        }
-        else {
-          this.renderedHtml += `<p>${ln}</p>`;
-        }
-
-      }
-
-    }
   }
 }
 </script>

@@ -2,7 +2,7 @@
   <div>
     <br/>
     <hr/>
-      
+
     <!-- GoogleMap -->
     <GmapMap
       ref="mapRef"
@@ -19,7 +19,7 @@
     </div>
 
     <!-- open dialog -->
-   
+
   </div>
   <!-- show markers manually -->
 </template>
@@ -58,10 +58,12 @@ import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
-/* istanbul ignore next */ 
+import GraphMixin from '@/components/mixins/GraphMixin.js'
+
+/* istanbul ignore next */
 export default {
   name: 'adoption',
-  mixins: [Expiration,AdptHandler,GoogleMapMixin],
+  mixins: [Expiration,GraphMixin,AdptHandler,GoogleMapMixin],
   // components: {
   //  SignIn
   // },
@@ -70,6 +72,7 @@ export default {
       // isSignInVisible: false,
       // isModalVisible1: false,
       // whichModal: 0,
+      name: 'Adoption',
       page: {
         feedback: 'Welcome'
       },
@@ -113,7 +116,7 @@ export default {
       // Strategy: monitor the state of adopter's token,
       // * if no token then token is either expired or never initiatied
       // * if no token then the red symbols are set to grey
-      
+
       this.toggleMarkers();
       this.showSymbols();
     }
@@ -178,7 +181,7 @@ export default {
     // Strategy: Use a polling function
     // Task: start the polling function
     this.pollExpiration();
-    
+
     // adds the event listener function that will handle the event
     this.$nuxt.$on('click-go-point', (lon, lat) => {
       this.panTo(lon, lat);
@@ -197,48 +200,26 @@ export default {
       * initalize the google map infowindow
       * load the drains
       */
-      console.log(`
-        (*)
-         |
-      [mounted Adoption]
-         |
-      [Location Request]  
-         .
-         .
-         .
-      `);
+      this.addGlyph(`   [ ${this.name}.vue ] `);
+      this.addGlyph('    (*) ', '     (*) ');
+      this.addGlyph('     | ',   '      | ');
+      this.addGlyph(`   [ Init ${this.name}] .`,   `... [ Mount ${this.name} ] `);
+      this.addGlyph('     | ',   '      | ');
+      this.addGlyph('     | ',   '      + ---> (request) >','> [[ Location Service ]] ');
+      this.addGlyph('     | ',   '                       ','      | ');
+
       new GLHandlers(this).locateMe()
       .then((response) => {
-        console.log(`
-         .
-         .
-         .
-      (location response)
-         |  
-      (location)
-         |
-      [Map Request] 
-         .
-         .
-         .
-      `);
+        this.addGlyph('     | ',   '      + <--- (location) <','<<<< + ');
+        this.addGlyph('     | ',   '      | ');
+
+        this.addGlyph('   [ Map ] .', '..... + ---> (request) >','> [[ Map Service ]] ');
+        this.addGlyph('     | ',      '                        ','     | ');
         this.$refs.mapRef.$mapPromise
           .then((map) => {
-            console.log(`  
-         .
-         .
-         .
-      (map response)
-         |
-      [Center the Map at (location)]
-         |
-      [setup map click handlers] <--- [google.maps.event.addListener]  
-         | 
-      [loadData]  
-          \\
-           \\
-            \\
-             `);
+            this.addGlyph('     | ','      + <--- (map) <','<<<< + ');
+            this.addGlyph('     | ','      | ');
+
             /////////////////
             // center the map on user location when browser supports
             ////////////
@@ -247,16 +228,20 @@ export default {
                 lat: this.location.coords.latitude,
                 lng: this.location.coords.longitude
               }
+              this.addGlyph('     | ',     '   [ Center Map ] ');
+              this.addGlyph('     | ',     '      | ');
               map.setCenter(pos);
             }
             // never delete this infowindow
             this.info_window = new google.maps.InfoWindow();
             // const current_token_helper = this.current_token_helper
             // const that = this;
-            
-            const form_init_handler = this.form_init_handler; 
+            const form_init_handler = this.form_init_handler;
             // set up a listener and wait for the DOM to load
             // infoHelper attaches forms for the infowindow
+            this.addGlyph('     | ',     '   [ Setup map click listeners ] ');
+            this.addGlyph('     | ',     '      | ');
+
             google.maps.event.addListener(
               this.info_window,
               'domready',
@@ -266,34 +251,37 @@ export default {
             // load markers
             /////////////
             this.setMap(map);
+
             this.loadData();
+
+            console.log(this.getGraph());
           })
-          .catch((response) => {
-            console.error('Unexpected issue getting map!');
+          .catch((err) => {
+            console.error('Unexpected issue getting map! ', err);
           })
       })
-      .catch((response) => {
-        console.error('Unexpected issue locating you!');
+      .catch((err) => {
+        console.error('Unexpected issue locating you! ', err);
       })
     },
   methods: {
     // onToggleAll() {
     //  this.toggle AuthorizedDatum(this.isAuthenticated);
     // },
-  
+
     onAdopt(datumId) {
       console.log(`
       [onAdopt]
         |
       [collect name]
         |
-      (form)  
+      (form)
         |
-      [getDatumAdpt] 
+      [getDatumAdpt]
         |
       (datum)
         |
-      [merge]     
+      [merge]
         |
       [upsertAdpt]
         |
@@ -312,7 +300,7 @@ export default {
       }
       // Get input value
       // make copy with the marker
-    
+
       let datum = this.getDatumAdpt(datumId);
       datum.merge(form);
 
@@ -328,13 +316,13 @@ export default {
         |
       [collect form data]
         |
-      (form)  
+      (form)
         |
-      [getDatumAdpt] 
+      [getDatumAdpt]
         |
       (datum)
         |
-      [merge]     
+      [merge]
         |
       [upsertAdpt]
         |
@@ -363,12 +351,12 @@ export default {
        [onOrphan]
           |
        `);
-      
+
       const owner = this.payload.key;
       let drainObj = this.getDatumAdpt(datumId);
       this.deleteAdpt(this.current_token, owner, drainObj.id);
       this.info_window.close();
-      this.$nuxt.$emit('refresh-my-adoptees-list'); 
+      this.$nuxt.$emit('refresh-my-adoptees-list');
     },
     onSignIn() {
        console.log(`
@@ -418,7 +406,7 @@ export default {
           switch (button.id){
             case 'adoptButton':
                 // [Add adopt button handler]
-                
+
                 button.onclick = function () {
                     console.log(`
                     [adoptButton]
@@ -443,7 +431,7 @@ export default {
                   // onSave;
                 }
                 break;
-            
+
             case 'orphanButton':
                   // [Add orphan delete button handler]
 
@@ -465,9 +453,9 @@ export default {
               };
           }
         } // if
-      
+
       } // for
-      
+
     },
     doDragEnd () {
 
@@ -500,7 +488,7 @@ export default {
       // ** Adoptees are stored in application DB
       // ** All Drains are stored in data.world table
       // put adoptees in cache
- 
+
             // this.loadAdpt(centerBox);
 
       const is_auth = this.isAuthenticated;
@@ -523,10 +511,11 @@ export default {
 
       this.loadAdpt(centerBox);
 
+
       // this.showSymbols();
 
     } // end loadData
-  
+
   }
 }
 

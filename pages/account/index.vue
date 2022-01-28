@@ -10,17 +10,19 @@ import atob from 'atob'
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import Account from '@/components/Account.vue'
+import GraphMixin from '@/components/mixins/GraphMixin.js'
+
 export default {
-  mixins: [Expiration],
+  mixins: [Expiration, GraphMixin],
   components: {
     Account
   },
   methods: {
     getId() {
       let rc = '0';
-      if (this.isAuthenticated) { // if authenticated 
+      if (this.isAuthenticated) { // if authenticated
         rc = this.payload.user;
-      } else { // if not authenticate 
+      } else { // if not authenticate
         rc = '0';
       }
       const id = this.payload.user;
@@ -37,7 +39,7 @@ export default {
     },
     upsert(owner, id, form) {
       // console.log('[upsert]');
-      // insert 
+      // insert
       if (id === '0') {
          // console.log('   (form) -->');
          this.addAdopter(form);
@@ -49,6 +51,7 @@ export default {
     addAdopter(form) { // ('signup', aadHeader, form)
       // console.log('[addAdopter]');
       // [Setup Authorization]
+
       const aadHeader = {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
@@ -58,20 +61,28 @@ export default {
       const aadUrl = process.env.AAD_API_URL + '/signup';
 
       // [Store new user data]
-    
       // console.log('   (url,header,form) -->');
-
       new AADHandlers(this).aadAdopterPost(aadUrl, aadHeader, form)
         .then((response) => {
+          this.clearGraph();
+          this.addGlyph('    | '  ,'     + ---> (request) >>','> [ Adopter Service] ');
+          this.addGlyph('    | '  ,'                      ','    | ');
+          this.addGlyph('    | '  ,'     + <--- (response) <','<<< + ');
+          this.addGlyph('    | '  ,'     |                 ');
+          this.addGlyph('    | '  ,'  [ Add Account ] ---> (fail) --->  [=] ');
+          this.addGlyph('    | '  ,'     |                 ');
+          this.addGlyph('    | '  ,'  (success)           ');
+          this.addGlyph('    | '  ,'     |                 ');
+          this.addGlyph('   [=] ','    [=]  ');
+
           if (response.status === 200) {
-            
             switch(response.data.status) {
               case '200':
                 // console.log('Welcome');
                 // this.$router.push('authenticate');
                 break;
               case '409':
-                console.log('You already have an account');
+                // console.log('You already have an account');
                 break;
               default:
                 console.error('Not sure what just happened');
@@ -80,14 +91,15 @@ export default {
           } else {
             console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
           }
+          console.log(this.getGraph());
         })
         .catch((err) => {
-          // console.error('add adopter 2 aadUrl', aadUrl)      
+          // console.error('add adopter 2 aadUrl', aadUrl)
           // console.error('add adopter 2 aadHeader', aadHeader)
           // console.error('add adopter 2 adopter', adopter)
           console.error('Something unexpected happened (%s)!'.replace('%s', err))
         })
-        
+
     },
     updateAdopter(owner, id, form) {
       // console.log('[updateAdopter]');
@@ -104,11 +116,11 @@ export default {
       new AADHandlers(this).aadAdopterPut(aadUrl, aadHeader, form)
         .then((response) => {
           if (response.status === 200) {
-            
+
             switch(response.data.status) {
               case '200':
                 // console.log('Thanks for the update');
-                
+
                 if (this.payload.user !== response.data.updation.form.username) {
                   // console.log('Force logout');
                   this.$store.commit('detoken');
@@ -130,14 +142,14 @@ export default {
           }
         })
         .catch((err) => {
-          // console.error('put adopter 2 aadUrl', aadUrl);      
+          // console.error('put adopter 2 aadUrl', aadUrl);
           // console.error('put adopter 2 aadHeader', aadHeader);
           // console.error('put adopter 2 form', form);
           console.error('Something unexpected happened (%s)!'.replace('%s', err));
         })
-      
+
     }
-    
+
   }
 
 }

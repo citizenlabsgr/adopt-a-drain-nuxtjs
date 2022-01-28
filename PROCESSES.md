@@ -17,50 +17,177 @@
 1. **Request a Review**: Notify the repo owner that your contribution is ready for review
 1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
 
+# Routes
+/account
+/signin
+/adoptee
+/map
+
 # System Processes
 
-[Sign Up](#sign-up) * [Sign In](#sign-in) * [Update Adopter](#update-adopter) * [Adoption](#adoption) * [Unadopt](#unadopt) * [Reset Password](#reset-password)
+* [Sign Up Account](#sign-up)
+* [Update Account](#update-adopter)     
+* [Sign In](#sign-in)
+* [Reset Password](#reset-password)
+* [Adoption Start Up](#adoption-start-up)  
+* [Orphan](#orphan)
+* [Adoption](#startup)
 
-#### Sign Up
-Also known as Create Adopter and Authorize
+
+## Sign Up
+Also known as create user, create adopter or authorize user.
 
 ```
-      +-------------->(authorized)------------------>+
-      |                                              |
-  +-->+----->(unauthorized)                          +-->
-      ^           |                                  |
-      |    +-->[Get Display Name]-->(cancel)-------->+
-      |    ^      |    ^     |                       ^
-      |    |      |    +<--[Not Empty Feedback]      |
-      |    |      |                                  |
-      |    +-->[Get Name      ]---->(cancel)-------->+
-      ^    ^      |    ^     |                       ^
-      |    |      |    +<--[Username Feedback]       |
-      |    |      |                                  |
-      |    +<--[Get Password  ]---->(cancel)-------->|
-      ^           |    ^     |                       ^
-      |           |    +<--[Password Feedback]       |
-      |           |                                  |
-      |        [Conformant Submit]                   |
-      |           |                                  |
-      |        (submit-data)                         |
-      .           .                                  .
-      .               .                              .  }---- REST Call
-      .                   .                          .
-      ^                    |                         ^
-      |                 [Create]--->(authorized)---->+
-      |                    |
-      +<--(unauthorized)<--+
+ (*)                          (*)                
+  |                            |
+  |                           [Goto /account]
+  |                            |                  
+[ Collect ] ................ (displayname, username, password)
+  |                            |                  
+  |                            |                  
+[ Save ] .................. [ Emit upsert ]       
+  |                            |                  
+  |                            + ---> (request) >>>>>>> [[ Adopter Service ]]
+  |                                                       |                   
+  |                            + <--- (response) <<<<<<<< +                   
+  |                            |                  
+  |                         [ Add Account ] ---> (fail) --->  [=]
+  |                            |                  
+  |                         (success)             
+  |                            |                  
+  |                         [ Goto /signin ]
+  |                            |
+ [=]                          [=]  
 ```
-* [Not Empty Feedback](DEFINITIONS.md#not-empty-feedback)
-* [Username Feedback](DEFINITIONS.md#username-feedback)
-* [Password Feedback](DEFINITIONS.md#password-feedback)
-* [Conformant Submit](DEFINITIONS.md#conformant-submit)
-* submit-data is [Authorization Data](DEFINITIONS.md#authorization-data)
-* Authorization Data is [Adopter Data](DEFINITIONS.md#adopter-data)
+## Sign In
+Also known as, login or authenticate.
+```
+(*)                               (*)                  
+ |                                 |
+ |                               [Goto /signin]
+ |                                 |                         
+[ Collect Credentials ] ........ (username, password)        
+ |                                 |
+ |                                 + ---> (cancel)
+ |                                 |         |
+ |                                 |      [ Goto Map ]  
+ |                                 |         |  
+ |                                 |      [ Close Modal ]
+ |                                 |         |
+ |                                 |        [=]
+ |                                 |                         
+[ SignIn ] .....................   + ---> (request) >>>>>>>>>>>>>> [[ SignIn Service ]]          
+ |                                                                   |                         
+ |                                 + <--- (token) <<<<<<<<<<<<<<<<<< +                         
+ |                                 |                         
+ |                                 |                         
+[ Authorize ] ................. [ Set Current Token State ]
+ |                                 |                         
+ |                                 |                         
+ |                              [ Goto Map ]                 
+ |                                 |                         
+ |                              [ Close Modal ]              
+ |                                 |                         
+[=]                               [=]
+
+```
+
+## Password Reset
+
+```
+```
+
+### Adoption Start Up
+The application start-up looks something like...
+http://localhost:3000
+```
+[ Adoption.vue ]     
+  (*)                         (*)               
+   |                            |                 
+ [ Init Adoption] .........   [ Mount Adoption ]  
+   |                            |                 
+   |                            + ---> (request) >>>>>> [[ Location Service ]]  
+   |                                                        |                 
+   |                            + <--- (location) <<<<<<<<< +                  
+   |                            |                 
+ [ Map ] .............          + ---> (request) >>>>>> [[ Map Service ]]       
+   |                                                       |                  
+   |                            + <--- (map) <<<<<<<<<<<<< +                  
+   |                            |                 
+   |                         [ Center Map ]       
+   |                            |                 
+   |                         [ Setup map click listeners ]
+   |                            |                 
+ [ Load Drains ] .....       (centerBox)          
+   |                            |                 
+   |                            + ---> (request) >>>>>> [[ Adoptee Service ]]   
+   |                                                        |                 
+   |                            + <--- (adoptees) <<<<<<<<< +                  
+   |                            |                 
+   |                         [ Cache Adpotees ]   
+   |                            |                 
+   |                         [ Clean Cache ]      
+   |                            |                 
+   |                         (centerBox)          
+   |                            |                 
+   |                            + ---> (request) >>>>>> [[ Drain Service ]]     
+   |                                                        |                  
+   |                            + <--- (drains) <<<<<<<<<<< +                 
+   |                            |                 
+   |                         [ Cache Drains ]     
+   |                            |                 
+[ Display Symbols ] ..       [ Symbolize ]        
+   |                            |                 
+   |                            |       [ Processed 42 Symbols ]
+   |                            |   
+  [=]                         [=]  
+```
+
+### Adopt
+
+```
+```
+
+### Orphan
+```
+```
+
+### Rename Drain
+
+```
+```
+
+
+
 
 #### Update Adopter
-
+```
+ (*)                          (*)   
+  |                            |
+[ Retrieve Account ] ...... (user-token)  
+  |                            |
+  |                            + ---> (request) >>>>>>> [[ Adopter Service ]]
+  |                                                               |                   
+  |                            + <--- (displayname, username) <<< +              
+  |                            |                  
+[ Collect Changes ] ....... (displayname, username)
+  |                            |  
+  |                            + ---> (cancel) ---> [ Goto SignUp ] ---> [=]                      
+  |                            |                  
+[ Save ] .................. [ Emit upsert ]       
+  |                            |                  
+  |                            + ---> (request) >>>>>>> [[ Adopter Service ]]
+  |                                                       |                   
+  |                            + <--- (response) <<<<<<<< +                   
+  |                            |                  
+  |                            + ---> (fail) ---> [ Goto SignUp] ---> [=]
+  |                            |                  
+  |                         (success)             
+  |                            |                  
+  |                         [ Goto SignIn ]
+  |                            |
+ [=]                          [=]  
+```
 ```
       +-------------->(unauthorized)---------------->+
       ^                                              |  
@@ -99,30 +226,24 @@ Also known as Create Adopter and Authorize
 #### Sign In
 Also known as login or authentication
 ```  
-      +-------------->(authenticated)--------------->+--->
-      ^                                              ^
-      |                                              |
-  +-->+----->(unauthenticated)                       |  
-      ^           |                                  ^
-      |           |                                  |
-      |    +-->[Get Adopter's Name]                  |
-      ^    ^      |    ^         |                   ^  
-      |    |      |    |<----[Username Feedback]     |  
-      |    |      |                                  |
-      |    +<--[Get Adopter's Password]              |
-      ^           |    ^         |                   ^  
-      |           |    |<----[Password Feedback]     |  
-      |           |                                  |  
-      |        [Conformant Submit]                   |
-      |           |                                  |  
-      |        (submit authentication data)          |
-      .           .                                  .    
-      .               .                              .   }---- REST Call
-      .                   .                          .   
-      ^                   |                          ^
-      |                [Sign In]-->(authenticated)-->+
-      |                   |  
-      +<---(unauth)<------+
+       (*)                              (*)                       
+        |                                 |                         
+     [ Collect Credentials ] .......... (username, password)        
+        |                                 |                         
+        |                                 |                         
+     [ SignIn ] .......................   + ---> (request) >>>>>>>>>>>>>> [[ SignIn Service ]]          
+        |                                                                   |                         
+        |                                 + <--- (token) <<<<<<<<<<<<<<<<<< +                         
+        |                                 |                         
+        |                                 |                         
+     [ Authorize ] .................... [ Set Current Token State ]
+        |                                 |                         
+        |                                 |                         
+        |                              [ Goto Map ]                 
+        |                                 |                         
+        |                              [ Close Modal ]              
+        |                                 |                         
+       [=]                               [=]
 
 ```
 * [Username Feedback](DEFINITIONS.md#username-feedback)
@@ -180,20 +301,41 @@ Also known as abandon
 ```   
 
 #### Send Reset Password Email
-Also known as reauthorize
+Also known as forgot your password, reauthorize
+
 
 ```
-WIP
-+<----[      Get Name     ]
-^        |     ^        |
-|        |     |<----[Username Feedback]
-|        |   
-|     [Conformant Submit]
-|        |
-.        .
-.        .                                              }---- REST Call
-.        .
-|     [Send Reset Password Email]
+TBD
+
+ (*)                     (*)
+  |                       |
+[Request New Password]  (email_address, <id>)
+  |                       |
+  |                       + ---> (request) >>>>>>>>>> [[ Password Reset Service]]
+  |                                                       |
+  |                       + <--- (reset-link) <<<<<<<<<<< +
+  |                       |  
+  |                       + ---> (request) >>>>>>>>>> [[ Email Service ]]
+  |                                                       |
+  |                       + <--- (sent-confirmation) <<<< +
+  |                       |
+[Wait]                  [ Wait ]
+  .
+  .  wait for response
+  .
+[ Respond to Email ]    [ Click Link ]
+  |                       |
+  |                     [ Goto /renew/<id> ]
+  |                       |    
+[ Collect ]             (password, username, <id>)
+  |                       |
+[ Submit ]                + ---> (request) >>>>>>>>> [[ Password Renew Service ]]
+  |                                                       |
+  |                       + <--- (confirm-change) <<<<<<< +  
+  |                       |
+  |                    [ Goto Signin ]
+  |                       |   
+ [=]                     [=]  
 
 ```
 * [Conformant Submit](DEFINITIONS.md#conformant-submit)

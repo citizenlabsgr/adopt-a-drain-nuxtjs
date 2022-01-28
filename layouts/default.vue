@@ -13,6 +13,10 @@ import Header from '@/components/Header'
 import Nav from '@/components/Nav'
 import Footer from '@/components/Footer'
 
+// import Vue from 'vue'
+// import CommunityListMixin from '@/components/mixins/CommunityListMixin.js'
+// Vue.mixin(CommunityListMixin);
+
 export default {
   components: {
     Header,
@@ -161,6 +165,7 @@ html {
   font-variant: petite-caps;
   font-size: 12px;
   padding:5px;
+  width: 200px;
 }
 .input_error {
   color: #990033;
@@ -168,6 +173,7 @@ html {
   font-variant: petite-caps;
   font-size: 12px;
   padding-left:5px;
+  width: 200px;
 }
 .list-item {
   list-style-type:none;

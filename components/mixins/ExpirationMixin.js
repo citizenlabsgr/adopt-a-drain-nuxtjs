@@ -7,13 +7,18 @@ export default {
     };
   },
   methods: {
-    setCurrentToken(token) {
-      console.log(`
+    setCurrentToken(token, graph=false) {
+      if (graph) {
+        graph.addGlyph('    | ','    | ');
+        graph.addGlyph(' [ Authorize ] .','. [ Set Current Token State ] ');
+        graph.addGlyph('    | ','    | ');
+      }
+      /* console.log(`
              (token)
                 |
              [setCurrentToken]
-                |   
-      `);
+                |
+      `); */
       try {
         this.$store.commit('token', token);
       } catch(err) {
@@ -45,37 +50,37 @@ export default {
         return JSON.parse(atob(this.current_token.split('.')[1]));
       } catch (err) {
         throw new Error('Bad Payload');
-      } 
+      }
     },
     displayname () {
       try {
         return this.payload.user;
       } catch(err) {
         throw new Error('Bad user', err);
-      }  
+      }
     },
     key () {
-      
+
       try {
         return this.payload.key;
       } catch(err) {
         throw new Error('Bad key', err);
-      } 
+      }
     },
     scope () {
-      
+
       try {
         return this.payload.scope;
       } catch(err) {
         throw new Error('Bad scope', err);
-      } 
+      }
     },
     sub () {
       try {
         return this.payload.sub;
       } catch(err) {
         throw new Error('Bad sub', err);
-      } 
+      }
     },
     exp () {
       try {
@@ -85,14 +90,14 @@ export default {
         return this.payload.exp;
       } catch(err) {
         throw new Error('Bad exp', err);
-      } 
+      }
     },
     isAuthenticated () {
      try {
       return ( this.current_token && this.exp > 0) ;
      } catch (err) {
       throw new Error('isAuthenticated: Bad current_token or exp', err);
-     } 
+     }
     },
     username () {
       try {

@@ -28,29 +28,49 @@
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import DataWorld from '@/components/mixins/DataWorldMixin.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
+import CommunityListMixin from '@/components/mixins/CommunityListMixin.js'
+import GraphMixin from '@/components/mixins/GraphMixin.js'
 
 // Modals
 import ModalCommunities from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, DataWorld, GoogleMapMixin],
+  mixins: [Expiration, GraphMixin, CommunityListMixin, GoogleMapMixin,ModalCommunities],
   components: {
     ModalCommunities,
   },
   data () {
     return {
       name: "Communities",
-      isModalVisible:false
+      isModalVisible:false,
+      // cmmtGraph: new Graph()
     }
   },
   mounted () {
-    console.log(`
-        (*)
-         |
-      [mounted Communities]
-         |`);
+    this.addGlyph(`    [ ${this.name}.vue ] `);
+    this.addGlyph('     (*) ','     (*) ');
+    this.addGlyph('      |  ','      | ');
+    this.addGlyph('    [ Init Communities ] ','    [ Mount ] ');
+    this.addGlyph('      |  ','      | ');
 
-      this.loadCommunityList();
+      // this.loadCommunityList();
+      this.loadCommunityList(this.graph)
+        .then((response) => {
+          // console.log('loadCommunityList');
+          this.responseCommunityList(response, this.graph);
+          this.addGlyph('      |  ','      | ');
+          this.addGlyph('     [=]  ','     [=] ');
+
+          console.log(this.getGraph());
+        })
+        .catch((err) => {
+          console.error('loadCommunityList ', err);
+          this.addGlyph('      |  ','      | ');
+          this.addGlyph(`    [ ${err} ]  `);
+          this.addGlyph('      |  ','      | ');
+          this.addGlyph('     [=]  ','     [=] ');
+
+        });
   },
   methods: {
     onClickGoPoint(lon, lat) {

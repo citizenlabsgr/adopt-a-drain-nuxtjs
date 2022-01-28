@@ -8,7 +8,7 @@
     <!-- Display username -->
     <!-- ------------ -->
     <br/>
-    
+
     <div>
       <!-- ------------ -->
       <!-- Display Name -->
@@ -49,15 +49,11 @@
         Password</label>
       </div>
       <div class="input"><input id="password" v-model="form.password" type="password" placeholder="secure password"></div>
-      <!-- div class="input"><input id="password" v-model="form.password" type="password" placeholder="secure password" :disabled="isAuthenticated"></div -->
-      
+
       <div id="error-password" :class="[is_password ? 'input_ok' : 'input_error']">
-          {{status_password}}
+        {{status_password}}
+        hey
       </div>
-      
-      <!-- div id="error-password-list" v-for="item in meta.password.errors"  v-bind:key="item.id" :class="[is_password ? 'input_ok' : 'input_error']">
-        {{ item.id }}
-      </div -->
 
     </div>
     <br/>
@@ -82,20 +78,22 @@ import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
+import GraphMixin from '@/components/mixins/GraphMixin.js'
 
 export default {
-  name: 'Account',  
-  mixins: [Expiration],
+  name: 'Account',
+  mixins: [Expiration,GraphMixin],
   components: {
     HeaderSmall,
     // Button
-  }, 
+  },
   props: {
     owner: String,
     id: String
-  }, 
+  },
   data () {
     return {
+      name: 'Account',
       page: {
         title: ['Sign Up', 'Update'],
         subtitle: ['Because because because', 'What next?'],
@@ -124,7 +122,7 @@ export default {
           errors: []
         }
       }
-    }  
+    }
   },
 computed: {
     getTitle() {
@@ -148,39 +146,19 @@ computed: {
       }
       return !rc;
     },
-    /*
-    isDisabled () {
-      return !(this.is_password && this.is_username && this.is_displayname)
-    },
-    */
     is_displayname () {
-      return (this.meta.displayname.regexp.test(this.form.displayname.trim()))
+      return (this.meta.displayname.regexp.test(this.form.displayname.trim()));
     },
     status_displayname () {
-      return (this.is_displayname ? "Ok" : "Required" )
+      return (this.is_displayname ? "Ok" : "Required" );
     },
     is_password () { // true when not compliant, expects lower and upper, symbol, and number
-      return (Constants.password().test(this.form.password.trim()))
+      return (Constants.password().test(this.form.password.trim()));
     },
     status_password () {
-      this.meta.password.errors=[]
-      if (!Constants.lowercase().test(this.form.password)) {
-        this.meta.password.errors.push({"id": "At least 1, lowercase"})
-      }
-      if (!Constants.uppercase().test(this.form.password)) {
-        this.meta.password.errors.push({"id": "At least 1, uppercase"})
-      }
-      if (!Constants.digit().test(this.form.password)) {
-        this.meta.password.errors.push({"id": "At least 1, digit"})
-      }
-      if (!Constants.symbol().test(this.form.password)) {
-        this.meta.password.errors.push({"id": "At least 1, symbol"})
-      }
-      if (!Constants.eight_char().test(this.form.password)) {
-        this.meta.password.errors.push({"id": "At least 8 characters"})
-      }
-      return (this.is_password ? "Ok" : "Required" )
+      return (this.is_password ? "Ok" : "xA password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark.");
     },
+
     is_username () { // true when not compliant, expects an email
       return (Constants.user_name().test(this.form.username.trim()))
     },
@@ -189,8 +167,17 @@ computed: {
     },
   }, // end of computed
   methods: {
-
     onSubmit (e) {
+      this.clearGraph();
+      this.addGlyph('   (*) ',                '    (*) ');
+      this.addGlyph('    |  ',                 '     |  ');
+      this.addGlyph(' [ Collect ] .',       '. [ Account Values ] ');
+      this.addGlyph('    |   ',                '     | ');
+      this.addGlyph('    |   ',                '  (displayname, username, password)');
+      this.addGlyph('    |   ',                '     | ');
+      this.addGlyph(` [ Save ${this.name} ] .`,'. [ Emit upsert ] ');
+      this.addGlyph('    |   ',                '     | ');
+
       // [onSubmit]
       const original_id = this.payload;
       if (!this.isValidForm()) {
@@ -201,8 +188,9 @@ computed: {
       const claims = this.payload;
       const owner = claims.key;
       //  (upsert, owner, id, form) -->
-
+      // console.log('Emit Upsert');
       this.$emit('upsert', this.owner, this.id, form);
+      console.log(this.getGraph());
     },
     isValidForm () {
       if (this.form.displayname.length ===0 ) {
@@ -210,9 +198,12 @@ computed: {
       }
       return true;
     }
-    
+
   },
   mounted() {
+    this.addGlyph('     (*) ','       (*) ');
+    this.addGlyph('      |   ','        | ');
+
     this.$nextTick(function () {
         this.form.displayname = '';
         this.form.username = '';
@@ -220,13 +211,14 @@ computed: {
         if (this.isAuthenticated) {
           const owner = this.payload.key;
           const id = this.payload.user;
-          const aadUrl = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`; 
+          const aadUrl = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`;
           const aadHeader = {
              "Accept":"application/json",
              'Authorization': `Bearer ${this.current_token}`,
              'Content-Type': 'application/json'
           };
-
+          this.addGlyph(`    [ Mount ${this.name} ] `,'       (*) ');
+          this.addGlyph('      |   ','        | ');
           new AADHandlers(this).aadAdopterGet(aadUrl, aadHeader)
             .then((response) => {
               if (response.status === 200) {
@@ -235,23 +227,29 @@ computed: {
                     this.form.displayname = response.data.selection[0].form.displayname;
                     this.form.username = response.data.selection[0].form.username;
                     this.form.password = '';
+                    this.addGlyph('      |   ','        | ');
+                    this.addGlyph('      |   ','      (displayname,username,password)');
+
                     break;
                   default:
                     console.error('Not sure what just happened');
                     // console.error('response', response.data);
                 }
+                console.log(this.getGraph());
               } else {
+
                 console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
               }
             })
             .catch((err) => {
+
               console.error('Something unexpected happened (%s)!'.replace('%s', err))
             })
-          
+
       }
     })
   }
-  
+
 }
 </script>
 

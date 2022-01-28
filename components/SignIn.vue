@@ -2,7 +2,7 @@
   <div>
     <!--button type="button" class="btn" @click="showModal()">
       SignIn
-    </button --> 
+    </button -->
     <a @click="showModal()">Sign-In</a>
     <ModalSignIn
       v-show="isModalVisible"
@@ -17,7 +17,7 @@
         </div>
         <div id="error-name" :class="[is_username() ? 'input_ok' : 'input_error']">{{status_username()}}</div>
         <p>&nbsp;</p>
-        
+
         <div class="prompt"><label for="password">{{signin.meta.password.prompt}}</label></div>
         <div>
           <input id="password" v-model="signin.aadform.password" type="password" placeholder="password">
@@ -44,15 +44,18 @@
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
+import GraphMixin from '@/components/mixins/GraphMixin.js'
+import SignInMixin from '@/components/mixins/SignInMixin.js'
+
 // Modals
 import ModalSignIn from '@/components/Modal.vue'
 // import ModalSignOut from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration],
+  mixins: [Expiration,SignInMixin,GraphMixin],
   components: {
     ModalSignIn,
-    
+
   },
   data () {
     return {
@@ -119,57 +122,45 @@ export default {
       // set all dialog to closed/false
       this.isModalVisible = false;
     },
+
     onSignIn () {
 
-      const aadUrl = process.env.AAD_API_URL + '/signin';
-      // const aadBody = JSON.stringify(this.aadform);
-      const aadBody = this.signin.aadform;
+      this.addGlyph('   (*) ','   (*) ');
+      this.addGlyph('    | ', '    | ');
+      this.addGlyph(' [ Collect Credentials ] .', '. (username, password) ');
+      this.addGlyph('    | ', '    | ');
 
-      const aadHeader = {
-        "Accept":"application/json",
-        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
-        'Content-Type': 'application/json'
-      };
+      this.requestSignIn(this.signin.aadform, this.graph)
+        .then((response) => {
+          this.responseSignIn(response, this.graph);
+          this.setCurrentToken(this.tokenSignIn, this.graph);
 
-      new AADHandlers(this).aadSignin(
-          aadUrl,
-          aadHeader,
-          aadBody
-        ).then((response) => {
+          console.log('Go find a drain to adopt!');
 
-          if (response.status === 200) {
+          this.addGlyph('    | ','    | ');
+          this.addGlyph('    | ',' [ Goto Map ] ');
+          // Goto Map
+          this.$router.push('/'); // to map
 
-             switch(response.data.status) {
-              case '200':
-                this.setCurrentToken(response.data.token);
-                console.log('Go find a drain to adopt!');
-                this.$router.push('/'); // to map
-                this.closeModal();
-                break;
-              case '404':
-                console.error('User not found!');
-                break;
+          this.addGlyph('    | ','    | ');
+          this.addGlyph('    | ',' [ Close Modal ] ');
+          // Close Modal
+          this.closeModal();
 
-              default:
-                console.log('Not sure what just happened');
-                console.log('Not sure what just happened');
-            }
-          }
-
+          this.addGlyph('    | ','    | ');
+          this.addGlyph('   [=] ','   [=] ');
+          // Show Graph
+          console.log(this.getGraph());
         })
         .catch((err) => {
-          this.detoken();
-          if (err.message.includes('403')) {
-            /* eslint-disable no-console */
-            console.error('Have you signed up?');
-            /* eslint-enable no-console */
-          } else {
-            /* eslint-disable no-console */
-            console.error('Something unexpected happened while searching (%s)!'.replace('%s', err));
-            /* eslint-enable no-console */
-          }
-        })
+          this.addGlyph('    | ',` [ Error ${err} ]`);
+          this.addGlyph('    |   ','    | ');
+          this.addGlyph('   [=] ', '   [=] ');
+          console.log(this.getGraph());
+        });
+
     },
+
     detoken () {
       this.$store.commit('detoken')
     }

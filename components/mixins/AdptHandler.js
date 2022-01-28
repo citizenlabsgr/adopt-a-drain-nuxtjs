@@ -4,6 +4,8 @@ import { DrainTypes } from '@/components/mixins/DrainTypes.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { DWHandlers } from '@/components/mixins/DWHandlers.js'
+import  Graph   from '@/components/mixins/graph.js'
+
 // import { Datum } from './Datum'
 import { OrphanDatum } from './DatumOrphan'
 import { AdopteeDatum } from './DatumAdoptee'
@@ -24,6 +26,7 @@ export default {
         info_window: null,
         map: null,
         // my_adoptee_list: []
+        adptGraph: new Graph()
     }
   },
 
@@ -31,7 +34,7 @@ export default {
     getDataCount() {
         return Object.keys(this.marker_dictionary).length;
     },
-    getDataAdpt() { 
+    getDataAdpt() {
         return this.marker_dictionary;
     },
     setDatumAdpt(datum) {
@@ -43,7 +46,7 @@ export default {
             throw new Error('Object missing data attribute!');
         }
         // if (this.marker_dictionary[datum.getId()]) { // replace old
-        if (!this.getDatumAdpt(datum.getId())) {    
+        if (!this.getDatumAdpt(datum.getId())) {
             // add marker when not available
             this.marker_dictionary[datum.getId()] = datum;
         } else {
@@ -52,11 +55,11 @@ export default {
             this.marker_dictionary[datum.getId()].detach(); // hide old one
             this.marker_dictionary[datum.getId()]=datum; // replace the old one
             // the new container will get initialized later
-        } 
+        }
     },
     getDatumAdpt(id) {
         // returns a object that contains id and data
-        let rc = false;        
+        let rc = false;
         rc = this.marker_dictionary[id];
         if (!rc) {
             rc = false;
@@ -66,7 +69,7 @@ export default {
     /*
        upsert
        owner is the owner identity value
-       id is '0' or identity value 
+       id is '0' or identity value
        formContainer is object/class wrapper that has id and data
     */
     upsertAdpt(token, owner, id, formContainer){
@@ -86,7 +89,7 @@ export default {
     /*
        delete
        owner is the owner identity value
-       id is identity value 
+       id is identity value
     */
     deleteAdpt(token, owner, id) {
         const atoken = token;
@@ -100,7 +103,7 @@ export default {
         // [Assemble Route]
         const _infowindow = this.info_window;
         const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
-    
+
         let mapHelper = new MapHelper(this);
         const infoHelper = new InfoHelper(true);
 
@@ -108,7 +111,7 @@ export default {
 
         new AADHandlers(this).aadAdopteeDelete(aadUrl, aadHeader)
         .then((response) => {
-            
+
             let datum = this.getDatumAdpt(aid);
 
             let data = datum.getDataCopy();
@@ -122,14 +125,14 @@ export default {
             console.error('Unexpected issue removing orphan!');
 
             //this.feedback('Unexpected issue with adoption!')
-            // eslint-disable no-console 
+            // eslint-disable no-console
             // console.error('Unexpected issue with deletion!');
             // console.error('aadUrl    ', aadUrl);
             // console.error('aadHeader ', aadHeader);
 
-            // eslint-enable no-console 
+            // eslint-enable no-console
         }) // end of AADHandler
-        
+
     },
     insertAdpt(token, owner, formContainer) {
          // [Setup Authorization]
@@ -149,15 +152,15 @@ export default {
         aadData['type'] = DrainTypes.adoptee
 
         new AADHandlers(this).aadAdopteePost(
-            aadUrl, 
-            aadHeader, 
+            aadUrl,
+            aadHeader,
             aadData
             ).then((response) => {
 
                 let mapHelper = new MapHelper(this);
                 // returns the new or updated version
                 // grab it and update the buffer
-        
+
                 const infoHelper = new InfoHelper(true);
 
                 let image = mapHelper.markerImage(DrainTypes.yours);
@@ -166,24 +169,24 @@ export default {
                     case '200':
                         /*
                         need to replace the drain with Red marker
-                        */        
+                        */
                         const id = response.data.insertion.form['drain_id'];
                         const data = JSON.parse(JSON.stringify(response.data.insertion.form));
                         const ownerKey = this.payload.key;
                         this.setDatumAdpt(new YoursDatum(id, data, ownerKey, this));
-                        
+
                         this.getDatumAdpt(id).show(this.map);
                         // this.refreshMyAdopteeList(atoken, ownerKey) ;
                         break;
                     case '409':
-                        console.log('Duplicate'); 
+                        console.log('Duplicate');
                         break;
-                    default: 
-                        throw new Error('Bad Adoption');    
+                    default:
+                        throw new Error('Bad Adoption');
                 }
             })
             .catch((response) => {
-               
+
                 /* eslint-disable no-console */
                 console.error('Unexpected issue with adoption!');
                 /* eslint-enable no-console */
@@ -195,7 +198,7 @@ export default {
         const atoken = token;
         const aid = id;
         const ainfowindow = this.info_window;
-    
+
         const aadHeader = {
             "Accept":"application/json",
             'Authorization': `Bearer ${atoken}`,
@@ -206,31 +209,31 @@ export default {
         const aadData = formContainer.data ;
         // never store type = DrainTypes.yours change to .adoptee
         aadData.type = DrainTypes.adoptee;
-        
+
         new AADHandlers(this).aadAdopteePut(
-            aadUrl, 
-            aadHeader, 
+            aadUrl,
+            aadHeader,
             aadData
             ).then((response) => {
                 // returns the new or updated version
-               
+
                 const id = response.data.updation.form['drain_id'];
                 const data = JSON.parse(JSON.stringify(response.data.updation.form));
                 const ownerKey = this.payload.key;
                 this.setDatumAdpt(new YoursDatum(id, data, ownerKey, this));
-                
+
                 this.getDatumAdpt(id).show(this.map);
-                
+
             })
             .catch((response) => {
-                //* eslint-disable no-console 
+                //* eslint-disable no-console
                 // console.error('aadHeader ',aadHeader);
                 // console.error('aadUrl    ',aadUrl);
                 // console.error('aadData   ',aadData);
- 
+
                 console.error('Unexpected issue with adoption!');
-                //* eslint-enable no-console 
-            }) // end of AADHandler      
+                //* eslint-enable no-console
+            }) // end of AADHandler
     },
     getViewBox() {
         return this.view_box;
@@ -270,10 +273,14 @@ export default {
       }
     },
     toggleMarkers() {
-        console.log(`             
+      this.adptGraph.addGlyph('     | ', '   [ Toggle Markers ] ');
+      this.adptGraph.addGlyph('     | ', '      | ');
+      /*
+        console.log(`
         [toggle markers]
            |
         `);
+        */
         for (let i in this.marker_dictionary) {
             let datum = this.getDataAdpt()[i];
             let id = datum.getId();
@@ -281,7 +288,7 @@ export default {
             let owner = datum.getKey();
             if (this.isAuthenticated) {
                 let isYours = (this.payload.key === datum.getKey());
-                if (datum.toggleState() === 2 && isYours){ 
+                if (datum.toggleState() === 2 && isYours){
                     // upgrade marker to RED and change info window
                     this.setDatumAdpt(new YoursDatum(id, data, owner, this));
                 } else if (datum.toggleState() === 2) {
@@ -307,10 +314,10 @@ export default {
                         break;
                     case 3:
                         this.setDatumAdpt(new AdopteeDatum(id, data, owner, this));
-                    
+
                         break;
                 }
-                
+
             }
         }
     },
@@ -322,40 +329,38 @@ export default {
     },
 
     showSymbols() {
-        
+
         try {
             // let infoHelper = new InfoHelper(this.isAuthenticated);
-            // const mapHelper = new MapHelper(this); 
+            // const mapHelper = new MapHelper(this);
             // const map = mapHelper.map
             // const info_window = this.info_window;
             //let counter = 0;
+            this.adptGraph.addGlyph('  [ Display Symbols ] .','.. [ Symbolize ] ');
+            this.adptGraph.addGlyph('     | ',  '      | ');
 
-            console.log(`
-                |
-            [showSymbols] <--- [getDataAdpt] <--- +
-                |                  |              |
-                |               (datum)           |
-                |                  |              |
-                |               [showDatum] ----> +  
-                =
-            `);
             this.counter = 0;
-            for (let i in this.marker_dictionary) {    
+            for (let i in this.marker_dictionary) {
                 let datum = this.getDataAdpt()[i];
-                
-                datum.show(this.map, this); 
+
+                datum.show(this.map, this);
                 this.counter ++;
-                
+
             } // for
-            
+            this.adptGraph.addGlyph('     | ',  '      | ', ` [ Processed ${this.counter} Symbols ] `);
+            this.adptGraph.addGlyph('     | ',  '      | ');
+            this.adptGraph.addGlyph('    [=] ','     [=] ');
         } catch(err) {
-          console.error('showSymbols ', err); 
+          console.error('showSymbols ', err);
         }
     },
-
     cleanCache(centerBox) {
         //  Objective: minimize the number of drains in the application at one time
         //  Strategy: disable and remove markers not found in the centerBox
+          this.adptGraph.addGlyph('     | ', '      | ');
+          this.adptGraph.addGlyph('     | ', '   [ Clean Cache ] ');
+          this.adptGraph.addGlyph('     | ', '      | ');
+        /*
         console.log(`
              (centerBox)
                 |
@@ -363,12 +368,13 @@ export default {
                 |                   |                         |
                 |                (datum)                      |
                 |                   |                         |
-                |                [centerBox] ---> ((in)) ---> +   
+                |                [centerBox] ---> ((in)) ---> +
                 |                   |                         |
                 |                ((out))                      |
                 |                   |                         |
                 |                [delete (datum)] ----------> +
         `);
+        */
         this.info_window.close();
         let datum ;
         for(let i in this.marker_dictionary) {
@@ -380,34 +386,27 @@ export default {
             centerBox.west > datum.getLon() ||
             centerBox.east < datum.getLon()
           ) {
-  
+
             // for visual effect, hide markers before deleting
             datum.hide();
-  
+
             // remove drain from dictionary ... this does not delete from db
             delete this.getDataAdpt()[datum.id];
-  
+
           }
         }
-  
+
       },
     loadAdpt (centerBox) {
-        // load drains into marker_dictionary 
+        // load drains into marker_dictionary
         // token is a user token
-        // aadData is a rectangle of the current view, 
-        console.log(`
-             (centerBox)
-                |
-             [loadAdpt]
-                |
-             (aadUrl, aadHeader, centerBox)
-                |
-             [Adoptee Request]   
-                .
-                .
-                .
-        `);
-        const mapHelper = new MapHelper(this); 
+        // aadData is a rectangle of the current view,
+        this.addGlyph('   [ Load Drains ] .','.. (centerBox) ');
+        this.addGlyph('     | ',     '      | ');
+        this.adptGraph.addGlyph('     | ', '      + ---> (request) >','> [[ Adoptee Service ]] ');
+        this.adptGraph.addGlyph('     | ', '                       ','      | ');
+
+        const mapHelper = new MapHelper(this);
         const aadAuthentecated = this.isAuthenticated;
         const aadData = JSON.parse(JSON.stringify(centerBox));
         const aadUrl = `${process.env.AAD_API_URL}/adoptee/mbr`;
@@ -418,37 +417,25 @@ export default {
             'Content-Type': 'application/json'
         };
         new AADHandlers(this).aadAdopteeGetMBR(
-            aadUrl, 
-            aadHeader, 
+            aadUrl,
+            aadHeader,
             aadData)
             .then((response) => {
                 /////////////////
                 // load adoptees
                 ///////
-             console.log(` 
-                .    
-                .
-                .   
-             (adoptee response)
-                |
-             [Cache Data] <--- [selection] <----------- +
-                |                 |                     |
-                |              (datum)                  |
-                |                 |                     |
-                |              [Determine datum type]   |
-                |                 |                     |
-                |              (datum)                  |
-                |                 |                     |
-                |              [setDatumAdpt] --------> +
-                |
-             `);
+                this.adptGraph.addGlyph('     | ', '      + <--- (adoptees) <','<<<< + ');
+                this.adptGraph.addGlyph('     | ', '      | ');
+
+                this.adptGraph.addGlyph('     | ', '   [ Cache Adpotees ] ');
+
 
                 let dr = {};
                 for (dr in response.data.selection) {
-                    
+
                     let id=response.data.selection[dr].form.drain_id;
                     let data=response.data.selection[dr].form;
-                    let ownerKey=response.data.selection[dr].owner; 
+                    let ownerKey=response.data.selection[dr].owner;
                     // let isYours = (this.payload.key !== '0' && this.payload.key === datum.getKey());
 
                     let datum = null;
@@ -491,20 +478,23 @@ export default {
                 // call the data.world service once adoptees are loaded
                 /////////
                 // [Merge adoptees and drains]
-                console.log(`
-             (DW_DRAIN_URL, dwHeaders, dwData)
-                |
-             [Request Drains]
-                .
-                .
-                .
-                `);
+                this.adptGraph.addGlyph('     | ', '   (centerBox) ');
+                this.adptGraph.addGlyph('     | ', '      | ');
+                this.adptGraph.addGlyph('     | ', '      + ---> (request) >','> [[ Drain Service ]] ');
+                this.adptGraph.addGlyph('     | ', '                         ','     | ');
+
                 //////////
-                new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL, 
-                    headers, 
+                new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL,
+                    headers,
                     data)
                 .then((response) => {
-                    console.log(`   
+                  this.adptGraph.addGlyph('     | ', '      + <--- (drains) <','<<<<< + ');
+
+                  this.adptGraph.addGlyph('     | ', '      | ');
+                  this.adptGraph.addGlyph('     | ', '   [ Cache Drains ] ');
+                  this.adptGraph.addGlyph('     | ', '      | ');
+                  /*
+                    console.log(`
                 .
                 .
                 .
@@ -515,11 +505,11 @@ export default {
              (datum)             |
                 |                |
              [setDatumAdpt] ---> +
-                | 
+                |
                     `);
-
+                    */
                     const tokenHelper = this.current_token_helper
-                    
+
                     let dr = {}
                     ///////////////
                     // load orphans, marker, and set infowindow
@@ -531,7 +521,7 @@ export default {
                         let dr = response.data[i];
                         let id = dr['dr_asset_id'];
                         let _drain = this.getDatumAdpt(id);
-                        if (!_drain) {          
+                        if (!_drain) {
                             const data={
                                 type: DrainTypes.orphan ,
                                 lat: dr['dr_lat'],
@@ -541,26 +531,28 @@ export default {
                             };
                             let datum = new OrphanDatum(id, data, this);
                             this.setDatumAdpt(datum);
-                        } 
-                         
+                        }
+
                     } // end for
                     this.setFeedback(`Found ${this.getDataCount()} Storm Drains`);
                     this.showSymbols();
+                    console.log(this.adptGraph.getGraph());
                 })
                 .catch((err) => {
-                    // eslint-disable no-console 
+                    // eslint-disable no-console
                     console.error('Unexpected issue loading drains!', err);
-                    // eslint-enable no-console  
+                    // eslint-enable no-console
                 }); // end of DWHandlers
                 ///////////
                 //////////
                 //////////
             })
             .catch((err) => {
-                // eslint-disable no-console 
+                // eslint-disable no-console
                 console.error('Unexpected issue with adoptees!', err);
-                // eslint-enable no-console 
-            }); //    
+                // eslint-enable no-console
+            }); //
+
     }, // loadAdpt
     loadMyAdopteeList(token, owner) {
         // token is a user token
@@ -573,7 +565,7 @@ export default {
                 |
              (aadUrl, aadHeader, aadData)
                 |
-             [My Adoptee Request]   
+             [My Adoptee Request]
                 .
                 .
                 .
@@ -588,7 +580,7 @@ export default {
             'Content-Type': 'application/json'
         };
         new AADHandlers(this).aadAdopteeGet(
-            aadUrl, 
+            aadUrl,
             aadHeader)
             .then((response) => {
                 let save = false;
@@ -599,14 +591,14 @@ export default {
                 for (let i in response.data.selection) {
                     if (save) {
                         this.my_adoptee_list.push(response.data.selection[i].form);
-                    } 
+                    }
                 }
             })
             .catch((err) => {
-                // eslint-disable no-console 
+                // eslint-disable no-console
                 console.error('Unexpected issue with adoptee list!', err);
-                // eslint-enable no-console 
-            }); 
+                // eslint-enable no-console
+            });
     },
     /*
     refresh MyAdopteeList(token, owner) {
@@ -620,14 +612,14 @@ export default {
                 |
              (aadUrl, aadHeader, aadData)
                 |
-             [My Adoptee Request]   
+             [My Adoptee Request]
                 .
                 .
                 .
         `);
         // console.log('refreshMyAdopteeList token ', token);
         // console.log('refreshMyAdopteeList owner ', owner);
-        
+
         const aadAuthentecated = this.isAuthenticated;
         // const aadData = JSON.parse(JSON.stringify(centerBox));
         const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
@@ -638,7 +630,7 @@ export default {
             'Content-Type': 'application/json'
         };
         new AADHandlers(this).aadAdopteeGet(
-            aadUrl, 
+            aadUrl,
             aadHeader)
             .then((response) => {
                 let save = false;
@@ -652,21 +644,21 @@ export default {
                     if (save) {
                         console.log('i ', response.data.selection[i]);
                         this.my_adoptee_list.push(response.data.selection[i]);
-                    } 
+                    }
                 }
             })
             .catch((err) => {
-                // eslint-disable no-console 
+                // eslint-disable no-console
                 console.error('Unexpected issue with adoptee list!', err);
-                // eslint-enable no-console 
-            }); 
+                // eslint-enable no-console
+            });
     },
     */
     /*
     getMyAdopteeList(token, owner) {
         // token is a user token
         // owner is key value
-        
+
         console.log(`
              (owner)
                 |
@@ -674,7 +666,7 @@ export default {
                 |
              (aadUrl, aadHeader, aadData)
                 |
-             [My Adoptee Request]   
+             [My Adoptee Request]
                 .
                 .
                 .
@@ -690,7 +682,7 @@ export default {
         };
 
         new AADHandlers(this).aadAdopteeGet(
-            aadUrl, 
+            aadUrl,
             aadHeader)
             .then((response) => {
                 console.log('response ', response.data.selection);
@@ -700,11 +692,11 @@ export default {
                 }
             })
             .catch((err) => {
-                // eslint-disable no-console 
+                // eslint-disable no-console
                 console.error('Unexpected issue with adoptee list!', err);
-                // eslint-enable no-console 
-            }); 
-         
+                // eslint-enable no-console
+            });
+
         return this.my_adoptee_list;
     }
     */

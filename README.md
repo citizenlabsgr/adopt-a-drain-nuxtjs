@@ -37,9 +37,8 @@
 | Strategy | Goal IDs
 | :------ | --------
 | Replace Ruby with Nuxtjs (nodejs) | G1, G2         
-| Use Postgrest APIs to decoupled the application and data storage | G1, G2 |
+| Decouple app from data using Hapi APIs | G1, G2 |
 | Replace the current application's user interface with a Single page design | G3,G4 |
-| ~~Static Website, should run on github or aws S3~~  | G1,G3  |
 | Establish Test Driven Development | G2 |
 
 #### Project Guides:
@@ -51,9 +50,9 @@
 
 #### Maintainers (people with write access):
 
-* Jace B
-* Dave W
-* Ross H
+* Jace B (Citizen Labs)
+* Dave W (Citizen Labs)
+* Ross H (Citizen Labs)
 
 # Contributions
 
@@ -149,20 +148,16 @@ Loaded in Docker container
 * Node
 * Database: Postgres https://www.postgresql.org
 * JSON Web Tokens https://github.com/michelp/pgjwt
-* API: Postgrest http://postgrest.org/en/v7.0.0/
+* Hapi API Framework https://hapi.dev
+* API: ~Postgrest http://postgrest.org/en/v7.0.0/~ doesnt work well with heroku free account
 
 
 
-## History 
-* Configure CORS 
-* Configure docker-compose.yml to pull and build AAD-API image from GitHUB
+~~## History~~
+~~* Configure CORS~~
+~~* Configure docker-compose.yml to pull and build AAD-API image from GitHUB ~~
 
 ## License
 See [LICENSE.md](https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs/blob/trunk/LICENSE) for details.
 
 [license]: https://github.com/citizenlabsgr/openbudgetgr/blob/master/LICENSE
-
-
-
-
-

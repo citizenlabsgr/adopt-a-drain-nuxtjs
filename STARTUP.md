@@ -1,4 +1,5 @@
 # Get Started
+Always create a branch for your development.
 
 #### Prerequisites
 This can be the hardest section for new developers and a challenge to seasoned veterans.
@@ -16,75 +17,132 @@ Keys and Tokens are never saved to the repo.
     1. verify signature password is PASSWORDmustBEATLEAST32CHARSLONGLONG
         1. password is configured in the .env as POSTGRES_JWT_SECRET
 
-# Setup
+# Setup Folders
+
 This is a the recommended setup, experienced git user may vary.
 * [Manually Setup Folders and Files](#manually-setup-folders-and-files)
-* [Optional Bash Setup Script](#optional-bash-setup-script)
 
-## Manually Setup Folders and Files
+
+## Expected Folder Structure
 
 ```
-+-- <your-development-folder>
++-- citizenlabsgr/
     |
-    +-- <your-branch-name>
+    +-- <your-branch-name>/
         |
         +-- adopt-a-drain-nuxtjs
             |-- .env
+
 ```
-### Your Branch Name
-GitHub has a nice feature such that using a # followed by an issue number will create a link to that issue.
-For example, prefixing your branch name with #45, such as #45.update.reademe will help team members understand the relationship
-between issue #45 and the reason for your branch (update.readme).
-* use the issue number (eg #45) as prefix for your-branch-name
 
 ## Manual Setup
+
 1. Folders
     ```
     # Folders
-    mkdir <your-development-folder>/
-    cd <your-development-folder>/
-
-    mkdir <your-branch-name>/
-    cd <your-branch-name>/
+    mkdir citizenlabsgr/
+    cd citizenlabsgr/
 
     ```
+1. Create a configuration file
+Change the branch name in the git.config.sh file .
 
-1. Clone Repo
-    ```
-    # from <your-branch-name> folder
-    git clone https://github.com/citizenlabsgr/adopt-a-drain-nuxtjs.git
-    ```
-1. Create .env file in adopt-a-drain-nuxtjs folder
+```
+  # cd citizenlabsgr/
+  echo 'export GIT_BRANCH=provide.a.branch.name' >  git.config.sh
+  echo 'export GIT_PROJECT=adopt-a-drain-nuxtjs' >>  git.config.sh
+  echo 'export GIT_PREFIX=aad' >>  git.config.sh
+  echo 'export GIT_OWNERNAME=citizenlabsgr' >>  git.config.sh
+  echo 'export GIT_TRUNK=main' >>  git.config.sh
+```
+
+1. Create a bash download script.
+
+  ```
+  # cd citizenlabsgr/
+
+  echo 'source ./git.config.sh' > 'download.sh'
+
+  echo 'if [ ! -f git.config.sh ]; then' >> 'download.sh'
+  echo '  exit 1' >> 'download.sh'
+  echo 'fi' >> 'download.sh'
+
+  echo 'if [ ! -d ${GIT_BRANCH}  ]; then' >> 'download.sh'
+  echo '  # make the branch' >> 'download.sh'
+  echo '  mkdir ${GIT_BRANCH}/' >> 'download.sh'
+  echo 'fi' >> 'download.sh'
+
+  echo 'cd ${GIT_BRANCH}/' >> 'download.sh'
+
+  echo '##############' >> 'download.sh'
+  echo '# clone' >> 'download.sh'
+  echo '##########' >> 'download.sh'
+
+  echo 'export MY_REPOURL=https://github.com/${GIT_OWNERNAME}/${GIT_PROJECT}.git' >> 'download.sh'
+
+  echo 'if [ ! -d ${GIT_PROJECT} ] ; then' >> 'download.sh'
+  echo '   git clone ${MY_REPOURL}' >> 'download.sh'
+  echo 'fi' >> 'download.sh'
+
+  echo 'cd ${GIT_PROJECT}/' >> 'download.sh'
+  echo 'git checkout -b ${GIT_BRANCH}' >> 'download.sh'
+  # permission the download script
+  chmod 755 download.sh
+
+  ```
+3. Run download
+Before running the download script, change the branch name.
+
+  ```
+  # cd citizenlabsgr/
+  ./download.sh
+  ```
+
+1. Create .env file in the adopt-a-drain-nuxtjs folder
     1. Cut and paste the following into .env
     ```
     # adopt-a-drain-nuxtjs/.env
 
+    NODE_ENV=development
+
+    ###############
     # Google Map API (aad-web)
+    ############
     GOOGLE_MAPS_API_KEY=<your-google-map-api-key>
 
+    ###########
     # Data.World API (aad-web)
+    ##########
     DW_AUTH_TOKEN=<your-data.world-authorization-token>
     DW_USER=citizenlabs
-    DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains
+    DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/lgrow-storm-drains-current
 
-    # Adopt-a-Drain (aad-web)
-    AAD_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo
-    AAD_API_URL=http://localhost:3100/rpc
-    AAD_API_VERSION=aad_version_1_4_2
-    LB_GUEST_PASSWORD=mysecretclientpassword
-    LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}
+    ########
+    # Adopt a Drain
+    ########
+    API_HOST=0.0.0.0
+    API_PORT=5555
+    AAD_API_URL=http://0.0.0.0:5555
+    AAD_API_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaXRpemVubGFicy1hcGkiLCJpc3MiOiJjaXRpemVubGFicyIsInN1YiI6ImNsaWVudC1hcGkiLCJ1c2VyIjoiZ3Vlc3QiLCJzY29wZSI6ImFwaV9ndWVzdCIsImtleSI6IjAifQ.P3rZzJPzyCe6X96eyHSWOL_Yt6_c8ql2mwcioI8tkFU
 
-    # Postgres (aad-db)
+    ############
+    # Postgres specific variables
+    ############
     POSTGRES_DB=aad_db
     POSTGRES_USER=postgres
     POSTGRES_PASSWORD=mysecretdatabasepassword
-    POSTGRES_JWT_SECRET=PASSWORDmustBEATLEAST32CHARSLONGLONG
+    # JWT_SECRET requires at least 32 characters
+    POSTGRES_JWT_SECRET=fe5d9645_302a_493d_b9de_207dfa16ca9c
+    POSTGRES_API_PASSWORD=mysecretdatabasepassword
+    POSTGRES_JWT_CLAIMS={"aud":"citizenlabs-api", "iss":"citizenlabs", "sub":"client-api", "user":"guest", "scope":"api_guest", "key":"0"}
 
-    # Postgrest (aad-db)
-    PGRST_DB_SCHEMA=aad_version_1_4_2
-    PGRST_DB_ANON_ROLE=guest_aad
     ```
+
+
+
 ### Start Docker
+This will be slow the first time)
+
     ```
     # open a command window
     # from the adopt-a-drain-nuxtjs/ folder
@@ -93,7 +151,6 @@ between issue #45 and the reason for your branch (update.readme).
 
     docker-compose up
     ```
-
 ### Stop Docker
     ```
     # open a command window
@@ -106,207 +163,3 @@ between issue #45 and the reason for your branch (update.readme).
     # when docker is up and running
     open -a safari http://localhost:3000
     ```
-
-# Optional Bash Setup Script
-The bash setup script performs the following:
- * Creates a repo clone, when not already downloaded
- * Creates and checks out a local branch,
- * Builds a .env file,
- * Makes a config.sh utility script,
- * Makes a docker up utility script,
- * Makes a docker down utility script,
-
-## Using the Setup Script
-1. Create or set <your-development-folder>
-1. Create a setup.sh script file:
-    ```
-    # from your-development-folder
-    touch setup.sh
-    ```
-1. Cut and paste [**Setup Script Contents**](#setup-script-contents) into setup.sh
-    1. Replace **<your-branch-name>** with your actual branch name in setup.sh
-    1. Replace **<your-google-map-api-key>** with your actual key in setup.sh
-    1. Replace **<your-data.world-authorization-token>** with your actual token in setup.sh
-1. Make script executable:
-    ```
-    # from your-develoment-folder
-    chmod 755 setup.sh
-    ```
-1. Run the script: ./setup.sh
-    ```
-    # from your-develoment-folder
-    ./setup.sh
-    ```
-
-## Setup Script Output Folders and Files
-Expected folders and some files
-```
-+-- your-development-folder
-    |-- config.sh
-    |-- setup.sh
-    |-- config.sh
-    |-- down.sh
-    |-- up.sh
-    +-- your-branch-name
-        +-- adopt-a-drain-nuxtjs
-            |-- .env
-```
-## Start Docker
-```
-# open a command window
-# from the adopt-a-drain-nuxtjs/ folder
-./up.sh
-```
-## Stop Docker
-```
-# open a command window
-# from the adopt-a-drain-nuxtjs/ folder
-./down.sh
-```
-## Start Adopt A Drain
-```
-# from a command window
-# when docker is up and running
-open -a safari http://localhost:3000
-```
-
-## Setup Script Contents
-```
-# setup.sh
-####################
-# Required Configuration Changes
-####################
-
-export MY_BRANCH=<your-branch-name>
-export GOOGLE_MAPS_API_KEY=<your-google-map-api-key>
-export DW_AUTH_TOKEN=<your-data.world-authorization-token>
-
-####################
-# Optional Configuration Changes (good enough for develpment)
-#####################
-
-export GIT_PROJECT=adopt-a-drain-nuxtjs
-export GIT_PREFIX=aad
-export GIT_OWNERNAME=citizenlabsgr
-export MY_DATA_FOLDER=~/.data/aad_db
-
-####################
-# Check for minimum configuration
-####################
-echo "GOOGLE_MAPS_API_KEY is ${GOOGLE_MAPS_API_KEY}"
-if [ "${GOOGLE_MAPS_API_KEY}" = "" ]; then
-    echo "GOOGLE_MAPS_API_KEY is ${GOOGLE_MAPS_API_KEY}"
-    echo "Need Google Map token."
-    exit 0
-fi
-echo "DW_AUTH_TOKEN is ${DW_AUTH_TOKEN}"
-if [ "${DW_AUTH_TOKEN}" = "" ]; then
-    echo "DW_AUTH_TOKEN is ${DW_AUTH_TOKEN}"
-    echo "Need Data.World token."
-    exit 0
-fi
-echo "MY_BRANCH is ${MY_BRANCH}"
-if [ "${MY_BRANCH}" = "" ]; then
-    echo "Need a GitHub Branch name. (#<issue-no>.<short-description>)"
-    exit 0
-fi
-##################################
-## config.sh (generate a script)
-####################
-echo "export MY_BRANCH=${MY_BRANCH}" > config.sh
-echo "export GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}" >> config.sh
-echo "export DW_AUTH_TOKEN=${DW_AUTH_TOKEN}" >> config.sh
-echo "export GIT_PREFIX=${GIT_PREFIX}" >> config.sh
-echo "export GIT_OWNERNAME=${GIT_OWNERNAME}" >> config.sh
-echo "export GIT_PROJECT=${GIT_PROJECT}" >> config.sh
-echo "export MY_DATA_FOLDER=${MY_DATA_FOLDER}" >> config.sh
-chmod 755 config.sh
-##################################
-## down.sh (generate a script)
-####################
-echo "# Stop Docker" > down.sh
-echo "source ./config.sh" >> down.sh
-echo 'cd "${MY_BRANCH}/"' >> down.sh
-echo 'cd "${GIT_PROJECT}/"' >> down.sh
-echo "docker-compose down" >> down.sh
-chmod 755 down.sh
-##################################
-## up.sh (generate a script)
-####################
-echo "# Start Docker" > up.sh
-echo "source ./config.sh" >> up.sh
-echo 'cd "${MY_BRANCH}/"' >> up.sh
-echo 'cd "${GIT_PROJECT}/"' >> up.sh
-echo "docker-compose build" >> up.sh
-echo "# after build" >> up.sh
-echo "docker-compose up" >> up.sh
-chmod 755 up.sh
-####################
-# Stop if branch has already been down loaded
-####################
-if [ -d ${MY_BRANCH} ]; then
-  echo "Already cloned. Stopping script."
-  exit 0
-fi
-####################
-# Setup Branch Folder
-####################
-echo "create folder...${MY_BRANCH}"
-if [ ! -d ${MY_BRANCH}  ]; then
-  # make the branch
-  mkdir ${MY_BRANCH}/
-fi
-cd ${MY_BRANCH}/
-####################
-# Clone the Repo
-####################
-export GIT_REPOURL=https://github.com/${GIT_OWNERNAME}/${GIT_PROJECT}.git
-echo "GIT_PROJECT is ${GIT_PROJECT} "
-if [ ! -d ${GIT_PROJECT} ] ; then
-   echo "# Clone ${GIT_REPOURL}"
-   git clone ${GIT_REPOURL}
-fi
-####################
-## Checkout the Branch
-###################
-cd ${GIT_PROJECT}/
-echo "Checkout"
-git checkout -b ${MY_BRANCH}
-####################
-## Create the branch on
-###################
-#git push origin ${MY_BRANCH}
-git status
-
-
-#### Environment variables are stored in the .env file. The .env is placed in the same folder as the docker-compose.yml.
-#####################################
-#### Generate an adopt-a-drain-nuxtjs/.env
-#####################################
-# adopt-a-drain-nuxtjs/.env
-
-echo "# Google Map API (aad-web)" > .env
-echo "GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}" >> .env
-
-echo "# Data.World API (aad-web)" >> .env
-echo "DW_AUTH_TOKEN=${DW_AUTH_TOKEN}" >> .env
-echo "DW_USER=citizenlabs" >> .env
-echo "DW_DRAIN_URL=https://api.data.world/v0/sql/citizenlabs/grb-storm-drains" >> .env
-
-echo "# Adopt-a-Drain (aad-web)" >> .env
-echo "AAD_API_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJDaXRpemVuLUxhYnMiLCJzdWIiOiJPcmlnaW4iLCJuYW1lIjoiQWRvcHQtYS1EcmFpbiIsInJvbGUiOiJndWVzdF9hYWQifQ.ML4Tmgv0jjwUzcqlxT3-Qcuk_vJpcgoXkni9IbdS4Wo" >> .env
-echo "AAD_API_URL=http://localhost:3100/rpc" >> .env
-echo "AAD_API_VERSION=aad_version_1_4_2" >> .env
-echo "LB_GUEST_PASSWORD=mysecretclientpassword" >> .env
-echo "LB_WODEN={"org":"CitizenLabs","app":"Adopt-A-Drain","name":"woden@citizenlabs.org","password":"a1A!aaaa"}" >> .env
-echo "# Postgres (aad-db)" >> .env
-echo "POSTGRES_DB=aad_db" >> .env
-echo "POSTGRES_USER=postgres" >> .env
-echo "POSTGRES_PASSWORD=mysecretdatabasepassword" >> .env
-echo "POSTGRES_JWT_SECRET=PASSWORDmustBEATLEAST32CHARSLONGLONG" >> .env
-echo "# Postgrest (aad-db)" >> .env
-echo "PGRST_DB_SCHEMA=aad_version_1_4_2" >> .env
-echo "PGRST_DB_ANON_ROLE=guest_aad" >> .env
-
-echo "OK"
-```

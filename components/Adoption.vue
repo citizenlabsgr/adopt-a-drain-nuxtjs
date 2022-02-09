@@ -58,7 +58,7 @@ import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
-import GraphMixin from '@/components/mixins/GraphMixin.js'
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 
 /* istanbul ignore next */
 export default {
@@ -200,25 +200,25 @@ export default {
       * initalize the google map infowindow
       * load the drains
       */
-      this.addGlyph(`   [ ${this.name}.vue ] `);
-      this.addGlyph('    (*) ', '     (*) ');
-      this.addGlyph('     | ',   '      | ');
-      this.addGlyph(`   [ Init ${this.name}] .`,   `... [ Mount ${this.name} ] `);
-      this.addGlyph('     | ',   '      | ');
-      this.addGlyph('     | ',   '      + ---> (request) >','> [[ Location Service ]] ');
-      this.addGlyph('     | ',   '                       ','      | ');
+      this.addGlyph(`  [${this.name}.vue ] `);
+      this.addStart();
+      this.addSpace();
+      this.addGlyph(`  [Init ${this.name}] .`,   `... [ Mount ${this.name} ] `);
+      this.addSpace();
+      this.addGlyph(this.down,   '      + ---> (request) >','> [[ Location Service ]] ');
+      this.addSpace();
 
       new GLHandlers(this).locateMe()
       .then((response) => {
-        this.addGlyph('     | ',   '      + <--- (location) <','<<<< + ');
-        this.addGlyph('     | ',   '      | ');
+        this.addGlyph(this.down,   '      + <--- (location) <','<<<< + ');
+        this.addSpace();
 
-        this.addGlyph('   [ Map ] .', '..... + ---> (request) >','> [[ Map Service ]] ');
-        this.addGlyph('     | ',      '                        ','     | ');
+        this.addGlyph('  [Map ] .', '..... + ---> (request) >','> [[ Map Service ]] ');
+        this.addGlyph(this.down,      '                        ',this.down);
         this.$refs.mapRef.$mapPromise
           .then((map) => {
-            this.addGlyph('     | ','      + <--- (map) <','<<<< + ');
-            this.addGlyph('     | ','      | ');
+            this.addGlyph(this.down,'      + <--- (map) <','<<<< + ');
+            this.addSpace();
 
             /////////////////
             // center the map on user location when browser supports
@@ -228,8 +228,8 @@ export default {
                 lat: this.location.coords.latitude,
                 lng: this.location.coords.longitude
               }
-              this.addGlyph('     | ',     '   [ Center Map ] ');
-              this.addGlyph('     | ',     '      | ');
+              this.addGlyph(this.down,     '  [Center Map ] ');
+              this.addSpace();
               map.setCenter(pos);
             }
             // never delete this infowindow
@@ -239,8 +239,8 @@ export default {
             const form_init_handler = this.form_init_handler;
             // set up a listener and wait for the DOM to load
             // infoHelper attaches forms for the infowindow
-            this.addGlyph('     | ',     '   [ Setup map click listeners ] ');
-            this.addGlyph('     | ',     '      | ');
+            this.addGlyph(this.down,     '  [Setup map click listeners ] ');
+            this.addSpace();
 
             google.maps.event.addListener(
               this.info_window,

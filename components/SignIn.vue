@@ -44,7 +44,7 @@
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-import GraphMixin from '@/components/mixins/GraphMixin.js'
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 import SignInMixin from '@/components/mixins/SignInMixin.js'
 
 // Modals
@@ -125,10 +125,10 @@ export default {
 
     onSignIn () {
 
-      this.addGlyph('   (*) ','   (*) ');
-      this.addGlyph('    | ', '    | ');
+      this.addStart();
+      this.addSpace();
       this.addGlyph(' [ Collect Credentials ] .', '. (username, password) ');
-      this.addGlyph('    | ', '    | ');
+      this.addSpace();
 
       this.requestSignIn(this.signin.aadform, this.graph)
         .then((response) => {
@@ -137,25 +137,25 @@ export default {
 
           console.log('Go find a drain to adopt!');
 
-          this.addGlyph('    | ','    | ');
-          this.addGlyph('    | ',' [ Goto Map ] ');
+          this.addSpace();
+          this.addGlyph(this.down,' [ Goto Map ] ');
           // Goto Map
           this.$router.push('/'); // to map
 
-          this.addGlyph('    | ','    | ');
-          this.addGlyph('    | ',' [ Close Modal ] ');
+          this.addSpace();
+          this.addGlyph(this.down,' [ Close Modal ] ');
           // Close Modal
           this.closeModal();
 
-          this.addGlyph('    | ','    | ');
-          this.addGlyph('   [=] ','   [=] ');
+          this.addSpace();
+          this.addEnd();
           // Show Graph
           console.log(this.getGraph());
         })
         .catch((err) => {
-          this.addGlyph('    | ',` [ Error ${err} ]`);
-          this.addGlyph('    |   ','    | ');
-          this.addGlyph('   [=] ', '   [=] ');
+          this.addGlyph(this.down,` [ Error ${err} ]`);
+          this.addSpace();
+          this.addEnd();
           console.log(this.getGraph());
         });
 

@@ -136,6 +136,21 @@ Before running the download script, change the branch name.
     POSTGRES_API_PASSWORD=mysecretdatabasepassword
     POSTGRES_JWT_CLAIMS={"aud":"citizenlabs-api", "iss":"citizenlabs", "sub":"client-api", "user":"guest", "scope":"api_guest", "key":"0"}
 
+    ########
+    # API
+    ########
+    # API_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJjaXRpemVubGFicy1hcGkiLCJpc3MiOiJjaXRpemVubGFicyIsInN1YiI6ImNsaWVudC1hcGkiLCJ1c2VyIjoiZ3Vlc3QiLCJzY29wZSI6ImFwaV9ndWVzdCIsImtleSI6IjAifQ.P3rZzJPzyCe6X96eyHSWOL_Yt6_c8ql2mwcioI8tkFU
+    DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/aad_db
+    JWT_SECRET=${POSTGRES_JWT_SECRET}
+    JWT_CLAIMS=${POSTGRES_JWT_CLAIMS}
+    # ACCEPTED_ORIGINS is a Security issue, ["*"]" can be used but not a good idea to let everyone connect
+    #                  add a string list of acceptable urls like '["http://localhost:3000"]'
+    #ACCEPTED_ORIGINS='["http://localhost:3000"]'
+    ACCEPTED_ORIGINS='["*"]'
+    # In dev, the HEROKU_API_KEY can be set to anything
+    # In GitHub secrets, set HEROKU_API_KEY to actual value from heroku
+    HEROKU_API_KEY=stub
+
     ```
 
 

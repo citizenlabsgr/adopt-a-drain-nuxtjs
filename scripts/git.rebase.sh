@@ -15,8 +15,12 @@ function get_input()
   fi
   echo $answer
 }
+
+cd ..
+ls
+
 # source ./config.sh
-source ../../../git.config.sh
+source ../../git.config.sh
 
 export MY_TRUNK=${GIT_TRUNK}
 export MY_BRANCH=${GIT_BRANCH}
@@ -45,6 +49,7 @@ if [ ${CONT} = "N" ]; then
   exit 0
 fi
 echo "Continuing"
+ls
 
 # Git Commands#                 Process
 # ---------------------------   ---------------------------------   ---------------------

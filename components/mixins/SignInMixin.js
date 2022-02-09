@@ -20,11 +20,11 @@ export default {
 
     async requestSignIn(form, graph=false) {
 
-      if (graph) {
+      if(this.graph) {
 
-        graph.addGlyph('    |   ',        '    | ');
-        graph.addGlyph(' [ SignIn ] .',  '.   + ---> (request) >','> [[[ SignIn Service ]]] ');
-        graph.addGlyph('    |   ','    ',                '    | ');
+       this.addSpace();
+       this.addGlyph(' [ SignIn ] .',  '.   + ---> (request) >','> [[[ SignIn Service ]]] ');
+       this.addGlyph(this.down,'    ',                this.down);
 
       }
 
@@ -46,9 +46,9 @@ export default {
         this.statusSignIn = response.data.status;
         this.msgSignIn = response.data.msg;
 
-        if (graph) {
-          graph.addGlyph('    | ',           '    + <--- (token) <',  '<<< + ');
-          graph.addGlyph('    | ',           '    | ');
+        if(this.graph) {
+         this.addGlyph(this.down,           '    + <--- (token) <',  '<<< + ');
+         this.addSpace();
 
         }
         switch(this.statusSignIn) {
@@ -65,14 +65,7 @@ export default {
            this.msgSignin = "Not sure what just happened!";
            console.error('Not sure what just happened!');
         }
-        if (graph) {
-          // graph.addGlyph('      | ',           '    + <--- (token) <',  '<<<< + ');
-          // graph.addGlyph('      | ',           '    | ');
-
-          // graph.addGlyph('    [ Authorize ] .', '  [ Set Current Token State ] ');
-          // graph.addGlyph('      |   ','    | ');
-          // graph.addGlyph('    [ = ] ','  [ = ] ');
-        }
+      
 
     }
   },

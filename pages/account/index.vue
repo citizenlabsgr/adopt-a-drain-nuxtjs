@@ -10,7 +10,7 @@ import atob from 'atob'
 import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import Account from '@/components/Account.vue'
-import GraphMixin from '@/components/mixins/GraphMixin.js'
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 
 export default {
   mixins: [Expiration, GraphMixin],
@@ -41,7 +41,7 @@ export default {
       // console.log('[upsert]');
       // insert
       if (id === '0') {
-         // console.log('   (form) -->');
+         // console.log('  (form) -->');
          this.addAdopter(form);
       } else if (id !== '0') { // update
          // id is the original id not one based on form changes
@@ -61,19 +61,19 @@ export default {
       const aadUrl = process.env.AAD_API_URL + '/signup';
 
       // [Store new user data]
-      // console.log('   (url,header,form) -->');
+      // console.log('  (url,header,form) -->');
       new AADHandlers(this).aadAdopterPost(aadUrl, aadHeader, form)
         .then((response) => {
           this.clearGraph();
-          this.addGlyph('    | '  ,'     + ---> (request) >>','> [ Adopter Service] ');
-          this.addGlyph('    | '  ,'                      ','    | ');
-          this.addGlyph('    | '  ,'     + <--- (response) <','<<< + ');
-          this.addGlyph('    | '  ,'     |                 ');
-          this.addGlyph('    | '  ,'  [ Add Account ] ---> (fail) --->  [=] ');
-          this.addGlyph('    | '  ,'     |                 ');
-          this.addGlyph('    | '  ,'  (success)           ');
-          this.addGlyph('    | '  ,'     |                 ');
-          this.addGlyph('   [=] ','    [=]  ');
+          this.addGlyph(this.down  ,'     + ---> (request) >>','> [ Adopter Service] ');
+          this.addGlyph(this.down  ,'                      ',this.down);
+          this.addGlyph(this.down  ,'     + <--- (response) <','<<< + ');
+          this.addSpace();
+          this.addGlyph(this.down  ,' [Add Account ] ---> (fail) --->  [=] ');
+          this.addSpace();
+          this.addGlyph(this.down  ,'  (success)           ');
+          this.addSpace();
+          this.addEnd();
 
           if (response.status === 200) {
             switch(response.data.status) {
@@ -111,7 +111,7 @@ export default {
       };
       const aadUrl = `/adopter/${owner}/${id}`;
 
-      // console.log('   (url, header, form) -->');
+      // console.log('  (url, header, form) -->');
       delete form['password'];
       new AADHandlers(this).aadAdopterPut(aadUrl, aadHeader, form)
         .then((response) => {

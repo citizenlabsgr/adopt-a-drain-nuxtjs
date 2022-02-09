@@ -8,10 +8,10 @@ export default {
   },
   methods: {
     setCurrentToken(token, graph=false) {
-      if (graph) {
-        graph.addGlyph('    | ','    | ');
-        graph.addGlyph(' [ Authorize ] .','. [ Set Current Token State ] ');
-        graph.addGlyph('    | ','    | ');
+      if(this.graph) {
+       this.addSpace();
+       this.addGlyph(' [ Authorize ] .','. [ Set Current Token State ] ');
+       this.addSpace();
       }
       /* console.log(`
              (token)

@@ -4,8 +4,7 @@ import { DrainTypes } from '@/components/mixins/DrainTypes.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { DWHandlers } from '@/components/mixins/DWHandlers.js'
-import  Graph   from '@/components/mixins/graph.js'
-
+import  Graph   from '@/components/mixins/graph/graph.js'
 // import { Datum } from './Datum'
 import { OrphanDatum } from './DatumOrphan'
 import { AdopteeDatum } from './DatumAdoptee'
@@ -273,8 +272,8 @@ export default {
       }
     },
     toggleMarkers() {
-      this.adptGraph.addGlyph('     | ', '   [ Toggle Markers ] ');
-      this.adptGraph.addGlyph('     | ', '      | ');
+      this.addGlyph(this.down, '  [Toggle Markers ] ');
+      this.addSpace();
       /*
         console.log(`
         [toggle markers]
@@ -336,8 +335,8 @@ export default {
             // const map = mapHelper.map
             // const info_window = this.info_window;
             //let counter = 0;
-            this.adptGraph.addGlyph('  [ Display Symbols ] .','.. [ Symbolize ] ');
-            this.adptGraph.addGlyph('     | ',  '      | ');
+            this.addGlyph(' [Display Symbols ] .','.. [ Symbolize ] ');
+            this.addSpace();
 
             this.counter = 0;
             for (let i in this.marker_dictionary) {
@@ -347,9 +346,9 @@ export default {
                 this.counter ++;
 
             } // for
-            this.adptGraph.addGlyph('     | ',  '      | ', ` [ Processed ${this.counter} Symbols ] `);
-            this.adptGraph.addGlyph('     | ',  '      | ');
-            this.adptGraph.addGlyph('    [=] ','     [=] ');
+            this.addGlyph(this.down,  this.down, ` [ Processed ${this.counter} Symbols ] `);
+            this.addSpace();
+            this.addEnd();
         } catch(err) {
           console.error('showSymbols ', err);
         }
@@ -357,24 +356,10 @@ export default {
     cleanCache(centerBox) {
         //  Objective: minimize the number of drains in the application at one time
         //  Strategy: disable and remove markers not found in the centerBox
-          this.adptGraph.addGlyph('     | ', '      | ');
-          this.adptGraph.addGlyph('     | ', '   [ Clean Cache ] ');
-          this.adptGraph.addGlyph('     | ', '      | ');
-        /*
-        console.log(`
-             (centerBox)
-                |
-             [cleanCache] <--- [getDataAdpt] <------------- +
-                |                   |                         |
-                |                (datum)                      |
-                |                   |                         |
-                |                [centerBox] ---> ((in)) ---> +
-                |                   |                         |
-                |                ((out))                      |
-                |                   |                         |
-                |                [delete (datum)] ----------> +
-        `);
-        */
+          this.addSpace();
+          this.addGlyph(this.down, '  [Clean Cache ] ');
+          this.addSpace();
+ 
         this.info_window.close();
         let datum ;
         for(let i in this.marker_dictionary) {
@@ -401,10 +386,10 @@ export default {
         // load drains into marker_dictionary
         // token is a user token
         // aadData is a rectangle of the current view,
-        this.addGlyph('   [ Load Drains ] .','.. (centerBox) ');
-        this.addGlyph('     | ',     '      | ');
-        this.adptGraph.addGlyph('     | ', '      + ---> (request) >','> [[ Adoptee Service ]] ');
-        this.adptGraph.addGlyph('     | ', '                       ','      | ');
+        this.addGlyph('  [Load Drains ] .','.. (centerBox) ');
+        this.addSpace();
+        this.addGlyph(this.down, '      + ---> (request) >','> [[ Adoptee Service ]] ');
+        this.addGlyph(this.down, '                       ',this.down);
 
         const mapHelper = new MapHelper(this);
         const aadAuthentecated = this.isAuthenticated;
@@ -424,10 +409,10 @@ export default {
                 /////////////////
                 // load adoptees
                 ///////
-                this.adptGraph.addGlyph('     | ', '      + <--- (adoptees) <','<<<< + ');
-                this.adptGraph.addGlyph('     | ', '      | ');
+                this.addGlyph(this.down, '      + <--- (adoptees) <','<<<< + ');
+                this.addSpace();
 
-                this.adptGraph.addGlyph('     | ', '   [ Cache Adpotees ] ');
+                this.addGlyph(this.down, '  [Cache Adpotees ] ');
 
 
                 let dr = {};
@@ -478,36 +463,22 @@ export default {
                 // call the data.world service once adoptees are loaded
                 /////////
                 // [Merge adoptees and drains]
-                this.adptGraph.addGlyph('     | ', '   (centerBox) ');
-                this.adptGraph.addGlyph('     | ', '      | ');
-                this.adptGraph.addGlyph('     | ', '      + ---> (request) >','> [[ Drain Service ]] ');
-                this.adptGraph.addGlyph('     | ', '                         ','     | ');
+                this.addGlyph(this.down, '  (centerBox) ');
+                this.addSpace();
+                this.addGlyph(this.down, '      + ---> (request) >','> [[ Drain Service ]] ');
+                this.addGlyph(this.down, '                         ',this.down);
 
                 //////////
                 new DWHandlers(this).dwDrains(process.env.DW_DRAIN_URL,
                     headers,
                     data)
                 .then((response) => {
-                  this.adptGraph.addGlyph('     | ', '      + <--- (drains) <','<<<<< + ');
+                  this.addGlyph(this.down, '      + <--- (drains) <','<<<<< + ');
 
-                  this.adptGraph.addGlyph('     | ', '      | ');
-                  this.adptGraph.addGlyph('     | ', '   [ Cache Drains ] ');
-                  this.adptGraph.addGlyph('     | ', '      | ');
-                  /*
-                    console.log(`
-                .
-                .
-                .
-             (drain response)
-                |
-             [data] <----------- +
-                |                |
-             (datum)             |
-                |                |
-             [setDatumAdpt] ---> +
-                |
-                    `);
-                    */
+                  this.addSpace();
+                  this.addGlyph(this.down, '  [Cache Drains ] ');
+                  this.addSpace();
+           
                     const tokenHelper = this.current_token_helper
 
                     let dr = {}
@@ -536,7 +507,7 @@ export default {
                     } // end for
                     this.setFeedback(`Found ${this.getDataCount()} Storm Drains`);
                     this.showSymbols();
-                    console.log(this.adptGraph.getGraph());
+                    console.log(this.getGraph());
                 })
                 .catch((err) => {
                     // eslint-disable no-console

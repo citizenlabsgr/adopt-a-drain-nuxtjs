@@ -78,7 +78,7 @@ import Expiration from '@/components/mixins/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-import GraphMixin from '@/components/mixins/GraphMixin.js'
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 
 export default {
   name: 'Account',
@@ -169,14 +169,14 @@ computed: {
   methods: {
     onSubmit (e) {
       this.clearGraph();
-      this.addGlyph('   (*) ',                '    (*) ');
-      this.addGlyph('    |  ',                 '     |  ');
+      this.addStart();
+      this.addSpace();
       this.addGlyph(' [ Collect ] .',       '. [ Account Values ] ');
-      this.addGlyph('    |   ',                '     | ');
-      this.addGlyph('    |   ',                '  (displayname, username, password)');
-      this.addGlyph('    |   ',                '     | ');
+      this.addSpace();
+      this.addGlyph(this.down,                '  (displayname, username, password)');
+      this.addSpace();
       this.addGlyph(` [ Save ${this.name} ] .`,'. [ Emit upsert ] ');
-      this.addGlyph('    |   ',                '     | ');
+      this.addSpace();
 
       // [onSubmit]
       const original_id = this.payload;
@@ -201,8 +201,8 @@ computed: {
 
   },
   mounted() {
-    this.addGlyph('     (*) ','       (*) ');
-    this.addGlyph('      |   ','        | ');
+    this.addStart();
+    this.addSpace();
 
     this.$nextTick(function () {
         this.form.displayname = '';
@@ -217,8 +217,8 @@ computed: {
              'Authorization': `Bearer ${this.current_token}`,
              'Content-Type': 'application/json'
           };
-          this.addGlyph(`    [ Mount ${this.name} ] `,'       (*) ');
-          this.addGlyph('      |   ','        | ');
+          this.addGlyph(` [ Mount ${this.name} ] `,this.start);
+          this.addSpace();
           new AADHandlers(this).aadAdopterGet(aadUrl, aadHeader)
             .then((response) => {
               if (response.status === 200) {
@@ -227,8 +227,8 @@ computed: {
                     this.form.displayname = response.data.selection[0].form.displayname;
                     this.form.username = response.data.selection[0].form.username;
                     this.form.password = '';
-                    this.addGlyph('      |   ','        | ');
-                    this.addGlyph('      |   ','      (displayname,username,password)');
+                    this.addSpace();
+                    this.addGlyph(this.down,'  (displayname,username,password)');
 
                     break;
                   default:

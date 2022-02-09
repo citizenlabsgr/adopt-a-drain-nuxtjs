@@ -16,30 +16,30 @@ export default {
       ///////////////
       // load community
       ////////
-      if (graph) {
-        graph.addGlyph('      | ',`                  | `);
-        graph.addGlyph('      | ',`      + <- - - [Response ${this.name}] `);
+      if(this.graph) {
+        this.addSpace();
+        this.addGlyph(this.down,`      + <- - - [Response ${this.name}] `);
       }
       for (let i in response.data) {
         let jur = response.data[i].dr_jurisdiction;
         let cnt = response.data[i].count;
         let lat = response.data[i].lat;
         let lon = response.data[i].lon;
-        //let ln = `           |                    + <--- (%a,%b)`.replace('%a', jur)
+        //let ln = `          this.down                   + <--- (%a,%b)`.replace('%a', jur)
         //          .replace('%b', cnt);
         //console.log(ln);
         this.communities.push({name: jur, count: cnt, lat: lat, lon:lon});
 
       } // end for
-      if (graph) {
-        graph.addGlyph('      | ',`      | `);
-        graph.addGlyph('      | ','      | ', ` [ Processed ${this.communities.length} ${this.name} ] `);
+      if(this.graph) {
+       this.addSpace();
+       this.addGlyph(this.down,this.down, ` [ Processed ${this.communities.length} ${this.name} ] `);
       }
     },
     async loadCommunityList(graph=false) {
 
-      if (graph) {
-        graph.addGlyph('      | ',`      + - - -> [Request ${this.name}]`);
+      if(this.graph) {
+       this.addGlyph(this.down,`      + - - -> [Request ${this.name}]`);
       }
       const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
                         .replace('%x', process.env.DW_TABLE);
@@ -95,7 +95,7 @@ export default {
         (dwCommunityList response)
            |
         [Process Response] <--- +
-           |                    |`);
+          this.down                   |`);
               ///////////////
               // load community
               ////////

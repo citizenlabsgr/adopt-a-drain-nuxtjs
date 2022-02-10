@@ -141,12 +141,14 @@ module.exports = class Graph {
     }
     formatOutput(output) {
       let rc = '';
+      console.log('formatOutput object');
 
       switch (typeof(output)) {
         case 'string':
           rc = `${output}`;
           break;
         case 'object':
+          // console.log('object');
           if (Array.isArray(output)) {
             for (let i in output[0]) {
               if (rc.length > 0) {

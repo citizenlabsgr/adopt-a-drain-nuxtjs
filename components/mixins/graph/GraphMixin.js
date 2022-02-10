@@ -61,6 +61,7 @@ export default {
     formatOutput(output) {
       return this.graph.formatOutput(output);
     },
+
     getGraph() {
       return this.graph.getGraph();
         //return this.graph.join('\n');

@@ -25,6 +25,7 @@
 </template>
 
 <script>
+
 /*
   DrainAdoption is an interactive map for showing and selecting drain markers.
     ref: https://www.npmjs.com/package/vue2-google-maps
@@ -58,14 +59,17 @@ import { DWHandlers } from '@/components/mixins/DWHandlers.js'
 import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
-import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
+import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 import LocationMixin from '@/components/mixins/location/LocationMixin.js'
+import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
+import DatumDictionaryMixin from '@/components/mixins/datum/DatumDictionaryMixin.js'
+import DrainMixin from '@/components/mixins/drain/DrainMixin.js'
 
 /* istanbul ignore next */
 export default {
   name: 'adoption',
-  mixins: [Expiration,GraphMixin,AdptHandler,GoogleMapMixin,LocationMixin],
+  mixins: [Expiration,GraphMixin,AdptHandler,GoogleMapMixin,LocationMixin,AdopteeMixin,DatumDictionaryMixin,DrainMixin],
 
   data () {
     return {
@@ -82,6 +86,7 @@ export default {
       location:null,
       gettingLocation: false,
       errorStr:null,
+      /*
       settings: {
         drains: {},
         delay: 20,
@@ -108,6 +113,7 @@ export default {
         drain_buffer: [], // a cache of drain data, defined before showing on map
         markers: [],
       }
+      */
     }
   },
   watch: {
@@ -211,46 +217,43 @@ export default {
           
           this.locationGetHandler(response);
 
-          this.$refs.mapRef.$mapPromise
-            .then((map) => {
-              this.addGlyph(this.down,'      + <--- (map) <','<<<< + ');
-              this.addSpace();
+          // this.$refs.mapRef.$mapPromise
 
-              /////////////////
-              // center the map on user location when browser supports
-              ////////////
-              if (this.location) {
-                let pos = {
-                  lat: this.location.coords.latitude,
-                  lng: this.location.coords.longitude
-                }
-                this.addGlyph(this.down,     '  [Center Map ] ');
-                this.addSpace();
-                map.setCenter(pos);
-              }
-              // never delete this infowindow
-              this.info_window = new google.maps.InfoWindow();
-              // const current_token_helper = this.current_token_helper
-              // const that = this;
-              const form_init_handler = this.form_init_handler;
-              // set up a listener and wait for the DOM to load
-              // infoHelper attaches forms for the infowindow
-              this.addGlyph(this.down,     '  [Setup map click listeners ] ');
-              this.addSpace();
+          this.googleMapGetRequest()
+            .then((responseMap) => {
+              this.googleMapGetHandler(responseMap, this.location);
+              const mbr = this.getViewBox();
+              this.info_window.close(); // close open infowindow
+              // ADOPTEES 
+              this.aadAdopteeGetMBR(mbr)    // ADOPTEE
+              .then((response) => {
 
-              google.maps.event.addListener(
-                this.info_window,
-                'domready',
-                this.form_init_handler
-              );
-              /////////////
-              // load markers
-              /////////////
-              this.setMap(map);
+                this.aadAdopteeGetMBRHandler(response,mbr);
+                // DRAINS
+                
+                this.drainGetRequest(mbr) // DRAIN
+                  .then((response) => {
+                     
+                    this.drainGetHandler(response);
+                    
+                    this.showSymbols();
 
-              this.loadData();
-              this.showGraph();
-              // console.log(this.getGraph());
+                    this.addEnd();
+                    this.showGraph();
+                    if (this.datumDictionary) {
+                      this.setFeedback(`Drains ${this.datumCount()}`);
+                    }
+                  })
+                  .catch((err) => {
+                    this.addError(err);
+                    this.showGraph();
+                  });
+                  
+              })
+              .catch((err) => {
+                this.addError(err);
+                this.showGraph();
+              });
             }) // Map
             .catch((err) => {
               console.error('Unexpected issue getting map! ', err);
@@ -463,17 +466,17 @@ export default {
       * at end of scroll recalculate the bounding box
       */
       // get new center
-      this.mapHelper.set(this.$refs.mapRef.$mapObject.getCenter())
-      const center = this.mapHelper.get('center')
+      this.mapHelper.set(this.$refs.mapRef.$mapObject.getCenter());
+      const center = this.mapHelper.get('center');
 
-      let newBox = this.$refs.mapRef.$mapObject.getBounds()
+      let newBox = this.$refs.mapRef.$mapObject.getBounds();
 
       if (!newBox) {
         // patch up center_box... map is lagging
-        newBox = this.mapHelper.boxify(center)
+        newBox = this.mapHelper.boxify(center);
       }
-      this.mapHelper.settings('center_box', newBox)
-      this.loadData()
+      this.mapHelper.settings('center_box', newBox);
+      this.loadData();
 
     },
 
@@ -510,11 +513,36 @@ export default {
 
       // this.showSymbols();
 
-    } // end loadData
+    }, // end loadData
+    showSymbols() {
 
+        try {
+
+            if (this.graph) {
+              this.addGlyph(' [ Display Symbols ] .',' [ Symbolize ] ');
+              this.addSpace();
+            }
+            let counter = 0;
+            if (this.datumDictionary) {
+              for (let i in this.datumDictionary.getDictionary()) {
+                  // let datum = this.getDataAdpt()[i];
+                  let datum = this.datumDictionary.getDictionary()[i];
+                  datum.show(this.map, this);
+                  counter ++;
+
+              } // for
+            }
+            if (this.graph) {
+              this.addGlyph(this.down,  this.down, ` [ Processed ${counter} Symbols ] `);
+              this.addSpace();
+              this.addEnd();
+            }
+        } catch(err) {
+          console.error('showSymbols ', err);
+        }
+    },
   }
 }
-
 </script>
 
 <style scoped>

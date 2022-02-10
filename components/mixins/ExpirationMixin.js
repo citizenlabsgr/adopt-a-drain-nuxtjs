@@ -7,7 +7,7 @@ export default {
     };
   },
   methods: {
-    setCurrentToken(token, graph=false) {
+    setCurrentToken(token) {
       if(this.graph) {
        this.addSpace();
        this.addGlyph(' [ Authorize ] .','. [ Set Current Token State ] ');

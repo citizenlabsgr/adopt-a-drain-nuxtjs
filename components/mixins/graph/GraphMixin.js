@@ -58,7 +58,9 @@ export default {
       // this.graph.concat(graph);
       this.graph.appendGraph(graph);
     },
-
+    formatOutput(output) {
+      return this.graph.formatOutput(output);
+    },
     getGraph() {
       return this.graph.getGraph();
         //return this.graph.join('\n');

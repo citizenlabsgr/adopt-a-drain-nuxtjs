@@ -53,20 +53,20 @@ import AdptHandler from '@/components/mixins/AdptHandler.js'
 // import SignIn from '@/components/SignIn'
 // classes
 import { DWHandlers } from '@/components/mixins/DWHandlers.js'
-import { GLHandlers } from '@/components/mixins/GLHandlers.js'
+// import { GLHandlers } from '@/components/mixins/GLHandlers.js'
+
 import { InfoHelper } from '@/components/mixins/InfoHelper.js'
 import { MapHelper } from '@/components/mixins/MapHelper.js'
 import { Utils } from '@/components/mixins/Utils.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
+import LocationMixin from '@/components/mixins/location/LocationMixin.js'
 
 /* istanbul ignore next */
 export default {
   name: 'adoption',
-  mixins: [Expiration,GraphMixin,AdptHandler,GoogleMapMixin],
-  // components: {
-  //  SignIn
-  // },
+  mixins: [Expiration,GraphMixin,AdptHandler,GoogleMapMixin,LocationMixin],
+
   data () {
     return {
       // isSignInVisible: false,
@@ -200,69 +200,65 @@ export default {
       * initalize the google map infowindow
       * load the drains
       */
-      this.addGlyph(`  [${this.name}.vue ] `);
+      this.addGlyph(`  [ Adoption.vue ] `);
       this.addStart();
       this.addSpace();
-      this.addGlyph(`  [Init ${this.name}] .`,   `... [ Mount ${this.name} ] `);
+      this.addGlyph(`  [ Init Adoption ] .`,   `... [ Mount Adoption ] `);
       this.addSpace();
-      this.addGlyph(this.down,   '      + ---> (request) >','> [[ Location Service ]] ');
-      this.addSpace();
+     
+      this.locationGetRequest()
+        .then((response) => {
+          
+          this.locationGetHandler(response);
 
-      new GLHandlers(this).locateMe()
-      .then((response) => {
-        this.addGlyph(this.down,   '      + <--- (location) <','<<<< + ');
-        this.addSpace();
-
-        this.addGlyph('  [Map ] .', '..... + ---> (request) >','> [[ Map Service ]] ');
-        this.addGlyph(this.down,      '                        ',this.down);
-        this.$refs.mapRef.$mapPromise
-          .then((map) => {
-            this.addGlyph(this.down,'      + <--- (map) <','<<<< + ');
-            this.addSpace();
-
-            /////////////////
-            // center the map on user location when browser supports
-            ////////////
-            if (this.location) {
-              let pos = {
-                lat: this.location.coords.latitude,
-                lng: this.location.coords.longitude
-              }
-              this.addGlyph(this.down,     '  [Center Map ] ');
+          this.$refs.mapRef.$mapPromise
+            .then((map) => {
+              this.addGlyph(this.down,'      + <--- (map) <','<<<< + ');
               this.addSpace();
-              map.setCenter(pos);
-            }
-            // never delete this infowindow
-            this.info_window = new google.maps.InfoWindow();
-            // const current_token_helper = this.current_token_helper
-            // const that = this;
-            const form_init_handler = this.form_init_handler;
-            // set up a listener and wait for the DOM to load
-            // infoHelper attaches forms for the infowindow
-            this.addGlyph(this.down,     '  [Setup map click listeners ] ');
-            this.addSpace();
 
-            google.maps.event.addListener(
-              this.info_window,
-              'domready',
-              this.form_init_handler
-            );
-            /////////////
-            // load markers
-            /////////////
-            this.setMap(map);
+              /////////////////
+              // center the map on user location when browser supports
+              ////////////
+              if (this.location) {
+                let pos = {
+                  lat: this.location.coords.latitude,
+                  lng: this.location.coords.longitude
+                }
+                this.addGlyph(this.down,     '  [Center Map ] ');
+                this.addSpace();
+                map.setCenter(pos);
+              }
+              // never delete this infowindow
+              this.info_window = new google.maps.InfoWindow();
+              // const current_token_helper = this.current_token_helper
+              // const that = this;
+              const form_init_handler = this.form_init_handler;
+              // set up a listener and wait for the DOM to load
+              // infoHelper attaches forms for the infowindow
+              this.addGlyph(this.down,     '  [Setup map click listeners ] ');
+              this.addSpace();
 
-            this.loadData();
+              google.maps.event.addListener(
+                this.info_window,
+                'domready',
+                this.form_init_handler
+              );
+              /////////////
+              // load markers
+              /////////////
+              this.setMap(map);
 
-            console.log(this.getGraph());
-          })
-          .catch((err) => {
-            console.error('Unexpected issue getting map! ', err);
-          })
-      })
-      .catch((err) => {
-        console.error('Unexpected issue locating you! ', err);
-      })
+              this.loadData();
+              this.showGraph();
+              // console.log(this.getGraph());
+            }) // Map
+            .catch((err) => {
+              console.error('Unexpected issue getting map! ', err);
+            })
+        }) // location
+        .catch((err) => {
+          console.error('Unexpected issue locating you! ', err);
+        })
     },
   methods: {
     // onToggleAll() {

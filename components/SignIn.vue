@@ -132,7 +132,7 @@ export default {
 
       this.requestSignIn(this.signin.aadform, this.graph)
         .then((response) => {
-          this.responseSignIn(response, this.graph);
+          this.signInGetHandler(response, this.graph);
           this.setCurrentToken(this.tokenSignIn, this.graph);
 
           console.log('Go find a drain to adopt!');

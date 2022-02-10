@@ -12,7 +12,7 @@ export default {
       // return this.communities;
       return this.communities
     },
-    loadCommunityList() {
+    communityGetRequest() {
       ////
       // pull data.world parameters together
       const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'

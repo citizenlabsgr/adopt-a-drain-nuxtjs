@@ -1,5 +1,5 @@
-import atob from 'atob';
-import { DWHandlers } from '@/components/mixins/DWHandlers.js'
+// import atob from 'atob';
+// import { DWHandlers } from '@/components/mixins/DWHandlers.js'
 export default {
   data () {
     return {
@@ -12,34 +12,12 @@ export default {
       // return this.communities;
       return this.communities
     },
-    responseCommunityList(response, graph=false) {
-      ///////////////
-      // load community
-      ////////
-      if(this.graph) {
-        this.addSpace();
-        this.addGlyph(this.down,`      + <- - - [Response ${this.name}] `);
-      }
-      for (let i in response.data) {
-        let jur = response.data[i].dr_jurisdiction;
-        let cnt = response.data[i].count;
-        let lat = response.data[i].lat;
-        let lon = response.data[i].lon;
-        //let ln = `          this.down                   + <--- (%a,%b)`.replace('%a', jur)
-        //          .replace('%b', cnt);
-        //console.log(ln);
-        this.communities.push({name: jur, count: cnt, lat: lat, lon:lon});
 
-      } // end for
+    async communityGetRequest() {
       if(this.graph) {
-       this.addSpace();
-       this.addGlyph(this.down,this.down, ` [ Processed ${this.communities.length} ${this.name} ] `);
-      }
-    },
-    async loadCommunityList(graph=false) {
-
-      if(this.graph) {
-       this.addGlyph(this.down,`      + - - -> [Request ${this.name}]`);
+        this.addRequestService('GET','Community');
+        
+       // this.addGlyph(this.down,`      + - - -> [Request ${this.name}]`);
       }
       const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
                         .replace('%x', process.env.DW_TABLE);
@@ -58,68 +36,36 @@ export default {
             headers: dwHeaders,
             data: dwData })
           return response
+      },
+
+      communityGetHandler(response) {
+        ///////////////
+        // load community
+        ////////
+        if(this.graph) {
+          // this.addSpace();
+          this.addResponseService('GET','Community', this.formatOutput(response.data));
+          this.addPassFail('Community');
         }
-    },
+        for (let i in response.data) {
+          let jur = response.data[i].dr_jurisdiction;
+          let cnt = response.data[i].count;
+          let lat = response.data[i].lat;
+          let lon = response.data[i].lon;
+          //let ln = `          this.down                   + <--- (%a,%b)`.replace('%a', jur)
+          //          .replace('%b', cnt);
+          //console.log(ln);
+          this.communities.push({name: jur, count: cnt, lat: lat, lon:lon});
+  
+        } // end for
+        if(this.graph) {
+         this.addSpace();
+         this.addGlyph(this.down,this.down, ` [ Processed ${this.communities.length} ${this.name} ] `);
+        }
+      },
+      
+    }, // methods
 
-    deploadCommunityList() {
-      ////
-      // pull data.world parameters together
-      const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
-      .replace('%x', process.env.DW_TABLE);
-      const data = { query: queryStr, includeTableSchema: false }
-      const headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer %s'.replace('%s', process.env.DW_AUTH_TOKEN)
-      }
+    
 
-      console.log(`
-      (DW_DRAIN_URL, dwHeaders, dwData)
-         |
-      [dwCommunityList]
-         .
-         .
-         .
-      `);
-      // [request dataworld]
-      // if (this.list.length===0) {
-        new DWHandlers(this).dwCommunityList(
-          process.env.DW_DRAIN_URL,
-          headers,
-          data)
-          .then((response) => {
-
-              console.log(`
-           .
-           .
-           .
-        (dwCommunityList response)
-           |
-        [Process Response] <--- +
-          this.down                   |`);
-              ///////////////
-              // load community
-              ////////
-              for (let i in response.data) {
-                let jur = response.data[i].dr_jurisdiction;
-                let cnt = response.data[i].count;
-                let lat = response.data[i].lat;
-                let lon = response.data[i].lon;
-                let ln = `           |                    + <--- (%a,%b)`.replace('%a', jur)
-                          .replace('%b', cnt);
-                console.log(ln);
-                this.communities.push({name: jur, count: cnt, lat: lat, lon:lon});
-
-              } // end for
-              console.log(`        (community-list)
-           |
-           =
-              `);
-          })
-          .catch((err) => {
-                // eslint-disable no-console
-                console.error('Unexpected issue loading community list!', err);
-                // eslint-enable no-console
-          }); // end of DWHandlers
-      // } // if
-    }
   }

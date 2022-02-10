@@ -64,7 +64,7 @@ module.exports = class Graph {
 
     addResponseService(method, name, outputs) {
       method = this.pad(method, ' ', 6);
-      this.addGlyph(this.down,  `     + <<`,`<   (${outputs}) `);
+      this.addGlyph(this.down,  `     + <<`,`<   ${outputs} `);
       this.addSpace();
     }
 
@@ -139,7 +139,30 @@ module.exports = class Graph {
     fN(name) {
       return `[ ${name} ]`
     }
+    formatOutput(output) {
+      let rc = '';
 
+      switch (typeof(output)) {
+        case 'string':
+          rc = `${output}`;
+          break;
+        case 'object':
+          if (Array.isArray(output)) {
+            for (let i in output[0]) {
+              if (rc.length > 0) {
+                rc += ',';
+              }
+              rc += i;
+            }
+            rc = `[(${rc}),...]`;
+          }
+          break;
+        default:
+          rc = `${output}`;
+      }
+      return rc;
+      
+    }
     formatVariable(variable) {
       return fV(variable);
     }

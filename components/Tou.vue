@@ -48,7 +48,7 @@ export default {
          |`);
 
       // this.ldC();
-      this.loadCommunityList();
+      this.communityGetRequest();
       console.log('done loaded');
       // this.render();
       // this.replace();

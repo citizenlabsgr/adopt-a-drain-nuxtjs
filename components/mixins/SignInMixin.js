@@ -18,7 +18,7 @@ export default {
       return false;
     },
 
-    async requestSignIn(form, graph=false) {
+    async requestSignIn(form) {
 
       if(this.graph) {
 
@@ -42,7 +42,7 @@ export default {
             headers: aadHeaders,
             data: aadData });
     },
-    responseSignIn(response, graph=false) {
+    signInGetHandler(response) {
         this.statusSignIn = response.data.status;
         this.msgSignIn = response.data.msg;
 

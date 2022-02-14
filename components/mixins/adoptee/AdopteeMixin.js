@@ -10,15 +10,24 @@ export default {
   data () {
     return {
       name: 'Adoptee',
-      aadHeader: {
+      my_adoptee_list: []
+    };
+  },
+  computed: {
+    aadHeaderGuest () {
+      return {
         "Accept":"application/json",
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
-      },
-      my_adoptee_list: [],
-      mbr: null
-      // datumDictionary: new DatumDictionary()
-    };
+      };
+    },
+    aadHeaderUser() {
+      return {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${this.current_token}`,
+        'Content-Type': 'application/json'
+      }
+    },
   },
   methods: {
     ////////
@@ -26,11 +35,13 @@ export default {
       if (this.graph) {
         this.addRequestService('PUT', 'Adoptee');
       }
+      const aadHeader = this.aadHeaderUser;
 
-      const aadHeader = JSON.stringify(this.aadHeader);
-      aadHeader.authorization = `Bearer ${this.current_token}`;
-      const aadUrl = `/adoptee/${owner}/${id}`;
-      const response = await this.$axios({
+      // const aadHeader = JSON.stringify(this.aadHeaderUser);
+      const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
+      const aadBody = JSON.stringify(form);
+
+      return await this.$axios({
         url: aadUrl,
         method: 'put',
         headers: aadHeader,
@@ -42,15 +53,20 @@ export default {
         this.addResponseService('PUT', 'Adoptee', 'response');
         this.addPassFail('Adoptee','400','404');
       }
+
       if (response.status === 200) {
+
         switch(response.data.status) {
           case '200':
-            // console.log('Thanks for the update');
-            if (this.payload.user !== response.data.updation.form.username) {
-              // console.log('Force logout');
-              this.$store.commit('detoken');
-              // this.$router.push('authenticate');
-            }
+
+            const id = response.data.updation.form['drain_id'];
+            const data = JSON.parse(JSON.stringify(response.data.updation.form));
+            const ownerKey = this.payload.key;
+            // [ Add to Cache ]
+            this.addDatum(new YoursDatum(id, data, ownerKey, this));
+            // [ show on map]
+            this.getDatum(id).show(this.map);
+
             break;
           case '400':
             console.log('aadAdopteePutHandler 400');
@@ -62,6 +78,7 @@ export default {
           default:
             console.error('Not sure what just happened');
         }
+
       }
 
     }, // PUT
@@ -69,20 +86,27 @@ export default {
 
 
     ////////////
-    async aadAdopteePost(form) {
+    async aadAdopteePost(owner, form) {
+      
       if (this.graph) {
         this.addRequestService('POST', 'Adoptee');
       }
-      const aadUrl = process.env.AAD_API_URL + '/adoptee';
+
+      const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
       const aadBody = form;
-      const aadHeader = this.aadHeader;
+      const aadHeader = this.aadHeaderUser;
+
       return await this.$axios({
         url: aadUrl,
         method: 'post',
         headers: aadHeader,
         data: aadBody });
     }, // POST
+
     aadAdopteePostHandler(response) {
+        if (!this.datumDictionary) {
+          throw new Error('datumDictionary not found');
+        }
         this.statusAdoptee = response.data.status;
         this.msgAdoptee = response.data.msg;
         if (this.graph) {
@@ -93,27 +117,21 @@ export default {
         if (response.status === 200) {
           switch(response.data.status) {
             case '200':
-                // console.log('aadAdopteePostHandler 200 undefined')
 
                 const id = response.data.insertion.form['drain_id'];
                 const data = JSON.parse(JSON.stringify(response.data.insertion.form));
                 const ownerKey = this.payload.key;
 
                 // [ Add to Cache ]
-                this.setDatum(new YoursDatum(id, data, ownerKey, this));
+                this.addDatum(new YoursDatum(id, data, ownerKey, this));
                 // [ show on map]
                 this.getDatum(id).show(this.map);
-
+                
                 if (this.graph) {
                   this.addGlyph(' [ Map ] ',     ' [ Mark Drain as Yours ] ');
                   this.addSpace();
-                  this.addGlyph(this.down,     ' [ Show Drains ] ');
-
-                  this.addSpace();
-                  this.addEnd();
-                  // console.log(this.get Graph());
-                  this.showGraph();
                 }
+                this.showSymbols();
               break;
             case '400':
             console.log('aadAdopteePostHandler 400 undefined')
@@ -138,7 +156,8 @@ export default {
         this.addRequestService('GET', 'Adoptee');
       }
       const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
-      const aadHeader = this.aadHeader;
+      const aadHeader = this.aadHeaderGuest;
+
       return await this.$axios({
         url: aadUrl,
         method: 'get',
@@ -174,26 +193,35 @@ export default {
 
     async aadAdopteeDelete(owner, id) {
       if (this.graph) {
-        this.addSpace();
-        this.addGlyph(this.down,  '   + ---> (DELETE) >','> [[ Adoptee Service ]] ');
-        this.addGlyph(this.down,' ', this.down);
+        this.addRequestService('DELETE', 'Adoptee');
       }
+ 
       const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
-      const aadHeader = this.aadHeader;
+      const aadHeader = this.aadHeaderUser;
       return await this.$axios({
         url: aadUrl,
-        method: 'get',
+        method: 'delete',
         headers: aadHeader});
     }, // DELETE
     aadAdopteeDeleteHandler (response){
       if (this.graph) {
-        this.addResponseService('DELETE', this.name, '[adoptee,...]');
+        this.addResponseService('DELETE', this.name, '(adoptee)');
         this.addPassFail('Adoptee','400','404');
       }
       if (response.status === 200) {
         switch(response.data.status) {
           case '200':
-            console.log('aadAdopteeDeleteHandler 200 undefined')
+            // console.log('aadAdopteeDeleteHandler 200 undefined')
+            if (this.graph) {
+
+              this.addGlyph(' [ Map ] ',' [ Mark Adoptee as Orphan ] ');
+              this.addSpace();
+
+            }
+            // console.log('aadAdopteeDeleteHandler ',response.data.deletion.form.drain_id );
+            // let id = response.data.deletion.form.drain_id;
+            // this.getDatum(id).show(this.map);
+            this.showSymbols();
             break;
           case '400':
             console.log('aadAdopteeDeleteHandler 400 undefined')
@@ -218,9 +246,9 @@ export default {
       if (this.graph) {
         this.addRequestService('GET', 'Adoptee');
       }
-      this.mbr = mbr;
+      // this.mbr = mbr;
       const aadUrl = `${process.env.AAD_API_URL}/adoptee/mbr`;
-      const aadHeader = this.aadHeader;
+      const aadHeader = this.aadHeaderGuest;
       const aadData = JSON.parse(JSON.stringify(mbr));
       return await this.$axios({
         url: aadUrl,
@@ -229,33 +257,28 @@ export default {
         data: aadData
       });
     },// GET MBR
-    //     aadAdopteeGetMBRHandler (response, mbr){
-    aadAdopteeGetMBRHandler (response){
-      // console.log('aadAdopteeGetMBRHandler 1');
+    
+    aadAdopteeGetMBRHandler(response, mbr){
       if (this.graph) {
-        this.addResponseService('GET', 'Adoptee', '[adoptee,...]');
+        this.addResponseService('GET', 'Adoptee', this.formatOutput(response.data.selection));
         this.addPassFail('Adoptee','400','404');
       }
 
       if (response.status === 200) {
         switch(response.data.status) {
           case '200':
-              // console.log('aadAdopteeGetMBRHandler 2');
               if (!this.datumDictionary) {
                 console.log('No datumDictionary');
               }
-              // console.log('aadAdopteeGetMBRHandler 3');
 
                 const aadAuthentecated = this.isAuthenticated;
                 let dr = {};
                 for (dr in response.data.selection) {
-                  // console.log('aadAdopteeGetMBRHandler 4');
 
                     let id=response.data.selection[dr].form.drain_id;
                     let data=response.data.selection[dr].form;
                     let ownerKey=response.data.selection[dr].owner;
                     // let isYours = (this.payload.key !== '0' && this.payload.key === datum.getKey());
-                    // console.log('aadAdopteeGetMBRHandler 5');
 
                     let datum = false;
                     if (aadAuthentecated) {
@@ -268,48 +291,35 @@ export default {
                     } else {
                         datum = new AdopteeDatum(id, data, ownerKey,this);
                     }
-                    // console.log('aadAdopteeGetMBRHandler 6');
 
                     if (this.datumDictionary) {
-                      // console.log('aadAdopteeGetMBRHandler 6.1');
 
                       this.addDatum(datum); // this drain is not on the map yet
-                      // console.log('aadAdopteeGetMBRHandler 6.2');
-                      // console.log('mbr ', this.mbr)
                       
-                      this.cleanDatumCache(this.mbr);
-
-                      // console.log('aadAdopteeGetMBRHandler 6.3');
+                      this.cleanDatumCache(mbr);
                     
                     }
-                    // console.log('aadAdopteeGetMBRHandler 7');
 
                     // AADHandlers_cnt++
                 } // for
                 //////////////
                 // Prepare to load orphans
                 ///////
-                // console.log('aadAdopteeGetMBRHandler 8');
 
                 if (this.graph) {
-                  // console.log('aadAdopteeGetMBRHandler 4', ` [ Processed ${this.datumDictionary.datumCount()} Datum ] `);
                   if (this.datumDictionary) {
                     this.addGlyph(this.down, ` [ Processed ${this.datumDictionary.datumCount()} Datum ] `);
                   } 
                 }
-               //  console.log('aadAdopteeGetMBRHandler out');
             break;
           case '400':
-            // console.log('aadAdopteeGetMBRHandler 400');
             // console.log('You already have an account');
             break;
           case '404':
-            // console.log('aadAdopteeGetMBRHandler 404 ');
             // console.log('You already have an account');
             break;
           default:
             console.error('Not sure what just happened ', response.data.status);
-            // console.error('response', response.data);
         }
       } else {
         console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
@@ -336,7 +346,7 @@ export default {
         this.addRequestService('GET', 'Adoptee');
       }
       const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
-      const aadHeader = this.aadHeader;
+      const aadHeader = this.aadHeaderUser;
       return await this.$axios({
         url: aadUrl,
         method: 'get',

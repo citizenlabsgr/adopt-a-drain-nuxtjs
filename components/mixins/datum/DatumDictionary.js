@@ -41,22 +41,23 @@ class DatumDictionary {
     if (this.limit < this.datumCount() ) {
       return this;
     }
+
     if (!datum || !datum.data) {
         throw new Error('Object missing data attribute!');
     }
-    // if (this.marker_dic tionary[datum.getId()]) { // replace old
+
     if (!this.getDatum(datum.getId())) {
-        // add marker when not available
+        // add marker when not in dictionary
         this.dictionary[datum.getId()] = datum;
     } else {
         // replace marker when found
         // what about removing info window?
-        // this.dictionary[datum.getId()].detach(); // hide old one
-        // delete this.dictionary[datum.getId()]; // hide old one
+        this.dictionary[datum.getId()].detach(); // hide old one
 
         this.dictionary[datum.getId()]=datum; // replace the old one
         // the new container will get initialized later
     }
+
     return this;
   }
 
@@ -79,7 +80,6 @@ class DatumDictionary {
           centerBox.west > datum.getLon() ||
           centerBox.east < datum.getLon()
         ) {
-
           // for visual effect, hide markers before deleting
           datum.hide();
 

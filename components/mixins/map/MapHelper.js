@@ -47,9 +47,11 @@ class MapHelper {
     return this.component.settings.max_center_box_area
   }
   */
+  /*
   getBounds() {
     return this.map.getBounds()
   }
+  */
  /*
   boxify ( pnt ) {
     // Objective: keep data download from getting too big

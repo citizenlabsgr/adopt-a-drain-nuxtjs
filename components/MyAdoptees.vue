@@ -26,15 +26,18 @@
 </template>
 <script>
 
-import Expiration from '@/components/mixins/ExpirationMixin.js'
-import AdptHandler from '@/components/mixins/AdptHandler.js'
-import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
+// import AdptHandler from '@/components/mixins/AdopteeMixin.js'
+import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
+import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
 
 // Modals
 import ModalMyAdoptees from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, AdptHandler, GoogleMapMixin],
+  // mixins: [Expiration, AdptHandler, GoogleMapMixin],
+  mixins: [Expiration, GoogleMapMixin,AdopteeMixin],
+
   components: {
     ModalMyAdoptees,
   },
@@ -65,20 +68,66 @@ export default {
          |
       [mounted MyAdoptees]
          |`);
-      // this.loadMyAdopteeList(this.current_token, this.payload.key);
+       this.loadMyAdopteeList(this.current_token, this.payload.key);
     //}
+
   },
   methods: {
     onClickGoPoint(lon, lat) {
       this.$nuxt.$emit('click-go-point',lon, lat);
     },
+    
     showModal() {
       this.isModalVisible=true;
       this.loadMyAdopteeList(this.current_token, this.payload.key);
     },
+    
     closeModal() {
       // set all dialog to closed/false
       this.isModalVisible = false;
+    },
+    
+
+    
+    loadMyAdopteeList(token, owner) {
+        // token is a user token
+        // owner is key value
+        // to persist the list add my_adoptee_list to your component's data section
+        console.log('MyAdoptees.vue loadMyAdopteeList fixme ');
+        /*
+        console.log(`
+             (owner)
+                |
+             [loadMyAdpt]
+                |
+             (aadUrl, aadHeader, aadData)
+                |
+             [My Adoptee Request]
+                .
+                .
+                .
+        `);
+        const aadAuthentecated = this.isAuthenticated;
+        // const aadData = JSON.parse(JSON.stringify(centerBox));
+        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
+
+        const aadHeader = {
+            "Accept":"application/json",
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        };
+    
+        this.aadAdopteeGetMy(owner)     
+            .then((response) => {
+              this.aadAdopteeGetMyHandler(response);
+
+            })
+            .catch((err) => {
+                // eslint-disable no-console
+                console.error('Unexpected issue with adoptee list!', err);
+                // eslint-enable no-console
+            });
+            */
     },
   }
 }

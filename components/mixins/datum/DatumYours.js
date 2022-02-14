@@ -1,5 +1,5 @@
 import { MarkerDatum } from '@/components/mixins/datum/DatumMarker.js';
-import { InfoHelper } from '@/components/mixins/map/InfoHelper.js';
+// import { InfoHelper } from '@/components/mixins/map/InfoHelper.js';
 // always call detach() when releasing to garbage collection
 class YoursDatum extends MarkerDatum {
   // Marker Wrapper

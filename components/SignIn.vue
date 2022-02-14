@@ -41,9 +41,9 @@
 </template>
 <script>
 
-import Expiration from '@/components/mixins/ExpirationMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
-import { AADHandlers } from '@/components/mixins/AADHandlers.js'
+// import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 import SignInMixin from '@/components/mixins/SignInMixin.js'
 
@@ -133,17 +133,19 @@ export default {
       this.requestSignIn(this.signin.aadform, this.graph)
         .then((response) => {
           this.signInGetHandler(response, this.graph);
+
           this.setCurrentToken(this.tokenSignIn, this.graph);
 
           console.log('Go find a drain to adopt!');
 
-          this.addSpace();
-          this.addGlyph(this.down,' [ Goto Map ] ');
+          // this.addSpace();
+          // this.addGlyph(this.down,' [ Goto Map ] ');
+          
           // Goto Map
           this.$router.push('/'); // to map
 
-          this.addSpace();
-          this.addGlyph(this.down,' [ Close Modal ] ');
+          // this.addSpace();
+          // this.addGlyph(this.down,' [ Close Modal ] ');
           // Close Modal
           this.closeModal();
 

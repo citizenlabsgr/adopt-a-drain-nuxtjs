@@ -14,7 +14,6 @@
         <ul>
           <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}}</a></li>
         </ul>
-
       </template>
       <template v-slot:footer>
         Communities
@@ -25,16 +24,18 @@
 </template>
 <script>
 
-import Expiration from '@/components/mixins/ExpirationMixin.js'
-import DataWorld from '@/components/mixins/DataWorldMixin.js'
-import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
-import CommunityListMixin from '@/components/mixins/CommunityListMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
+import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
+import CommunityMixin from '@/components/mixins/community/CommunityMixin.js'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
+
 // Modals
 import ModalCommunities from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, GraphMixin, CommunityListMixin, GoogleMapMixin,ModalCommunities],
+  // mixins: [Expiration, GraphMixin,GoogleMapMixin,ModalCommunities,CommunityMixin],
+
+  mixins: [Expiration, GraphMixin,GoogleMapMixin,ModalCommunities,CommunityMixin],
   components: {
     ModalCommunities,
   },
@@ -46,28 +47,31 @@ export default {
     }
   },
   mounted () {
-      this.addGlyph(` [${this.name}.vue ] `);
-      this.addGlyph(this.start,this.start);
+      this.addGlyph(` [ ${this.name}.vue ] `);
+      this.addStart();
       this.addSpace();
-      this.addGlyph(' [Init Communities ] ',' [Mount ] ');
+      this.addGlyph(' [ Init Communities ] ',' [ Mount ] ');
       this.addSpace();
 
-      this.communityGetRequest(this.graph)
+      this.communityGetRequest()
         .then((response) => {
-         // this.communityGetHandler(response);
-           this.addSpace();
+          // console.log('communityGetRequest');
+          this.communityGetHandler(response);
+          this.addSpace();
           this.addEnd();
 
-          console.log(this.getGraph());
+          // console.log(this.getGraph());
+          this.showGraph();
         })
         .catch((err) => {
           console.error('communityGetRequest ', err);
-           this.addSpace();
-          this.addGlyph(` [${err} ]  `);
-           this.addSpace();
+          this.addSpace('      |  ','      | ');
+          this.addGlyph(`    [ ${err} ]  `);
+          this.addSpace('      |  ','      | ');
           this.addEnd();
 
         });
+
   },
   methods: {
     onClickGoPoint(lon, lat) {

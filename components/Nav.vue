@@ -44,7 +44,8 @@
 
 </template>
 <script>
-import Expiration from '@/components/mixins/ExpirationMixin.js'
+
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import MyAdoptees from '@/components/MyAdoptees'
 import Communities from '@/components/Communities'
 import SignIn from '@/components/SignIn'

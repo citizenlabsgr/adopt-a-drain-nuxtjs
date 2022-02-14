@@ -55,6 +55,7 @@ export default {
          case '200':
            this.tokenSignIn = response.data.token;
            console.log('this.tokenSignIn ',this.tokenSignIn);
+           this.setCurrentToken(response.data.token);
            break;
          case '404':
            // this.msgSignin = 'User not found!';

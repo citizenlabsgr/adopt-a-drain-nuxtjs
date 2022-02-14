@@ -132,6 +132,26 @@ export default {
 
     }, // googleMapGetHandler
 
+    getCenter() {
+      return $refs.mapRef.$mapObject.getCenter();
+    },
+    
+    getBounds() {
+      return this.map.getBounds();
+    },
+
+    getMbr() {
+      // let cBox = mapHelper.map.getBounds();
+      let cBox = this.getBounds();
+
+      if (!cBox) { // patch up center_box
+        cBox = this.boxify( center );
+      }
+
+      this.setViewBox(cBox);
+      
+      return this.getViewBox();
+    },
     boxify ( pnt ) {
       // Objective: keep data download from getting too big
       // Strategy: create screen center box when no google map obj is available

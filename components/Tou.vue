@@ -7,7 +7,7 @@
 </template>
 <script>
 
-import Expiration from '@/components/mixins/ExpirationMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import DataWorld from '@/components/mixins/DataWorldMixin.js'
 import GoogleMapMixin from '@/components/mixins/GoogleMapMixin.js'
 

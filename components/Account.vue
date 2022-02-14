@@ -73,8 +73,9 @@
 </template>
 
 <script>
-import atob from 'atob'
-import Expiration from '@/components/mixins/ExpirationMixin.js'
+// import atob from 'atob'
+
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'

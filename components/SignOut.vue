@@ -23,7 +23,7 @@
 </template>
 <script>
 
-import Expiration from '@/components/mixins/ExpirationMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 // Modals
 import ModalSignOut from '@/components/Modal.vue'

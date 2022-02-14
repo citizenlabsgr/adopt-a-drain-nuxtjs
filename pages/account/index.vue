@@ -7,7 +7,7 @@
 import atob from 'atob'
 
 
-import Expiration from '@/components/mixins/ExpirationMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import Account from '@/components/Account.vue'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'

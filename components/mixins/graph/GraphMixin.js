@@ -19,8 +19,8 @@ export default {
       return this.graph.showGraph();
     },
 
-    addStart() {
-      this.graph.addStart();
+    addStart(name) {
+      this.graph.addStart(name);
     },
 
     addEnd() {
@@ -58,8 +58,8 @@ export default {
       // this.graph.concat(graph);
       this.graph.appendGraph(graph);
     },
-    formatOutput(output) {
-      return this.graph.formatOutput(output);
+    formatOutput(output,dflt) {
+      return this.graph.formatOutput(output,dflt);
     },
 
     getGraph() {

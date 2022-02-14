@@ -106,8 +106,11 @@ module.exports = class Graph {
       return this;
     }
 
-    addStart() {
-      this.addGlyph(this.start,this.start);
+    addStart(name) {
+      // this.addGlyph(` [ ${name} ] `,` [ ${name} ] `);
+      // this.addSpace();
+      this.addGlyph(`${this.start} [ ${name} ] `,`${this.start} [ ${name} ] `);
+      this.addSpace();
     }
     addEnd() {
       this.addGlyph(this.end,this.end);
@@ -139,9 +142,9 @@ module.exports = class Graph {
     fN(name) {
       return `[ ${name} ]`
     }
-    formatOutput(output) {
+    formatOutput(output,dflt='unknown') {
       let rc = '';
-      console.log('formatOutput object');
+      // console.log('formatOutput object');
 
       switch (typeof(output)) {
         case 'string':
@@ -150,11 +153,15 @@ module.exports = class Graph {
         case 'object':
           // console.log('object');
           if (Array.isArray(output)) {
-            for (let i in output[0]) {
-              if (rc.length > 0) {
-                rc += ',';
+            if (output.length) {
+              rc = dflt;
+            } else {
+              for (let i in output[0]) {
+                if (rc.length > 0) {
+                  rc += ',';
+                }
+                rc += i;
               }
-              rc += i;
             }
             rc = `[(${rc}),...]`;
           }

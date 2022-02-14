@@ -40,11 +40,11 @@ export default {
 
     drainGetHandler(response) {
       if (!this.datumDictionary) {
-        console.log('datumDictionary Not Found');
+        throw new Error('datumDictionary Not Found');
       }
 
       if (this.graph) {
-        this.addResponseService('GET', 'Drain', '[drain,...]');
+        this.addResponseService('GET', 'Drain', this.formatOutput(response.data));
         this.addPassFail('Drain','400','404');
       }
       
@@ -63,12 +63,11 @@ export default {
                   let id = dr['dr_asset_id'];
                   let _drain = false;
 
-                  if (this.datumDictionary) {
+                  // if (this.datumDictionary) {
 
                     _drain =   this.getDatum(id) ;
 
                     if (!_drain) {
-                      // console.log('xdrainGetHandler 4.1');
 
                         const data={
                             type: DrainTypes.orphan ,
@@ -80,9 +79,8 @@ export default {
 
                         let datum = new OrphanDatum(id, data, this);
                         this.addDatum(datum);
-
                     }
-                  }
+                  // }
 
               } // end for
 

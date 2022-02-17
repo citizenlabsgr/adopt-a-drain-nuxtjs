@@ -43,7 +43,6 @@
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
-// import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 import SignInMixin from '@/components/mixins/SignInMixin.js'
 
@@ -125,7 +124,7 @@ export default {
 
     onSignIn () {
 
-      this.addStart();
+      this.addStart(this.name);
       this.addSpace();
       this.addGlyph(' [ Collect Credentials ] .', '. (username, password) ');
       this.addSpace();
@@ -140,7 +139,7 @@ export default {
 
           // this.addSpace();
           // this.addGlyph(this.down,' [ Goto Map ] ');
-          
+
           // Goto Map
           this.$router.push('/'); // to map
 

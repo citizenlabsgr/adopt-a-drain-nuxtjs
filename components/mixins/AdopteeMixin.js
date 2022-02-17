@@ -1,17 +1,10 @@
 // namespace prefix Adoptee is Adpt
 /*
-import { AADHandlers } from '@/components/mixins/AADHandlers.js'
-import { DrainTypes } from '@/components/mixins/DrainTypes.js'
-import { MapHelper } from '@/components/mixins/MapHelper.js'
-import { InfoHelper } from '@/components/mixins/InfoHelper.js'
-*/
 import { OrphanDatum } from './DatumOrphan'
 import { AdopteeDatum } from './DatumAdoptee'
 import { YoursDatum } from './DatumYours'
 
-/*
-to use load
-*/
+
 export default {
   data () {
     return {
@@ -35,3 +28,4 @@ export default {
     },
   } // methods
 }
+*/

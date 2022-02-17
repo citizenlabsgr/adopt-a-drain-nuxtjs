@@ -18,7 +18,7 @@
 1. **Review**: one or more contributor's will review, suggest changes, and/or approve.
 
 # Routes
-/account
+/adopter
 /signin
 /adoptee
 /map

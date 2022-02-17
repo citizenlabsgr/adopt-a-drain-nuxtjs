@@ -6,6 +6,7 @@ export default {
     };
   },
   methods: {
+    
     async locationGetRequest () {
       if (this.graph) {
         this.addRequestService('GET', 'Location');

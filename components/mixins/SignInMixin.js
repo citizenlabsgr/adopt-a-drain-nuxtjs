@@ -54,7 +54,6 @@ export default {
         switch(this.statusSignIn) {
          case '200':
            this.tokenSignIn = response.data.token;
-           console.log('this.tokenSignIn ',this.tokenSignIn);
            this.setCurrentToken(response.data.token);
            break;
          case '404':
@@ -66,7 +65,7 @@ export default {
            this.msgSignin = "Not sure what just happened!";
            console.error('Not sure what just happened!');
         }
-      
+
 
     }
   },

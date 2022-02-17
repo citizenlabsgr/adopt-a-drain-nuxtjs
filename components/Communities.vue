@@ -47,10 +47,10 @@ export default {
     }
   },
   mounted () {
-      this.addGlyph(` [ ${this.name}.vue ] `);
-      this.addStart();
+      //this.addGlyph(` [ ${this.name}.vue ] `);
+      this.addStart(`${this.name}.vue`);
       this.addSpace();
-      this.addGlyph(' [ Init Communities ] ',' [ Mount ] ');
+      this.addGlyph(' [ Init ] ',' [ Mount ] ');
       this.addSpace();
 
       this.communityGetRequest()

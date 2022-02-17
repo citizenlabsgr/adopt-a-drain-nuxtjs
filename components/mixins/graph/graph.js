@@ -64,7 +64,7 @@ module.exports = class Graph {
 
     addResponseService(method, name, outputs) {
       method = this.pad(method, ' ', 6);
-      this.addGlyph(this.down,  `     + <<`,`<   ${outputs} `);
+      this.addGlyph(this.down,  `     + <<`,`<   (${outputs}) `);
       this.addSpace();
     }
 
@@ -142,18 +142,45 @@ module.exports = class Graph {
     fN(name) {
       return `[ ${name} ]`
     }
+    
+    getOutput(response) {
+      let rc = 'No Output Found';
+
+      switch(response.data.status){
+        case '200':
+           switch (response.data.config.method) {
+             case 'post':
+                rc = this.formatOutput(response.data.insertion.form);
+               break;
+             case 'put':
+                rc = this.formatOutput(response.data.updation.form);
+               break;
+             case 'get':
+                rc = this.formatOutput(response.data.selection.form);
+               break;
+             case 'delete':
+                rc = this.formatOutput(response.data.deletion.form);
+               break;
+             default: 
+                rc = 'No Output Found';  
+           }
+           break;
+        default:
+          rc = '(fail)';//this.formatOutput({fail:response.data.msg});//  `(fail ${res_data.msg})`;
+      }
+      return rc;
+    }
+
     formatOutput(output,dflt='unknown') {
       let rc = '';
-      // console.log('formatOutput object');
 
       switch (typeof(output)) {
         case 'string':
           rc = `${output}`;
           break;
         case 'object':
-          // console.log('object');
           if (Array.isArray(output)) {
-            if (output.length) {
+            if (output.length === 0) {
               rc = dflt;
             } else {
               for (let i in output[0]) {
@@ -164,7 +191,18 @@ module.exports = class Graph {
               }
             }
             rc = `[(${rc}),...]`;
-          }
+          } else {
+            for (let i in output) {
+                
+                if (rc.length > 0) {
+                  rc += ',';
+                }
+                rc += i;
+            }
+            
+            rc = `${rc}`;
+
+          }  
           break;
         default:
           rc = `${output}`;

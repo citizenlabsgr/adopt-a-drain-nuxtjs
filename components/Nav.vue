@@ -1,9 +1,9 @@
 <template>
 <div>
       <nav>
-      
+
       <ul>
-        
+
         <li v-if="isAuthenticated">
           <u><MyAdoptees /></u>
         </li>
@@ -13,31 +13,34 @@
           </nuxt-link>
         </li>
         <li>
-          
+
             <u><Communities /></u>
-          
+
         </li>
          <li v-if="!isAuthenticated">
-          
+
             <u><SignIn /></u>
-          
+
         </li>
         <li v-else>
-        
+
             <u><SignOut /></u>
 
         </li>
 
         <li v-if="isAuthenticated">
-          <nuxt-link to="/account">
+          <nuxt-link to="/adopter">
           Account
           </nuxt-link>
         </li>
         <li v-else>
-          <nuxt-link to="/account">
+          <nuxt-link to="/adopter">
           SignUp
           </nuxt-link>
         </li>
+
+
+
       </ul>
     </nav>
 </div>
@@ -50,7 +53,7 @@ import MyAdoptees from '@/components/MyAdoptees'
 import Communities from '@/components/Communities'
 import SignIn from '@/components/SignIn'
 import SignOut from '@/components/SignOut'
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 export default {
   mixins: [Expiration],
   components: {
@@ -61,7 +64,7 @@ export default {
   },
   data () {
     return {
-      
+
       title: 'Sponsors',
       subtitle: 'We can\'t do this alone.'
     }

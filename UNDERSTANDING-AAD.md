@@ -7,11 +7,11 @@ Some details
 * **Adopter** is an AAD registered user
 * **Adoption** is the process adopting an orphan storm drain
 * **Adoptee** is an adopted storm drain
-* **Document** is a block of text, formatted with Markdown, and accessible to the application 
+* **Document** is a block of text, formatted with Markdown, and accessible to the application
 * **Orphan** is an unadopted storm drain
 * **API-EP** is the Application Programming Interface EndPoint
 
-Document is a block of text, formatted with Markdown, and accessible to the application 
+Document is a block of text, formatted with Markdown, and accessible to the application
 ## Core Processes
 | Process | Description |  Method |
 | :------ | -------- | ------ |
@@ -41,7 +41,7 @@ Adopt-a-Drain <----> AAD API <------------------------------------
                                               \     \     Adoptees API-EP
                                                \     Adoptee API-EP
                                                 Adopter API-EP
-[Adoption[Expiration,AdptHandler]] 
+[Adoption[Expiration]] 
 [Nav [Expiration,SignInMixin]]
 [ModalSignIn]
 [ModalSignOut]

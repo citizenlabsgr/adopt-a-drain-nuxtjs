@@ -35,7 +35,6 @@ export default {
     communityGetHandler (response) {
 
           if (this.graph) {
-            console.log('response.data[i]',this.formatOutput(response.data));
             this.addResponseService('GET', 'Community', this.formatOutput(response.data));
             this.addPassFail('Community','400','404');
           }

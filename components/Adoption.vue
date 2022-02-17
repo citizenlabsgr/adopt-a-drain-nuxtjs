@@ -49,9 +49,7 @@
 import { gmapApi } from '@/node_modules/vue2-google-maps/src/main'
 // mixins
 import Expiration from  '@/components/mixins/expiration/ExpirationMixin.js'
-// import AdptHandler from '@/components/mixins/AdopteeMixin.js'
 import AdptMixin from '@/components/mixins/AdopteeMixin.js'
-// import SignIn from '@/components/SignIn'
 // classes
 import { DWHandlers } from '@/components/mixins/DWHandlers.js'
 
@@ -78,9 +76,7 @@ export default {
 
   data () {
     return {
-      // isSignInVisible: false,
-      // isModalVisible1: false,
-      // whichModal: 0,
+
       name: 'Adoption',
       keyy: 0,
       page: {
@@ -92,7 +88,7 @@ export default {
       location:null,
       gettingLocation: false,
       errorStr:null,
-      
+
     }
   },
   watch: {
@@ -187,56 +183,25 @@ export default {
       * load the drains
       */
       this.updateKey();
-      this.addGlyph(` [ Adoption.vue ] `);
-      this.addStart();
+      // this.addGlyph(` [ Adoption.vue ] `);
+      this.addStart(`${this.name}.vue`);
       this.addSpace();
       this.addGlyph(` [ Init Adoption ] .`,   `. [ Mount ] `);
       this.addSpace();
-     
-      this.locationGetRequest()
+
+      this.locationGetRequest() // REQUEST
         .then((response) => {
-          
-          this.locationGetHandler(response);
 
-          this.googleMapGetRequest()
+          this.locationGetHandler(response); // HANDLER
+
+          this.googleMapGetRequest() // REQUEST
             .then((responseMap) => {
-              this.googleMapGetHandler(responseMap, this.location);
-              // const mbr = this.getMbr();
-
+              this.googleMapGetHandler(responseMap, this.location); // HANDLER
               this.info_window.close(); // close open infowindow
+
               this.loadData()
-              // ADOPTEES 
-              /*
-              this.aadAdopteeGetMBR(mbr)    // ADOPTEE
-              .then((response) => {
+              // ADOPTEES
 
-                this.aadAdopteeGetMBRHandler(response,mbr);
-                // DRAINS
-
-                this.drainGetRequest(mbr) // DRAIN
-                  .then((response) => {
-                     
-                    this.drainGetHandler(response);
-                    
-                    this.showSymbols();
-
-                    this.addEnd();
-                    this.showGraph();
-                    if (this.datumDictionary) {
-                      this.setFeedback(`Drains ${this.datumCount()}`);
-                    }
-                  })
-                  .catch((err) => {
-                    this.addError(err);
-                    this.showGraph();
-                  });
-                  
-              })
-              .catch((err) => {
-                this.addError(err);
-                this.showGraph();
-              });
-              */
             }) // Map
             .catch((err) => {
               console.error('Unexpected issue getting map! ', err);
@@ -251,9 +216,6 @@ export default {
     updateKey() {
       this.keyy++;
     },
-    // onToggleAll() {
-    //  this.toggle AuthorizedDatum(this.isAuthenticated);
-    // },
 
     onAdopt(datumId) {
        if (this.graph) {
@@ -276,28 +238,20 @@ export default {
       }
       // Get input value
       // make copy with the marker
-      //       let datum = this.getDatumAdpt(datumId);
       let datum = this.getDatum(datumId);
-      // console.log('datum ', datum);
       datum.merge(form);
 
-      // this.upsertAdpt(this.current_token, owner, '0', datum);
-
-      this.aadAdopteePost(owner, datum.data)
+      this.adopteePost(owner, datum.data)
           .then((response) => {
-            // console.log('onAdopt 6 aadAdopteePostHandler')
-            // this.setFeedback('Update successful!');
-            this.aadAdopteePostHandler(response);
+
+            this.adopteePostHandler(response);
             this.addEnd();
             this.showGraph();
           })
           .catch((err) => {
-            // console.error('onAdopt 7 aadAdopteePost err ', err);
             this.addError(err);
             this.showGraph();
           });
-
-      // console.log('onAdopt 8');
 
       this.info_window.close();
 
@@ -309,26 +263,7 @@ export default {
         this.addGlyph(this.down, ' (token, owner, id, form) ');
         this.addSpace();
       }
-      /*
-      console.log(`
-      [onSave]
-        |
-      [collect form data]
-        |
-      (form)
-        |
-      [getDatumAdpt]
-        |
-      (datum)
-        |
-      [merge]
-        |
-      [upsertAdpt]
-        |
-      (token, owner, '0', datum)
 
-      `);
-      */
       if (!this.datumDictionary) {
           throw new Error('datumDictionary not found');
       }
@@ -344,11 +279,10 @@ export default {
       let datum = this.getDatum(datumId);
       datum.merge(form);
       // adopter keys
-      // this.upsertAdpt(this.current_token, owner, datumId, datum);
-      this.aadAdopteePutRequest(owner,datumId,datum.data)
+      this.adopteePutRequest(owner,datumId,datum.data)
         .then((response) => {
-          
-          this.aadAdopteePutHandler(response);
+
+          this.adopteePutHandler(response);
           this.addEnd();
           this.showGraph();
         })
@@ -357,40 +291,39 @@ export default {
           this.addError(err);
           this.showGraph();
         } );
-      
+
       this.info_window.close();
       this.$nuxt.$emit('refresh-my-adoptees-list');
     },
 
     onOrphan(datumId) {
       if (this.graph) {
-          this.addStart('Delete Orphan');
+          this.addStart('Orphan aka Delete');
           this.addGlyph(this.down, ' (owner, datumId) ');
           this.addSpace();
-      }     
-      
+      }
+
       if (!this.datumDictionary) {
           throw new Error('datumDictionary not found');
       }
       const owner = this.payload.key;
       let drainObj = this.getDatum(datumId);
-     
-      // this.deleteAdpt(this.current_token, owner, drainObj.id);
-      this.aadAdopteeDelete(owner, datumId)
+
+      this.adopteeDelete(owner, datumId)
           .then((response) => {
-            this.aadAdopteeDeleteHandler(response);
-            
+            this.adopteeDeleteHandler(response);
+
             this.addEnd();
             this.showGraph();
           })
           .catch((err) => {
-            // console.error('onAdopt 7 aadAdopteeDelete err ', err);
             this.addGlyph(` [ ${err} ]`);
             this.showGraph();
           });
       this.info_window.close();
       this.$nuxt.$emit('refresh-my-adoptees-list');
     },
+
     onSignIn() {
        console.log(`
        [onSignIn]
@@ -399,6 +332,7 @@ export default {
        this.signIn();
        this.closeModal();
     },
+
     onSignOut() {
        console.log(`
        [onSignOut]
@@ -441,7 +375,7 @@ export default {
                 // [Add adopt button handler]
 
                 button.onclick = function () {
- 
+
                     that.onAdopt(drainId);
                     // onAdopt;
                 };
@@ -449,7 +383,7 @@ export default {
             case 'adoptUpdateButton':
                 //[Add adopt update button handler]
                 button.onclick = function () {
-   
+
                   that.onSave(drainId);
                   // onSave;
                 }
@@ -459,7 +393,7 @@ export default {
                   // [Add orphan delete button handler]
 
                   button.onclick = function () {
-                    
+
                     that.onOrphan(drainId);
                     // onOrphan;
                   }
@@ -484,11 +418,11 @@ export default {
       Strategy: Use a boundary rectangle as a filter for download of drains
       * at end of scroll recalculate the bounding box
       */
-      
+
      this.loadData();
-                   
+
     },
-    
+
    loadData () {
       // Objective: Keep from downloading all the drains at one time
       // Strategy:
@@ -497,17 +431,17 @@ export default {
       const mbr = this.getMbr();
       this.cleanDatumCache(mbr);
 
-      this.aadAdopteeGetMBR(mbr)    // ADOPTEE
+      this.adopteeGetMBR(mbr)    // ADOPTEE
         .then((response) => {
 
-          this.aadAdopteeGetMBRHandler(response,mbr);
+          this.adopteeGetMBRHandler(response,mbr);
           // DRAINS
 
           this.drainGetRequest(mbr) // DRAIN
             .then((response) => {
-                
+
               this.drainGetHandler(response);
-              
+
               this.showSymbols();
 
               this.addEnd();
@@ -520,7 +454,7 @@ export default {
               this.addError(err);
               this.showGraph();
             });
-            
+
         })
         .catch((err) => {
           this.addError(err);
@@ -528,7 +462,7 @@ export default {
         });
 
     }, // end loadData
-    
+
     toggleMarkers() {
         if (this.graph) {
           this.addGlyph(this.down, ' [ Toggle Markers ] ');
@@ -584,16 +518,13 @@ export default {
               this.addGlyph(' [ Display ] .',' [ Refresh Map ] ');
               this.addSpace();
             }
-            
-            // console.log('showSymbols 2');
+
 
             let counter = 0;
-            
+
             if (this.datumDictionary) {
-            // console.log('showSymbols 2.1');
 
               for (let i in this.getDictionary()) {
-                  // console.log('showSymbols 2.1.1 ', this.getDictionary()[i]);
 
                   let datum = this.getDictionary()[i];
                   datum.show(this.map, this);
@@ -601,7 +532,7 @@ export default {
 
               } // for
             }
-            
+
             // console.log('showSymbols 3');
 
             if (this.graph) {

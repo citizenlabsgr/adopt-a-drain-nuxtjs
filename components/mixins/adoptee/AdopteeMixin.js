@@ -31,7 +31,13 @@ export default {
   },
   methods: {
     ////////
-    async aadAdopteePutRequest(owner,id,form) {
+
+    /*
+    owner is the Adopter's identifier
+    id is the Adoptee's identifier
+    form is JSON
+    */
+    async adopteePut(owner,id,form) {
       if (this.graph) {
         this.addRequestService('PUT', 'Adoptee');
       }
@@ -48,11 +54,12 @@ export default {
         data: aadBody });
     }, // PUT
 
-    aadAdopteePutHandler(response) {
+    adopteePutHandler(response) {
       if (this.graph) {
         this.addResponseService('PUT', 'Adoptee', 'response');
         this.addPassFail('Adoptee','400','404');
       }
+
 
       if (response.status === 200) {
 
@@ -69,10 +76,10 @@ export default {
 
             break;
           case '400':
-            console.log('aadAdopteePutHandler 400');
+            console.log('adopteePutHandler 400');
             break;
           case '404':
-            console.log('aadAdopteePutHandler 404');
+            console.log('adopteePutHandler 404');
             console.log('You already have an account');
             break;
           default:
@@ -86,8 +93,8 @@ export default {
 
 
     ////////////
-    async aadAdopteePost(owner, form) {
-      
+    async adopteePost(owner, form) {
+
       if (this.graph) {
         this.addRequestService('POST', 'Adoptee');
       }
@@ -103,7 +110,7 @@ export default {
         data: aadBody });
     }, // POST
 
-    aadAdopteePostHandler(response) {
+    adopteePostHandler(response) {
         if (!this.datumDictionary) {
           throw new Error('datumDictionary not found');
         }
@@ -126,7 +133,7 @@ export default {
                 this.addDatum(new YoursDatum(id, data, ownerKey, this));
                 // [ show on map]
                 this.getDatum(id).show(this.map);
-                
+
                 if (this.graph) {
                   this.addGlyph(' [ Map ] ',     ' [ Mark Drain as Yours ] ');
                   this.addSpace();
@@ -134,11 +141,11 @@ export default {
                 this.showSymbols();
               break;
             case '400':
-            console.log('aadAdopteePostHandler 400 undefined')
+            console.log('adopteePostHandler 400 undefined')
 
               break;
             case '404':
-            console.log('aadAdopteePostHandler 404 undefined')
+            console.log('adopteePostHandler 404 undefined')
 
               break;
             default:
@@ -151,7 +158,7 @@ export default {
 
     },// POST
 
-    async aadAdopteeGet(owner, id) {
+    async adopteeGet(owner, id) {
       if (this.graph) {
         this.addRequestService('GET', 'Adoptee');
       }
@@ -163,7 +170,7 @@ export default {
         method: 'get',
         headers: aadHeader});
     }, // GET
-    aadAdopteeGetHandler (response){
+    adopteeGetHandler (response){
       if (this.graph) {
         this.addResponseService('GET', 'Adoptee', '[adoptee,...]');
         this.addPassFail('Adoptee','400','404');
@@ -171,15 +178,15 @@ export default {
       if (response.status === 200) {
         switch(response.data.status) {
           case '200':
-          console.log('aadAdopteeGetHandler',response);
+          console.log('adopteeGetHandler',response);
             //
             break;
           case '400':
-            console.log('aadAdopteeGetHandler 400');
+            console.log('adopteeGetHandler 400');
             // console.log('You already have an account');
             break;
           case '404':
-            console.log('aadAdopteeGetHandler 404');
+            console.log('adopteeGetHandler 404');
             // console.log('You already have an account');
             break;
           default:
@@ -191,11 +198,11 @@ export default {
       }
     },
 
-    async aadAdopteeDelete(owner, id) {
+    async adopteeDelete(owner, id) {
       if (this.graph) {
         this.addRequestService('DELETE', 'Adoptee');
       }
- 
+
       const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}/${id}`;
       const aadHeader = this.aadHeaderUser;
       return await this.$axios({
@@ -203,7 +210,8 @@ export default {
         method: 'delete',
         headers: aadHeader});
     }, // DELETE
-    aadAdopteeDeleteHandler (response){
+
+    adopteeDeleteHandler (response){
       if (this.graph) {
         this.addResponseService('DELETE', this.name, '(adoptee)');
         this.addPassFail('Adoptee','400','404');
@@ -211,25 +219,30 @@ export default {
       if (response.status === 200) {
         switch(response.data.status) {
           case '200':
-            // console.log('aadAdopteeDeleteHandler 200 undefined')
+            // console.log('adopteeDeleteHandler 200 undefined')
             if (this.graph) {
 
               this.addGlyph(' [ Map ] ',' [ Mark Adoptee as Orphan ] ');
               this.addSpace();
 
             }
-            // console.log('aadAdopteeDeleteHandler ',response.data.deletion.form.drain_id );
+
+            let id = response.data.deletion.form.drain_id;
+            let data = this.getDatum(id).getDataCopy();
+            this.addDatum(new OrphanDatum(id, data, this));
+
+            // console.log('adopteeDeleteHandler ',response.data.deletion.form.drain_id );
             // let id = response.data.deletion.form.drain_id;
             // this.getDatum(id).show(this.map);
             this.showSymbols();
             break;
           case '400':
-            console.log('aadAdopteeDeleteHandler 400 undefined')
+            console.log('adopteeDeleteHandler 400 undefined')
 
             // console.log('You already have an account');
             break;
           case '404':
-            console.log('aadAdopteeDeleteHandler 404 undefined')
+            console.log('adopteeDeleteHandler 404 undefined')
 
             // console.log('You already have an account');
             break;
@@ -242,7 +255,7 @@ export default {
       }
     },
 
-    async aadAdopteeGetMBR(mbr) {
+    async adopteeGetMBR(mbr) {
       if (this.graph) {
         this.addRequestService('GET', 'Adoptee');
       }
@@ -257,10 +270,15 @@ export default {
         data: aadData
       });
     },// GET MBR
-    
-    aadAdopteeGetMBRHandler(response, mbr){
+
+    adopteeGetMBRHandler(response, mbr){
       if (this.graph) {
-        this.addResponseService('GET', 'Adoptee', this.formatOutput(response.data.selection));
+        //let d = this.getData(response);
+        // let d = response.data.selection;
+        // console.log('d ',d);
+        let d =[ {pk:'xx',sk:'cc',tk:'cc',form:{},owner:'xx'}];
+        this.addResponseService('GET', 'Adoptee', this.formatOutput(d));
+
         this.addPassFail('Adoptee','400','404');
       }
 
@@ -295,12 +313,12 @@ export default {
                     if (this.datumDictionary) {
 
                       this.addDatum(datum); // this drain is not on the map yet
-                      
+
                       this.cleanDatumCache(mbr);
-                    
+
                     }
 
-                    // AADHandlers_cnt++
+                    // AAD Handlers_cnt++
                 } // for
                 //////////////
                 // Prepare to load orphans
@@ -309,7 +327,7 @@ export default {
                 if (this.graph) {
                   if (this.datumDictionary) {
                     this.addGlyph(this.down, ` [ Processed ${this.datumDictionary.datumCount()} Datum ] `);
-                  } 
+                  }
                 }
             break;
           case '400':
@@ -326,7 +344,7 @@ export default {
       }
     },
     /*
-    async aadAdopteeGetMy(owner) {
+    async adopteeGetMy(owner) {
       if (graph) {
         this.addRequestService('GET', 'Adoptee');
       }
@@ -341,7 +359,7 @@ export default {
       });
     },// GET My
     */
-    async aadAdopteeGetMy(owner) {
+    async adopteeGetMy(owner) {
       if (this.graph) {
         this.addRequestService('GET', 'Adoptee');
       }
@@ -352,7 +370,7 @@ export default {
         method: 'get',
         headers: aadHeader});
     }, // GET
-    aadAdopteeGetMyHandler (response){
+    adopteeGetMyHandler (response){
       if (this.graph) {
         this.addResponseService('GET', 'Adoptee', '[adoptee,...]');
         this.addPassFail('Adoptee','400','404');
@@ -360,7 +378,7 @@ export default {
       if (response.status === 200) {
         switch(response.data.status) {
           case '200':
-            // console.log('aadAdopteeGetMyHandler',response);
+            // console.log('adopteeGetMyHandler',response);
             let save = false;
             if (this.my_adoptee_list) {
               save = true;
@@ -373,11 +391,11 @@ export default {
             }
             break;
           case '400':
-            console.log('aadAdopteeGetHandler 400');
+            console.log('adopteeGetHandler 400');
             // console.log('You already have an account');
             break;
           case '404':
-            console.log('aadAdopteeGetHandler 404');
+            console.log('adopteeGetHandler 404');
             // console.log('You already have an account');
             break;
           default:

@@ -17,7 +17,7 @@ export default {
         graph.addGlyph('    | ','  (success) ');
         graph.addGlyph('    | ','    | ');
         */
-        graph.addGlyph(graph.down,' [ Set Current Token State ] ');
+        graph.addGlyph(' [ Authorize ] ',' [ Set Current Token State ] ');
         graph.addSpace();
         // graph.addGlyph(graph.down,graph.down);
 

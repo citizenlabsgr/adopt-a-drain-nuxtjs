@@ -27,7 +27,6 @@
 <script>
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
-// import AdptHandler from '@/components/mixins/AdopteeMixin.js'
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
 import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
 
@@ -35,7 +34,6 @@ import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
 import ModalMyAdoptees from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  // mixins: [Expiration, AdptHandler, GoogleMapMixin],
   mixins: [Expiration, GoogleMapMixin,AdopteeMixin],
 
   components: {
@@ -61,7 +59,7 @@ export default {
   },
   */
   mounted () {
-    
+
     // this.$nextTick(function () {
       console.log(`
         (*)
@@ -76,19 +74,19 @@ export default {
     onClickGoPoint(lon, lat) {
       this.$nuxt.$emit('click-go-point',lon, lat);
     },
-    
+
     showModal() {
       this.isModalVisible=true;
       this.loadMyAdopteeList(this.current_token, this.payload.key);
     },
-    
+
     closeModal() {
       // set all dialog to closed/false
       this.isModalVisible = false;
     },
-    
 
-    
+
+
     loadMyAdopteeList(token, owner) {
         // token is a user token
         // owner is key value
@@ -116,8 +114,8 @@ export default {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         };
-    
-        this.aadAdopteeGetMy(owner)     
+
+        this.aadAdopteeGetMy(owner)
             .then((response) => {
               this.aadAdopteeGetMyHandler(response);
 

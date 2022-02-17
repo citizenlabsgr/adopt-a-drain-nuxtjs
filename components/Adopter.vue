@@ -58,6 +58,12 @@
     </div>
     <br/>
     <p>&nbsp;</p>
+
+    <!-- Feedback -->
+    <h3>
+      {{ this.page.feedback }}
+    </h3>
+
     <!-- ------------ -->
     <!-- Submit Button -->
     <!-- ------------ -->
@@ -78,12 +84,12 @@
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
-import { AADHandlers } from '@/components/mixins/AADHandlers.js'
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
+import AdopterMixin from '@/components/mixins/adopter/AdopterMixin.js';
 
 export default {
-  name: 'Account',
-  mixins: [Expiration,GraphMixin],
+  name: 'Adopter',
+  mixins: [Expiration,GraphMixin,AdopterMixin],
   components: {
     HeaderSmall,
     // Button
@@ -94,7 +100,7 @@ export default {
   },
   data () {
     return {
-      name: 'Account',
+      name: 'Adopter',
       page: {
         title: ['Sign Up', 'Update'],
         subtitle: ['Because because because', 'What next?'],
@@ -168,16 +174,14 @@ computed: {
     },
   }, // end of computed
   methods: {
+    setFeedback(msg) {
+      this.page.feedback = msg;
+    },
+
     onSubmit (e) {
       this.clearGraph();
-      this.addStart();
-      this.addSpace();
-      this.addGlyph(' [ Collect ] .',       '. [ Account Values ] ');
-      this.addSpace();
-      this.addGlyph(this.down,                '  (displayname, username, password)');
-      this.addSpace();
-      this.addGlyph(` [ Save ${this.name} ] .`,'. [ Emit upsert ] ');
-      this.addSpace();
+      this.addStart('onSubmit');
+
 
       // [onSubmit]
       const original_id = this.payload;
@@ -189,38 +193,60 @@ computed: {
       const claims = this.payload;
       const owner = claims.key;
       //  (upsert, owner, id, form) -->
-      // console.log('Emit Upsert');
-      this.$emit('upsert', this.owner, this.id, form);
-      console.log(this.getGraph());
+
+      this.addSpace();
+      this.addGlyph(' [ Collect ] .', ` (${this.formatOutput(this.form)}) `);
+      this.addSpace();
+      // this.addGlyph(this.down,' [ Emit upsert ] ');
+      // this.addSpace();
+
+      this.upsert(this.owner, this.id, form);
+      // this.$emit('upsert', this.owner, this.id, form);
+
+      // console.log(this.getGraph());
     },
     isValidForm () {
       if (this.form.displayname.length ===0 ) {
         return false;
       }
       return true;
-    }
+    },
 
-  },
+
+
+  }, // methods
   mounted() {
-    this.addStart();
+    this.addStart(`${this.name}.vue `);
+    this.addSpace();
+    this.addGlyph(' [ Init ] ',' [ Mount ] ');
     this.addSpace();
 
     this.$nextTick(function () {
         this.form.displayname = '';
         this.form.username = '';
         this.form.password = '';
+        // run when logged in
         if (this.isAuthenticated) {
+            this.loadAdopter();
+        }
+
+        /*
+        if (this.isAuthenticated) {
+
           const owner = this.payload.key;
           const id = this.payload.user;
           const aadUrl = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`;
+
           const aadHeader = {
              "Accept":"application/json",
              'Authorization': `Bearer ${this.current_token}`,
              'Content-Type': 'application/json'
           };
+
           this.addGlyph(` [ Mount ${this.name} ] `,this.start);
           this.addSpace();
-          new AADHandlers(this).aadAdopterGet(aadUrl, aadHeader)
+
+          new RequestAdopter.Get(owner,id)
             .then((response) => {
               if (response.status === 200) {
                 switch(response.data.status) {
@@ -248,8 +274,10 @@ computed: {
             })
 
       }
-    })
-  }
+      */
+    }) // nexttick
+
+  } // mounted
 
 }
 </script>

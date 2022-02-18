@@ -184,11 +184,13 @@ export default {
       */
       this.updateKey();
       // this.addGlyph(` [ Adoption.vue ] `);
+      this.addMount(this.name);
+      /*
       this.addStart(`${this.name}.vue`);
       this.addSpace();
       this.addGlyph(` [ Init Adoption ] .`,   `. [ Mount ] `);
       this.addSpace();
-
+      */
       this.locationGetRequest() // REQUEST
         .then((response) => {
 
@@ -196,6 +198,7 @@ export default {
 
           this.googleMapGetRequest() // REQUEST
             .then((responseMap) => {
+              this.setMap(responseMap);
               this.googleMapGetHandler(responseMap, this.location); // HANDLER
               this.info_window.close(); // close open infowindow
 

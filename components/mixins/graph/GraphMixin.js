@@ -31,6 +31,10 @@ export default {
       this.graph.addSpace();
     },
 
+    addMount(name) {
+      this.graph.addMount(name);
+    },
+    
     addError(err) {
       this.graph.addError(err);
     },

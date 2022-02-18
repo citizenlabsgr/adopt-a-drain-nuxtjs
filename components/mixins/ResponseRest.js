@@ -75,6 +75,7 @@ class ResponseRest {
       this.response = response;
       return this;
   }
+  // Start Here
   handler(response) {
     this.setResponse(response);
     // console.log('handler method ',response.config.method );
@@ -82,9 +83,7 @@ class ResponseRest {
     let status = '900';// this.getStatus(response);
     if (this.graph) {
         let d = this.getData(response);
-
         this.graph.addResponseService(method.toUpperCase(), this.name, this.graph.formatOutput(d));
-
     }
 
     switch(method) {

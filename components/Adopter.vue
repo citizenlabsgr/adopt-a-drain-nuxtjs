@@ -216,10 +216,8 @@ computed: {
 
   }, // methods
   mounted() {
-    this.addStart(`${this.name}.vue `);
-    this.addSpace();
-    this.addGlyph(' [ Init ] ',' [ Mount ] ');
-    this.addSpace();
+
+    this.addMount(this.name); // graph
 
     this.$nextTick(function () {
         this.form.displayname = '';

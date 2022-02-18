@@ -13,7 +13,7 @@
       <template v-slot:body>
         <ul>
           <!--li v-for="item in getMyAdopteeList(current_token, payload.key)"><a @click="onClickGoPoint(item.form.lon,item.form.lat)">{{item.form.name}}</a></li-->
-          <li v-for="item in my_adoptee_list"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}}</a></li>
+          <li v-for="item in my_adoptee_list"><a @click="onClickGoPoint(item.form.lon,item.form.lat)"><h3>{{item.form.name}}</h3> <i>{{item.created.substring(0,10)}}</i></a></li>
         </ul>
 
       </template>
@@ -29,12 +29,15 @@
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
 import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
+import { ResponseAdoptees } from '@/components/mixins/adoptee/ResponseAdoptees.js'
+import { RequestAdoptees } from '@/components/mixins/adoptee/RequestAdoptees.js'
 
 // Modals
 import ModalMyAdoptees from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, GoogleMapMixin,AdopteeMixin],
+  mixins: [Expiration,GraphMixin,GoogleMapMixin,AdopteeMixin,ModalMyAdoptees],
 
   components: {
     ModalMyAdoptees,
@@ -46,29 +49,16 @@ export default {
       my_adoptee_list: []
     }
   },
-  /*
-  beforeDestroy () {
-    this.$nuxt.$off('refresh-my-adoptees-list');
-  },
-  created () {
-    //this.$nuxt.$on('refresh-my-adoptees-list', () => {
-      //console.log('MyAdoptees refresh-my-adoptees-list');
-      // this.loadMyAdopteeList(this.current_token, this.payload.key)
 
-    //});
-  },
-  */
   mounted () {
 
-    // this.$nextTick(function () {
-      console.log(`
-        (*)
-         |
-      [mounted MyAdoptees]
-         |`);
-       this.loadMyAdopteeList(this.current_token, this.payload.key);
-    //}
+      this.addMount(this.name);
 
+      this.$nextTick(function () {
+        if (this.isAuthenticated) {
+            this.loadMyAdopteeList();
+        }
+      }); // nextTick
   },
   methods: {
     onClickGoPoint(lon, lat) {
@@ -85,49 +75,41 @@ export default {
       this.isModalVisible = false;
     },
 
-
-
-    loadMyAdopteeList(token, owner) {
+    loadMyAdopteeList() {
+        if (!this.isAuthenticated) {return;}
+        this.my_adoptee_list.length = 0;
         // token is a user token
         // owner is key value
         // to persist the list add my_adoptee_list to your component's data section
-        console.log('MyAdoptees.vue loadMyAdopteeList fixme ');
-        /*
-        console.log(`
-             (owner)
-                |
-             [loadMyAdpt]
-                |
-             (aadUrl, aadHeader, aadData)
-                |
-             [My Adoptee Request]
-                .
-                .
-                .
-        `);
-        const aadAuthentecated = this.isAuthenticated;
-        // const aadData = JSON.parse(JSON.stringify(centerBox));
-        const aadUrl = `${process.env.AAD_API_URL}/adoptee/${owner}`;
+        const owner = this.payload.key;
+        const requestRest = new RequestAdoptees(this);
 
-        const aadHeader = {
-            "Accept":"application/json",
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        };
-
-        this.aadAdopteeGetMy(owner)
+        requestRest.Get(owner)
             .then((response) => {
-              this.aadAdopteeGetMyHandler(response);
+              const responseRest = new ResponseAdoptees(this);
 
+              switch(responseRest.handler(response)) {
+                case '200':
+                  for (let i in responseRest.getData(response)) {
+                      let cpy = JSON.parse(JSON.stringify(responseRest.getData(response)[i]));
+
+                      this.my_adoptee_list.push(cpy);
+                  }
+                  break;
+                default:
+
+                  console.log(`status ${handledStatus}`);
+
+              }
+              this.showGraph();
             })
             .catch((err) => {
-                // eslint-disable no-console
-                console.error('Unexpected issue with adoptee list!', err);
-                // eslint-enable no-console
+              this.addError(err);
+              console.err('load My adoptees err ', err);
+              this.showGraph();
             });
-            */
     },
-  }
+  } // methods
 }
 </script>
 

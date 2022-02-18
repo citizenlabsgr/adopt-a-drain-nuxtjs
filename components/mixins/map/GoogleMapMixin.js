@@ -44,6 +44,9 @@ export default {
     */
   }, // computed
   methods: {
+    getMap() {
+      return this.map;
+    },
     setMap(map){
       if (this.graph) {
         this.addGlyph(this.down,' [ Set Map ] ');
@@ -52,12 +55,13 @@ export default {
       this.map = map;
     },
     panTo(lon, lat) {
-      // console.log('panTo', graph);
       if (this.graph) {
         this.addGlyph(this.down, ' [ Pan Map ] ');
       }
       let latLng = new this.google.maps.LatLng(lat, lon); //Makes a latlng
+  
       this.getMap().panTo(latLng);
+
     },
 
     //// request
@@ -135,7 +139,7 @@ export default {
     getCenter() {
       return $refs.mapRef.$mapObject.getCenter();
     },
-    
+
     getBounds() {
       return this.map.getBounds();
     },
@@ -149,7 +153,7 @@ export default {
       }
 
       this.setViewBox(cBox);
-      
+
       return this.getViewBox();
     },
     boxify ( pnt ) {

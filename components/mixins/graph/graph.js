@@ -37,6 +37,12 @@ module.exports = class Graph {
       console.log(this.getGraph());
       this.clearGraph();
     }
+    addMount(name) {
+      this.addStart(`${name}.vue`);
+      this.addSpace();
+      this.addGlyph(' [ Init ] ',' [ Mount ] ');
+      this.addSpace();
+    }
     addError(err) {
       this.addGlyph(` [${err}] `);
       return this;
@@ -142,7 +148,7 @@ module.exports = class Graph {
     fN(name) {
       return `[ ${name} ]`
     }
-    
+
     getOutput(response) {
       let rc = 'No Output Found';
 
@@ -161,8 +167,8 @@ module.exports = class Graph {
              case 'delete':
                 rc = this.formatOutput(response.data.deletion.form);
                break;
-             default: 
-                rc = 'No Output Found';  
+             default:
+                rc = 'No Output Found';
            }
            break;
         default:
@@ -193,22 +199,22 @@ module.exports = class Graph {
             rc = `[(${rc}),...]`;
           } else {
             for (let i in output) {
-                
+
                 if (rc.length > 0) {
                   rc += ',';
                 }
                 rc += i;
             }
-            
+
             rc = `${rc}`;
 
-          }  
+          }
           break;
         default:
           rc = `${output}`;
       }
       return rc;
-      
+
     }
     formatVariable(variable) {
       return fV(variable);

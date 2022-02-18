@@ -24,16 +24,15 @@
 </template>
 <script>
 
-import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
-import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
-import CommunityMixin from '@/components/mixins/community/CommunityMixin.js'
-import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
+import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
+import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js';
 
 // Modals
-import ModalCommunities from '@/components/Modal.vue'
+import ModalCommunities from '@/components/Modal.vue';
 /* istanbul ignore next */
 export default {
-  // mixins: [Expiration, GraphMixin,GoogleMapMixin,ModalCommunities,CommunityMixin],
 
   mixins: [Expiration, GraphMixin,GoogleMapMixin,ModalCommunities,CommunityMixin],
   components: {
@@ -43,33 +42,24 @@ export default {
     return {
       name: "Communities",
       isModalVisible:false,
-      // cmmtGraph: new Graph()
     }
   },
   mounted () {
-      //this.addGlyph(` [ ${this.name}.vue ] `);
-      this.addStart(`${this.name}.vue`);
-      this.addSpace();
-      this.addGlyph(' [ Init ] ',' [ Mount ] ');
-      this.addSpace();
+
+      this.addMount(this.name);
 
       this.communityGetRequest()
         .then((response) => {
-          // console.log('communityGetRequest');
+
           this.communityGetHandler(response);
           this.addSpace();
           this.addEnd();
 
-          // console.log(this.getGraph());
           this.showGraph();
         })
         .catch((err) => {
           console.error('communityGetRequest ', err);
-          this.addSpace('      |  ','      | ');
-          this.addGlyph(`    [ ${err} ]  `);
-          this.addSpace('      |  ','      | ');
-          this.addEnd();
-
+          this.addError(err);
         });
 
   },

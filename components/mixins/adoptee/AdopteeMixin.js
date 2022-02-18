@@ -37,7 +37,9 @@ export default {
     id is the Adoptee's identifier
     form is JSON
     */
-    async adopteePut(owner,id,form) {
+    // async adopteePut(owner,id,form) {
+
+    async adopteePutRequest(owner,id,form) {
       if (this.graph) {
         this.addRequestService('PUT', 'Adoptee');
       }
@@ -359,6 +361,7 @@ export default {
       });
     },// GET My
     */
+    /*
     async adopteeGetMy(owner) {
       if (this.graph) {
         this.addRequestService('GET', 'Adoptee');
@@ -370,6 +373,7 @@ export default {
         method: 'get',
         headers: aadHeader});
     }, // GET
+    */
     adopteeGetMyHandler (response){
       if (this.graph) {
         this.addResponseService('GET', 'Adoptee', '[adoptee,...]');

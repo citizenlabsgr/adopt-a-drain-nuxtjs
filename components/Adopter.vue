@@ -52,7 +52,7 @@
 
       <div id="error-password" :class="[is_password ? 'input_ok' : 'input_error']">
         {{status_password}}
-        hey
+        
       </div>
 
     </div>
@@ -163,7 +163,7 @@ computed: {
       return (Constants.password().test(this.form.password.trim()));
     },
     status_password () {
-      return (this.is_password ? "Ok" : "xA password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark.");
+      return (this.is_password ? "Ok" : "A password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark.");
     },
 
     is_username () { // true when not compliant, expects an email
@@ -197,11 +197,11 @@ computed: {
       this.addSpace();
       this.addGlyph(' [ Collect ] .', ` (${this.formatOutput(this.form)}) `);
       this.addSpace();
-      // this.addGlyph(this.down,' [ Emit upsert ] ');
+      // this.addGlyph(this.down,' [ E mit upsert ] ');
       // this.addSpace();
 
       this.upsert(this.owner, this.id, form);
-      // this.$emit('upsert', this.owner, this.id, form);
+      // this.$e mit('upsert', this.owner, this.id, form);
 
       // console.log(this.getGraph());
     },

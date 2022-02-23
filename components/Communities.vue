@@ -12,7 +12,7 @@
       <template v-slot:sub-title>Because, because</template>
       <template v-slot:body>
         <ul>
-          <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}}</a></li>
+          <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}} ({{item.count}})</a></li>
         </ul>
       </template>
       <template v-slot:footer>
@@ -50,7 +50,6 @@ export default {
 
       this.communityGetRequest()
         .then((response) => {
-
           this.communityGetHandler(response);
           this.addSpace();
           this.addEnd();
@@ -65,6 +64,7 @@ export default {
   },
   methods: {
     onClickGoPoint(lon, lat) {
+      this.addEmit('click-go-point');
       this.$nuxt.$emit('click-go-point',lon, lat);
     },
     showModal() {

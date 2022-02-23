@@ -248,6 +248,8 @@ export default {
           .then((response) => {
 
             this.adopteePostHandler(response);
+            this.addEmit('load-my-adoptee-list');
+            
             this.addEnd();
             this.showGraph();
           })
@@ -258,7 +260,10 @@ export default {
 
       this.info_window.close();
 
-      this.$nuxt.$emit('refresh-my-adoptees-list');
+      // this.$nuxt.$e mit('refresh-my-adoptees-list');
+      
+      this.$nuxt.$emit('load-my-adoptee-list');
+
     },
     onSave(datumId) {
       if (this.graph) {
@@ -286,6 +291,7 @@ export default {
         .then((response) => {
 
           this.adopteePutHandler(response);
+          this.addEmit('load-my-adoptee-list');
           this.addEnd();
           this.showGraph();
         })
@@ -296,7 +302,11 @@ export default {
         } );
 
       this.info_window.close();
-      this.$nuxt.$emit('refresh-my-adoptees-list');
+      
+
+      // this.$nuxt.$emit('refresh-my-adoptees-list');
+      this.$nuxt.$emit('load-my-adoptee-list');
+
     },
 
     onOrphan(datumId) {
@@ -315,7 +325,7 @@ export default {
       this.adopteeDelete(owner, datumId)
           .then((response) => {
             this.adopteeDeleteHandler(response);
-
+            this.addEmit('load-my-adoptee-list');
             this.addEnd();
             this.showGraph();
           })
@@ -324,7 +334,9 @@ export default {
             this.showGraph();
           });
       this.info_window.close();
-      this.$nuxt.$emit('refresh-my-adoptees-list');
+      
+      // this.$nuxt.$emit('refresh-my-adoptees-list');
+      this.$nuxt.$emit('load-my-adoptee-list');
     },
 
     onSignIn() {
@@ -541,7 +553,7 @@ export default {
             if (this.graph) {
               this.addGlyph(this.down,  this.down, ` [ Processed ${counter} Symbols ] `);
               this.addSpace();
-              this.addEnd();
+              // this.addEnd();
             }
 
         } catch(err) {

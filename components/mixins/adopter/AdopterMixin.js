@@ -27,6 +27,7 @@ export default {
 
     loadAdopter() {
       if (!this.isAuthenticated) { return; }
+      this.loadTOU();
 
       const owner = this.payload.key;
       const id = this.payload.user;
@@ -64,32 +65,12 @@ export default {
           this.addSpace();
           this.addEnd();
           this.showGraph();
-          /*
-          if (response.status === 200) {
-            switch(response.data.status) {
-              case '200':
-                this.form.displayname = response.data.selection[0].form.displayname;
-                this.form.username = response.data.selection[0].form.username;
-                this.form.password = '';
-                this.addSpace();
-                this.addGlyph(this.down,'  (displayname,username,password)');
-
-                break;
-              default:
-                console.error('Not sure what just happened');
-                // console.error('response', response.data);
-            }
-            console.log(this.getGraph());
-          } else {
-
-            console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
-          }
-          */
+          
         })
         .catch((err) => {
 
           console.error('Something unexpected happened (%s)!'.replace('%s', err))
-        })
+        });
         
     },
 

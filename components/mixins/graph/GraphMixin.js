@@ -22,7 +22,9 @@ export default {
     addStart(name) {
       this.graph.addStart(name);
     },
-
+    addEmit(function_name) {
+      this.graph.addEmit(function_name);
+    },
     addEnd() {
       this.graph.addEnd();
     },

@@ -37,6 +37,11 @@ module.exports = class Graph {
       console.log(this.getGraph());
       this.clearGraph();
     }
+    addEmit(function_name) {
+      this.addSpace();
+      this.addGlyph(' [ Emit ] ',` [ ${function_name} ] `);
+      this.addSpace();
+    }
     addMount(name) {
       this.addStart(`${name}.vue`);
       this.addSpace();
@@ -119,6 +124,7 @@ module.exports = class Graph {
       this.addSpace();
     }
     addEnd() {
+      this.addSpace();
       this.addGlyph(this.end,this.end);
     }
     addSpace() {

@@ -32,6 +32,7 @@ export default {
                 headers: dwHeaders,
                 data: dwData });
     },
+
     communityGetHandler (response) {
 
           if (this.graph) {
@@ -43,9 +44,7 @@ export default {
             let cnt = response.data[i].count;
             let lat = response.data[i].lat;
             let lon = response.data[i].lon;
-            //let ln = `           |                    + <--- (%a,%b)`.replace('%a', jur)
-            //          .replace('%b', cnt);
-            //console.log(ln);
+
             this.communityList.push({name: jur, count: cnt, lat: lat, lon:lon});
 
           } // end for

@@ -9,13 +9,15 @@
   </div>
 </template>
 <script>
+import config from '@/components/config/header.json';
+
 export default {
   data () {
     return {
       submitStatus: 'PENDING',
       page: {
-        title: 'Adopt a Drain',
-        subtitle: 'Volunteer to keep street drains clean and clear'
+        title: config.title,
+        subtitle: config.subtitle
       }
     }
   }

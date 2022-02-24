@@ -3,15 +3,15 @@
       <nav>
 
       <ul>
-
-        <li v-if="isAuthenticated">
-          <u><MyAdoptees /></u>
-        </li>
-        <li v-else>
+        <li>
           <nuxt-link class="" to="/">
             Adoptions
           </nuxt-link>
         </li>
+        <li v-if="isAuthenticated">
+          <u><MyAdoptees /></u>
+        </li>
+        
         <li>
 
             <u><Communities /></u>

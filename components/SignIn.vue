@@ -48,7 +48,6 @@ import SignInMixin from '@/components/mixins/SignInMixin.js'
 
 // Modals
 import ModalSignIn from '@/components/Modal.vue'
-// import ModalSignOut from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
   mixins: [Expiration,SignInMixin,GraphMixin],

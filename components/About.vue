@@ -12,14 +12,15 @@
 
 <script>
 // import Banner from '@/components/Banner.vue'
+import config from '@/components/config/about.json';
 
 export default {
 
   data () {
     return {
       about: {
-        title: 'About',
-        subtitle: 'We are concerned citizens.'
+        title: config.title,
+        subtitle: config.subtitle
       }
     }
   }

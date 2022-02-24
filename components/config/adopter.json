@@ -1,0 +1,7 @@
+{
+    "title":["Sign Up","Update"],
+    "subtitle": ["Because because because", "What next?"],
+    "displayname": {"prompt":"Display Name","status":["Ok","Required"]},
+    "username": {"prompt":"Email","status":["Ok","Required"]},
+    "password": {"prompt":"Password","status":["Ok","A password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark."]}
+}

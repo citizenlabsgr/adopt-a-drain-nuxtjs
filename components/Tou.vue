@@ -2,7 +2,7 @@
   <div class="document">
     <br/>
 
-  <div class="document"><span v-html="renderedHtml"></span></div>
+  <div class="document"><span v-html="config.body"></span></div>
     <!-- Feedback -->
     <h3>
       {{ this.feedback }}
@@ -20,6 +20,7 @@ import TOUMixin from '@/components/mixins/tou/TOUMixin.js';
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js';
 import { RequestTOU } from '@/components/mixins/tou/RequestTOU.js';
 import { ResponseTOU } from '@/components/mixins/tou/ResponseTOU.js';
+import config from '@/components/config/tou.json';
 
 /* istanbul ignore next */
 export default {
@@ -28,6 +29,11 @@ export default {
   data () {
     return {
       name: 'Terms of Use',
+      config: {
+        title: config.title,
+        subtitle: config.subtitle,
+        body: ''
+      },
       renderedHtml: '',
       stack: [],
       feedback:''
@@ -62,7 +68,7 @@ export default {
               this.communityGetHandler (response);
 
               ////////////
-              const owner = this.payload.key;
+              const owner = '0';
               const id = 'tou.md';
 
               new RequestTOU(this).Get(owner,id)
@@ -114,16 +120,17 @@ export default {
       this.feedback = msg;
     },
     replace() {
-      this.renderedHtml = this.renderedHtml.replace('[[communities]]', this.renderCommunity());
+      this.config.body = this.config.body.replace('[[communities]]', this.renderCommunity());
     },
     renderCommunity() {
       let rc = '<ul>';
       let lst = this.getCommunityList();
 
       for (let i in lst) {
-        rc += `<li>${lst[i].name}</li>`;
+        rc += `<li class="list-item-bullet"><i>${lst[i].name}</i></li>`;
       }
       rc += '</ul>';
+      rc += '<br/>';
 
       return rc;
     },
@@ -143,10 +150,10 @@ export default {
         }
 
         if (ln.startsWith('# ')) {
-           renderedHtml += `<h1>${ln.replace('#','')}</h1>`;
+           renderedHtml += `<h1 class="title">${ln.replace('#','')}</h1>`;
         }
         else if (ln.startsWith('## ')) {
-          renderedHtml +=  `<h2>${ln.replace('##','')}</h2>`;
+          renderedHtml +=  `<h2 class="subtitle">${ln.replace('##','')}</h2>`;
         }
         else if (ln.startsWith('### ')) {
           renderedHtml +=  `<h3>${ln.replace('###','')}</h3>`;
@@ -165,14 +172,14 @@ export default {
             this.stack.push('</ul>')
             this.renderedHtml += '<ul>'
           }
-          renderedHtml += `<li>${ln.replace('*','')}</li>`;
+          renderedHtml += `<li class="list-item-bullet"><i>${ln.replace('*','')}</i></li>`;
         }
         else {
-          renderedHtml += `<p>${ln}</p>`;
+          renderedHtml += `<p class="description">${ln}</p>`;
         }
 
       } // for
-      this.renderedHtml = renderedHtml;
+      this.config.body = renderedHtml;
     }
   }
 }

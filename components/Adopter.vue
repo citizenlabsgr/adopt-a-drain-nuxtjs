@@ -1,7 +1,13 @@
 <template>
   <div class="inner-div">
     <br/>
-    <HeaderSmall :title="this.getTitle" :subtitle="this.getSubTitle"/>
+    <h1 class="title">
+      {{ getTitle }}
+    </h1>
+    <h2 class="subtitle">
+      {{ getSubTitle }}
+    </h2>
+    <!-- HeaderSmall :title="this.getSubTitle" :subtitle="this.getSubTitle"/ -->
 
     <!-- HeaderSmall :title="isAuthenticated ? 'Update' :'Sign Up'" subtitle="{{ page.subtitle }}"/ -->
     <!-- ------------ -->
@@ -14,7 +20,7 @@
       <!-- Display Name -->
       <!-- ------------ -->
       <div class="prompt" >
-        <label for="displayname">Display Name</label>
+        <label for="displayname">{{meta.displayname.prompt}}</label>
       </div>
       <div class="input">
         <input id="displayname"
@@ -34,7 +40,7 @@
     <!-- ------------ -->
     <div>
         <div class="prompt" ><label for="username">
-          Name</label>
+          {{meta.username.prompt}}</label>
         </div>
         <div class="input"><input id="username" v-model="form.username" placeholder="your email"></div>
         <div id="error-name" :class="[is_username ? 'input_ok' : 'input_error']">
@@ -46,7 +52,7 @@
     <!-- ------------ -->
     <div v-if="!isAuthenticated">
       <div class="prompt" ><label for="password">
-        Password</label>
+        {{meta.password.prompt}}</label>
       </div>
       <div class="input"><input id="password" v-model="form.password" type="password" placeholder="secure password"></div>
 
@@ -80,7 +86,7 @@
 
 <script>
 // import atob from 'atob'
-
+import config from '@/components/config/adopter.json';
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
@@ -102,8 +108,8 @@ export default {
     return {
       name: 'Adopter',
       page: {
-        title: ['Sign Up', 'Update'],
-        subtitle: ['Because because because', 'What next?'],
+        title: config.title,
+        subtitle: config.subtitle,
         feedback: ''
       },
       form: {
@@ -113,18 +119,18 @@ export default {
       },
       meta: {
         displayname : {
-          prompt:"Display Name",
-          status:"",
+          prompt:config.displayname.prompt,
+          status: config.displayname.status,
           regexp: Constants.display_name()
         },
         username :{
-          prompt:"Email",
-          status:"",
+          prompt:config.username.prompt,
+          status:config.username.status,
           regexp: Constants.email()
         },
-        password :{
-          prompt:"Password",
-          status:"",
+        password: {
+          prompt:config.password.prompt,
+          status:config.password.status,
           regexp: Constants.password(),
           errors: []
         }
@@ -157,20 +163,20 @@ computed: {
       return (this.meta.displayname.regexp.test(this.form.displayname.trim()));
     },
     status_displayname () {
-      return (this.is_displayname ? "Ok" : "Required" );
+      return (this.is_displayname ? this.meta.displayname.status[0] : this.meta.displayname.status[1] );
     },
     is_password () { // true when not compliant, expects lower and upper, symbol, and number
       return (Constants.password().test(this.form.password.trim()));
     },
     status_password () {
-      return (this.is_password ? "Ok" : "A password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark.");
+      return (this.is_password ? this.meta.password.status[0] : this.meta.password.status[1]);
     },
 
     is_username () { // true when not compliant, expects an email
       return (Constants.user_name().test(this.form.username.trim()))
     },
     status_username () {
-      return (this.is_username ? "Ok" : "Required")
+      return (this.is_username ? this.meta.username.status[0] : this.meta.username.status[1])
     },
   }, // end of computed
   methods: {

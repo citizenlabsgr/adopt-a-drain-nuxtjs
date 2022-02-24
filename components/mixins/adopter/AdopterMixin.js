@@ -27,7 +27,7 @@ export default {
 
     loadAdopter() {
       if (!this.isAuthenticated) { return; }
-      this.loadTOU();
+      // this.loadAdopter();
 
       const owner = this.payload.key;
       const id = this.payload.user;

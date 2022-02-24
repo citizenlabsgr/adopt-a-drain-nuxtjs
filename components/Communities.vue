@@ -1,29 +1,26 @@
 <template>
   <div>
-    <!--button type="button" class="btn" @click="showModal()">
-      SignIn
-    </button -->
-    <a @click="showModal()">Communities</a>
+    <a @click="showModal()">{{title}}</a>
     <ModalCommunities
       v-show="isModalVisible"
       @close="closeModal"
     >
-      <template v-slot:header>Communities</template>
-      <template v-slot:sub-title>Because, because</template>
+      <template v-slot:header>{{title}}</template>
+      <template v-slot:sub-title>{{subtitle}}</template>
       <template v-slot:body>
         <ul>
           <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}} ({{item.count}})</a></li>
         </ul>
       </template>
       <template v-slot:footer>
-        Communities
+        {{title}}
       </template>
     </ModalCommunities>
 
   </div>
 </template>
 <script>
-
+import config from '@/components/config/community.json';
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
 import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
@@ -41,6 +38,8 @@ export default {
   data () {
     return {
       name: "Communities",
+      title: config.title,
+      subtitle: config.subtitle,
       isModalVisible:false,
     }
   },

@@ -1,15 +1,12 @@
 <template>
   <div>
-    <!--button type="button" class="btn" @click="showModal()">
-      SignIn
-    </button -->
-    <a @click="showModal()">My Adoptees</a>
+    <a @click="showModal()">{{title}}</a>
     <ModalMyAdoptees
       v-show="isModalVisible"
       @close="closeModal"
     >
-      <template v-slot:header>My Adoptees</template>
-      <template v-slot:sub-title>Because, because</template>
+      <template v-slot:header>{{title}}</template>
+      <template v-slot:sub-title>{{subtitle}}</template>
       <template v-slot:body>
         <ul>
           <li v-for="item in my_adoptee_list">
@@ -22,13 +19,14 @@
 
       </template>
       <template v-slot:footer>
-        My Adoptees
+        {{title}}
       </template>
     </ModalMyAdoptees>
 
   </div>
 </template>
 <script>
+import config from '@/components/config/my_adoptees.json';
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
@@ -49,6 +47,8 @@ export default {
   data () {
     return {
       name: "MyAdoptees",
+      title: config.title,
+      subtitle: config.subtitle,
       isModalVisible:false,
       my_adoptee_list: []
     }
@@ -65,6 +65,7 @@ export default {
       }); // nextTick
   },
   methods: {
+
     onClickGoPoint(lon, lat) {
       this.addEmit('click-go-point');
       this.$nuxt.$emit('click-go-point',lon, lat);

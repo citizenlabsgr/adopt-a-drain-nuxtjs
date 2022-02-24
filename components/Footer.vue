@@ -25,10 +25,10 @@
         </nuxt-link -->
       </li>
       <li>
-        About
-        <!-- nuxt-link to="/about">
+        
+        <nuxt-link to="/about">
           About
-        </nuxt-link -->
+        </nuxt-link>
       </li>
     </ul>
     <ul>

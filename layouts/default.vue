@@ -180,4 +180,10 @@ html {
   margin:0;
   padding:0;
 }
+.list-item-bullet {
+  list-style-type:disc;
+  margin:0;
+  padding:0px;
+  margin-left: 35px;
+}
 </style>

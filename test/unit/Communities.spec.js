@@ -19,10 +19,12 @@ token = `Bearer ${token}`;
 */
 
 describe('Communities', () => {
-  const guestToken = '';
+  // const guestToken = '';
+  /*
   test('Environment', () => {
     expect(process.env.AAD_API_TOKEN).toBeTruthy()
   })
+  */
   test('is a Vue instance', () => {
     // expect(true).toBeTruthy()
 

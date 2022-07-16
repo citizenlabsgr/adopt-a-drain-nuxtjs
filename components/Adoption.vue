@@ -24,8 +24,13 @@
   <!-- show markers manually -->
 </template>
 
-<script>
+  <script>
+  // [.Adoption]:
+  // |not(/home)|: [*],[*]
+  // |/home|: [*], Config
+  // |"AAD_API_TOKEN,DW_AUTH_TOKEN,GOOGLE_MAPS_API_KEY"|: Env, Load
 
+  // [Config]:
 /*
   DrainAdoption is an interactive map for showing and selecting drain markers.
     ref: https://www.npmjs.com/package/vue2-google-maps
@@ -46,49 +51,44 @@
 */
 
 
-import { gmapApi } from '@/node_modules/vue2-google-maps/src/main'
+import { gmapApi } from '@/node_modules/vue2-google-maps/src/main';
 // mixins
-import Expiration from  '@/components/mixins/expiration/ExpirationMixin.js'
-import AdptMixin from '@/components/mixins/AdopteeMixin.js'
+import Expiration from  '@/components/mixins/expiration/ExpirationMixin.js';
+// import AdptMixin from '@/components/mixins/AdopteeMixin.js';
 // classes
-import { DWHandlers } from '@/components/mixins/DWHandlers.js'
+import { DWHandlers } from '@/components/mixins/DWHandlers.js';
 
-import { InfoHelper } from '@/components/mixins/map/InfoHelper.js'
-import { MapHelper } from '@/components/mixins/MapHelper.js'
-import { Utils } from '@/components/mixins/Utils.js'
-import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
-import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
-import LocationMixin from '@/components/mixins/location/LocationMixin.js'
-import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
+import { InfoHelper } from '@/components/mixins/map/InfoHelper.js';
+import { MapHelper } from '@/components/mixins/MapHelper.js';
+import { Utils } from '@/components/mixins/Utils.js';
+import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
+import GraphMixin from '@/components/mixins/graph/GraphMixin.js';
+import LocationMixin from '@/components/mixins/location/LocationMixin.js';
+import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js';
 
-import DatumDictionaryMixin from '@/components/mixins/datum/DatumDictionaryMixin.js'
-import { YoursDatum } from '@/components/mixins/datum/DatumYours.js'
+import DatumDictionaryMixin from '@/components/mixins/datum/DatumDictionaryMixin.js';
+import { YoursDatum } from '@/components/mixins/datum/DatumYours.js';
 
-import { AdopteeDatum } from '@/components/mixins/datum/DatumAdoptee.js'
-import { OrphanDatum } from '@/components/mixins/datum/DatumOrphan.js'
+import { AdopteeDatum } from '@/components/mixins/datum/DatumAdoptee.js';
+import { OrphanDatum } from '@/components/mixins/datum/DatumOrphan.js';
 
-import DrainMixin from '@/components/mixins/drain/DrainMixin.js'
+import DrainMixin from '@/components/mixins/drain/DrainMixin.js';
 
 /* istanbul ignore next */
 export default {
-  name: 'adoption',
+  name: "adoption",
   mixins: [Expiration,GraphMixin,GoogleMapMixin,LocationMixin,AdopteeMixin,DatumDictionaryMixin,DrainMixin],
 
   data () {
     return {
-
-      name: 'Adoption',
+      name: "Adoption",
       keyy: 0,
       page: {
-        feedback: 'Welcome'
+        feedback: "Welcome"
       },
-      // the signin state of the adopter
-      // hold the expiration interval instance
-      //interval_monitor_expiration: null,
       location:null,
       gettingLocation: false,
-      errorStr:null,
-
+      errorStr:null
     }
   },
   watch: {
@@ -117,12 +117,14 @@ export default {
         'Content-Type': 'application/json'
       }
     },
+    /*
     dwBody () {
       // Objective: Separate UI and data
       // Strategy: use a bounding box as a view port to minimize
       // example: {west: -84.3, east: -84.0, north: 42.3, south: 42.0}
-      return this.settings.center_box
+      return this.settings.centerBox
     },
+    */
     dwURL () {
       // Objective: Separate UI and data
       // Strategy: use a developer configured url to data.world
@@ -174,6 +176,13 @@ export default {
     // });
   },
   mounted () {
+      // [Load]:
+      // |(get service.datumDictionary.output.datumDictionary)|: Load, Show
+
+      // # |datumDictionary|: Load, Show
+      // #|(get service.output.datumDictionary)|: Load, Show
+      // #|(get service.adopteeMBR.get.output.adopteeList)|: Load, Show
+        
       /*
       Objective: Initialize a map of drains
       Strategy: Use vuejs's mounted to initialize
@@ -182,30 +191,44 @@ export default {
       * initalize the google map infowindow
       * load the drains
       */
+      // console.log('Adoption mount');
+      // console.log('Adoption mount datumDictionary ', this.datumDictionary)
       this.updateKey();
-      // this.addGlyph(` [ Adoption.vue ] `);
-      this.addMount(this.name);
-      /*
-      this.addStart(`${this.name}.vue`);
-      this.addSpace();
-      this.addGlyph(` [ Init Adoption ] .`,   `. [ Mount ] `);
-      this.addSpace();
-      */
-      this.locationGetRequest() // REQUEST
-        .then((response) => {
+      // this.addMount(this.name);
+      // [*Load]:
+      // [[Start]]:
+      // [[LocationGetRequest]]:
+      // ||(get service.location.get.response)||:
 
+      let defaultMapCenter = this.settings.center;
+      this.locationGetRequest(defaultMapCenter) // REQUEST
+        .then((response) => {
+          // [[LocationGetHandler]]: 
+          // ||(get service.location.get.output.location)||:
+                                
           this.locationGetHandler(response); // HANDLER
 
+          // [[GoogleMapGetRequest]]:
+          // ||(get service.map.get.response) ||:
           this.googleMapGetRequest() // REQUEST
             .then((responseMap) => {
+
+              // [[GoogelMapGetHandler]]:
+              // ||(get service.map.get.output.mapObject)||:
               this.setMap(responseMap);
               this.googleMapGetHandler(responseMap, this.location); // HANDLER
               this.info_window.close(); // close open infowindow
+              
+              // [[LoadDrains]]:
+              // ||(get service.datumDictionary.output.datumDictionary)||:
 
-              this.loadData()
+              // #||datumDictionary||:
+
+              this.loadData();
               // ADOPTEES
+           
 
-            }) // Map
+            }) // Ma p
             .catch((err) => {
               console.error('Unexpected issue getting map! ', err);
             })
@@ -213,19 +236,95 @@ export default {
         .catch((err) => {
           console.error('Unexpected issue locating you! ', err);
         })
+        // [[End]]:    
     },
 
   methods: {
+    loadData () {
+      // Objective: Keep from downloading all the drains at one time
+      // Strategy:
+      // * Limit the number of drains to those that fall within a rectangle in middle of map screen
+      
+      // #[LoadDrains]:
+      
+      // [*LoadDrain]:
+      // [[Start]]:
+      // ||(get service.adopteeGetMBRRequest.request)||: [*], AdopteeGetMBRRequest
+
+      const mbr = this.getMbr();
+      // console.log('mbr', mbr);
+      if (this.datumDictionary) {
+        this.cleanDatumCache(mbr);
+      }
+
+      // [[AdopteeGetMBRRequest]]:
+      // ||(get service.adopteeGetMBRRequest.response)||:
+      // console.log('adopteeGetMBRRequest mbr ', mbr)
+      this.adopteeGetMBRRequest(mbr)    // ADOPTEE
+        .then((response) => {
+                
+          // console.log('adopteeGetMBRHandler response ', response)
+
+          // [[AdopteeGetMBRHandler]]:
+          // ||(get service.datumDictionary.output.datumDictionary)||:
+          
+          this.adopteeGetMBRHandler(response,mbr);
+          // DRAINS
+              
+          // [[DrainGetRequest]]:
+          // ||(get service.drain.get.response)||:
+          // console.log('drainGetRequest');
+          this.drainGetRequest(mbr) // DRAIN
+            .then((response) => {
+              
+              // [[DrainGetHandler]]:
+              // ||datumDictionary||: DrainGetHandler, [*]
+
+              this.drainGetHandler(response);
+
+              this.showSymbols();
+
+              if (this.datumDictionary) {
+                this.setFeedback(`Drains ${this.datumCount()}`);
+              }
+            })
+            .catch((err) => {
+              console.error('loadData A', err);
+            });
+
+        })
+        .catch((err) => {
+          console.error('loadData B ', err);
+        });
+          // [[End]]:
+    }, // end loadData
+                      // [Show]: /home
+                      // |not(/home)|: Show, [*]
+                      // #|"(adoptee)"|: Show, Manage
+
+                      // [*Show]: /home
+                      // [[Start]]:
+                      // [[Orphans]]:
+                      // [[Adoptees]]:
+                      // ||authenticated||: Adoptees, YourAdoptees
+                      // ||not(authenticated)||:Adoptees, [*]
+                      // [[YourAdoptees]]: adopt, orphan, rename
+                      
+                      // [[End]]:
+                      
     updateKey() {
       this.keyy++;
-    },
+    },                
 
+    // [*YourAdoptees]:
+    // [[Start]]:
+    // ||not(authenticated)||: [*], [*]
+    // ||adopt||:  [*], AdopteePostRequest
+    // ||rename||: [*], AdopteePutRequest
+    // ||orphan||: [*], AdopteeDeleteRequest
+    
     onAdopt(datumId) {
-       if (this.graph) {
-        this.addStart('Add Adpotee');
-        this.addGlyph(this.down, ' (owner, datumId) ');
-        this.addSpace();
-      }
+
       if (!this.datumDictionary) {
           throw new Error('datumDictionary not found');
       }
@@ -244,34 +343,25 @@ export default {
       let datum = this.getDatum(datumId);
       datum.merge(form);
 
-      this.adopteePost(owner, datum.data)
+      // [[AdopteePostRequest]]:
+      this.adopteePostRequest(owner, datum.data)
           .then((response) => {
-
+            // [[AdopteePostHandler]]:
+            // ||"Post Status"||: AdopteePostHandler, LoadMyAdoptees
             this.adopteePostHandler(response);
-            this.addEmit('load-my-adoptee-list');
-            
-            this.addEnd();
-            this.showGraph();
           })
           .catch((err) => {
-            this.addError(err);
-            this.showGraph();
+            console.log('Adoption', err);
           });
 
       this.info_window.close();
 
-      // this.$nuxt.$e mit('refresh-my-adoptees-list');
-      
       this.$nuxt.$emit('load-my-adoptee-list');
-
+      
     },
+    
     onSave(datumId) {
-      if (this.graph) {
-        this.addStart('Update Adpotee');
-        this.addGlyph(this.down, ' (token, owner, id, form) ');
-        this.addSpace();
-      }
-
+      // [[AdopteePutRequest]]:
       if (!this.datumDictionary) {
           throw new Error('datumDictionary not found');
       }
@@ -287,34 +377,26 @@ export default {
       let datum = this.getDatum(datumId);
       datum.merge(form);
       // adopter keys
+
       this.adopteePutRequest(owner,datumId,datum.data)
         .then((response) => {
+          // [[AdopteePutHandler]]:
+          // ||"Put Status"||: AdopteePutHandler, LoadMyAdoptees
 
           this.adopteePutHandler(response);
-          this.addEmit('load-my-adoptee-list');
-          this.addEnd();
-          this.showGraph();
         })
         .catch((err) => {
-          console.log('onSave err ', err);
-          this.addError(err);
-          this.showGraph();
+          console.error('onSave err ', err);
         } );
 
       this.info_window.close();
       
-
-      // this.$nuxt.$emit('refresh-my-adoptees-list');
       this.$nuxt.$emit('load-my-adoptee-list');
 
     },
 
     onOrphan(datumId) {
-      if (this.graph) {
-          this.addStart('Orphan aka Delete');
-          this.addGlyph(this.down, ' (owner, datumId) ');
-          this.addSpace();
-      }
+      // [[AdopteeDeleteRequest]]:
 
       if (!this.datumDictionary) {
           throw new Error('datumDictionary not found');
@@ -324,26 +406,26 @@ export default {
 
       this.adopteeDelete(owner, datumId)
           .then((response) => {
+            // [[AdopteeDeleteHandler]]:
+            // ||"Delete Status"||: AdopteeDeleteHandler, LoadMyAdoptees
+
             this.adopteeDeleteHandler(response);
-            this.addEmit('load-my-adoptee-list');
-            this.addEnd();
-            this.showGraph();
           })
           .catch((err) => {
-            this.addGlyph(` [ ${err} ]`);
-            this.showGraph();
+            console.error('onDelete err ', err);
           });
       this.info_window.close();
       
-      // this.$nuxt.$emit('refresh-my-adoptees-list');
       this.$nuxt.$emit('load-my-adoptee-list');
     },
-
+    // [[LoadMyAdoptees]]:
+    // ||status||: LoadMyAdoptees, [*]
+    // [[End]]:
     onSignIn() {
-       console.log(`
-       [onSignIn]
-          |
-       `);
+       // console.log(`
+       // [onSignIn]
+       //    |
+       // `);
        this.signIn();
        this.closeModal();
     },
@@ -387,7 +469,7 @@ export default {
 
           switch (button.id){
             case 'adoptButton':
-                // [Add adopt button handler]
+                // Add adopt button handler
 
                 button.onclick = function () {
 
@@ -396,7 +478,7 @@ export default {
                 };
                 break;
             case 'adoptUpdateButton':
-                //[Add adopt update button handler]
+                // Add adopt update button handler
                 button.onclick = function () {
 
                   that.onSave(drainId);
@@ -405,7 +487,7 @@ export default {
                 break;
 
             case 'orphanButton':
-                  // [Add orphan delete button handler]
+                  // Add orphan delete button handler
 
                   button.onclick = function () {
 
@@ -438,56 +520,12 @@ export default {
 
     },
 
-   loadData () {
-      // Objective: Keep from downloading all the drains at one time
-      // Strategy:
-      // * Limit the number of drains to those that fall within a rectangle in middle of map screen
-
-      const mbr = this.getMbr();
-      this.cleanDatumCache(mbr);
-
-      this.adopteeGetMBR(mbr)    // ADOPTEE
-        .then((response) => {
-
-          this.adopteeGetMBRHandler(response,mbr);
-          // DRAINS
-
-          this.drainGetRequest(mbr) // DRAIN
-            .then((response) => {
-
-              this.drainGetHandler(response);
-
-              this.showSymbols();
-
-              this.addEnd();
-              this.showGraph();
-              if (this.datumDictionary) {
-                this.setFeedback(`Drains ${this.datumCount()}`);
-              }
-            })
-            .catch((err) => {
-              this.addError(err);
-              this.showGraph();
-            });
-
-        })
-        .catch((err) => {
-          this.addError(err);
-          this.showGraph();
-        });
-
-    }, // end loadData
-
     toggleMarkers() {
-        if (this.graph) {
-          this.addGlyph(this.down, ' [ Toggle Markers ] ');
-          this.addSpace();
-        }
 
-        for (let i in this.getDictionary()) {
+        for (let i in this.getDatumDictionary()) {
 
             // let datum = this.getDataAdpt()[i];
-            let datum = this.getDictionary()[i];
+            let datum = this.getDatumDictionary()[i];
 
             let id = datum.getId();
             let data = datum.getDataCopy();
@@ -527,41 +565,35 @@ export default {
         }
     },
     showSymbols() {
+      // #[GoogleMap]: datumDictionary
+      // #[[Start]]:
+      // #[[Orphans]]:
+      // #[[Adoptees]]:
+      // #[[End]]:
         try {
-
-            if (this.graph) {
-              this.addGlyph(' [ Display ] .',' [ Refresh Map ] ');
-              this.addSpace();
-            }
-
 
             let counter = 0;
 
             if (this.datumDictionary) {
 
-              for (let i in this.getDictionary()) {
+              for (let i in this.getDatumDictionary()) {
 
-                  let datum = this.getDictionary()[i];
+                  let datum = this.getDatumDictionary()[i];
                   datum.show(this.map, this);
                   counter ++;
 
               } // for
             }
 
-            // console.log('showSymbols 3');
-
-            if (this.graph) {
-              this.addGlyph(this.down,  this.down, ` [ Processed ${counter} Symbols ] `);
-              this.addSpace();
-              // this.addEnd();
-            }
-
         } catch(err) {
           console.error('showSymbols ', err);
         }
     },
+  
   }
 }
+
+// [End]:
 </script>
 
 <style scoped>

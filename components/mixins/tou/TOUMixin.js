@@ -1,12 +1,39 @@
-// import { RequestTOU } from '@/components/mixins/tou/RequestTOU.js';
 import { ResponseTOU } from '@/components/mixins/tou/ResponseTOU.js';
+import { RequestTOU } from './RequestTOU';
 
 export default {
   data () {
     return {
-      name: 'TOU',
-      tou_markdown: []
-    };
+      name: "TOU",
+      service: {
+        tou: {
+          status: 900,
+          response: [
+            {
+              "active": true,
+              "created": "2022-06-14T10:28:58.30262",
+              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "owner": "api_admin",
+              "pk": "doc_id#tou.md",
+              "sk": "i#00000",
+              "tk": "w#tou.md",
+              "updated": "2022-06-14T10:28:58.30262"
+            }
+          ],
+          mapping: {
+            "form": {"i": "00000", "p": 0, "w": "tou.md", "doc_id": "tou.md"}
+          },
+          output: {
+            "touList": [
+              {
+                "id": "",
+                "paragraph": ""
+              }
+            ]
+          }
+        }  
+      }
+    }
   },
   computed: {
     aadHeaderGuest () {
@@ -18,38 +45,76 @@ export default {
     }
   },
   methods: {
-  
-    getMarkdown(i=0) {
-      if (i === 0) {
-        return this.tou_markdown;
-      }
-      return this.tou_markdown[i];
+    getTouMapping() {
+      return this.service.tou.mapping;
+    },
+    getTouList() {
+      return this.service.tou.output.touList;
+    },
+    resetTouList() {
+      this.service.tou.output.touList.length = 0;  
+    },
+    addTouDatum(datum) {
+      // console.log('datum ', datum);
+      this.service.tou.output.touList.push(datum);
+    },
+    setTouStatus(statusCode) {
+      this.service.tou.statusCode = statusCode;
+    },
+    getTouStatus() {
+      return this.service.tou.statusCode;
+    },
+    async touGetRequest (owner, id) {
+         
+      return new RequestTOU(this).Get(owner,id)
     },
     
-    formatParagraphs(response) {
-      let p = 0;
-      let para = '';
-      const responseRest = new ResponseTOU(this);
-      for (let i in responseRest.getData(response)) {
-        let item = responseRest.getData(response)[i];
-        if (item.form.p === 0) {
-           // first item is metadata so skip
-        } else {
-          if (item.form.p !== p) {
-            this.tou_markdown.push(para);
-            para = '';
-            p = item.form.p;
-          }
-          
-          if (para.length > 0) {
-            para += ' ';
-          }
-          // concat paragraph 
-          para += item.form.w;
-          p = item.form.p;
-        }  
+    touGetHandler (response) {
+      // documents are stored as one word per row
+      // this handler reassembles words into paragraphs {id, paragraph}
+      // the calling component handles the display of the document
+      // console.log('touGetHandler 1');
+      
+      this.resetTouList();
+
+      let handler = new ResponseTOU(this);
+
+      let statusCode = handler.getStatus(response); 
+
+      // Stop if service calls when not successful
+      
+      if (statusCode !== '200') {
+        this.statusCode = statusCode;
+        return;
       }
+
+      let d = handler.getData(response);
+      let lastP = 0;
+      let w = ''; // d[i]['form']['w'];
+
+      // combine words into paragraphs
+      
+      for (let i in d) {
+        if (lastP != d[i]['form']['p']) {
+            // console.log('para',{"id":lastP, "paragraph": w} );
+            this.addTouDatum({"id":lastP, "paragraph": w});
+            w = d[i]['form']['w'];
+        } else {
+          if (w.length > 0){
+            w += ' ';
+          }
+          w += d[i]['form']['w'];
+        }
+        lastP = d[i]['form']['p'];
+      } 
+
+      // finish off the last paragraph 
+      
+      if (w.length > 0) {
+        this.addTouDatum({"id":lastP, "paragraph": w});
+        w=null;
+      }
+      
     }
-    
-  }, // methods
+  }
 }

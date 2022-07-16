@@ -60,14 +60,40 @@
   </transition>
 </template>
 <script>
+  // [.Modal]:
+  // | |:[*], Config
+  // [Config]:
+  // [Load]:
+  // [*Load]:
+  // [[Start]]:
+  // [[Header]]:
+  // [[Subtitle]]:
+  // [[Body]]:
+  // [[Footer]]:
+  // [[End]]:
+
+  // [Show]: 
+  // [*Show]:
+  // [[Start]]:
+  // [[Header]]:
+  // [[Subtitle]]:
+  // [[Body]]:
+  // [[Footer]]:
+  // [[End]]:
+  // [End]:
   export default {
-    name: 'Modal',
+    name: "Modal",
+    data () {
+      return {
+        name: "Modal"
+      }
+    }, 
     methods: {
       close() {
         this.$emit('close');
       },
     },
-  };
+  }
 </script>
 <style>
   .modal-backdrop {

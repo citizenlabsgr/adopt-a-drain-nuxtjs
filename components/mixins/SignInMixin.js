@@ -1,33 +1,31 @@
 import atob from 'atob';
 // import { DWHandlers } from '@/components/mixins/DWHandlers.js'
+import { ResponseHelper } from '@/components/mixins/ResponseHelper.js';
+
 export default {
   data () {
     return {
-      name: 'SignInMixin',
+      name: "SignInMixin",
       tokenSignIn: false,
       statusSignIn: false,
       msgSignIn: false,
-    };
+      service: {
+        "signInPostRequest": {
+          "request": {
+            "username": "j@citizenlabs.org", 
+            "password": "a1A!aaaa"
+          },
+          "response":{
+
+          }
+        }
+      }
+    }
   },
   methods: {
-
-    getSignIn() {
-      // this code is not needed
-      // here for consistancy with other api mixins
-      // might be able to connect to store
-      return false;
-    },
-
-    async requestSignIn(form) {
-
-      if(this.graph) {
-
-       this.addSpace();
-       this.addGlyph(' [ SignIn ] .',  '.   + ---> (request) >','> [[[ SignIn Service ]]] ');
-       this.addGlyph(this.down,'    ',                this.down);
-
-      }
-
+    
+    async signInPostRequest(form) {
+      // aka signin, or login
       const aadUrl = `${process.env.AAD_API_URL}/signin`;
       const aadData = form;
       const aadHeaders = {
@@ -35,35 +33,44 @@ export default {
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
       };
-
       return await this.$axios({
             url: aadUrl,
             method: 'post',
             headers: aadHeaders,
-            data: aadData });
+            data: aadData 
+      });
     },
-    signInGetHandler(response) {
-        this.statusSignIn = response.data.status;
-        this.msgSignIn = response.data.msg;
 
-        if(this.graph) {
-         this.addGlyph(this.down,           '    + <--- (token) <',  '<<< + ');
-         this.addSpace();
+    signInPostHandler(response) {
+        // this.statusSignIn = response.data.status;
+        // this.msgSignIn = response.data.msg;
+        
+        const helper = new ResponseHelper(response);
+        let status = helper.status(); // this.response.data.status;
+        let msg = helper.msg();
 
-        }
-        switch(this.statusSignIn) {
+        switch(status) {
          case '200':
            this.tokenSignIn = response.data.token;
            this.setCurrentToken(response.data.token);
+
+          console.log('Go find a drain to adopt!');
+
+          // Goto Map
+          this.$router.push('/'); // to map
+
+          // Close Modal
+          this.closeModal();
            break;
+
          case '404':
            // this.msgSignin = 'User not found!';
-           console.error('User not found!');
+           console.error("User not found!");
            break;
 
          default:
            this.msgSignin = "Not sure what just happened!";
-           console.error('Not sure what just happened!');
+           console.error(`signInPostHandler Not sure what just happened! ${status} ${msg}`);
         }
 
 

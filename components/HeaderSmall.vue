@@ -22,7 +22,12 @@ export default {
       type: String,
       default: 'subtitle'
     }
-  }
+  },
+  data () {
+    return {
+      name: 'HeaderSmall'
+    }
+  }      
 }
 </script>
 

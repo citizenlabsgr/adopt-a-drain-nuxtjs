@@ -1,15 +1,14 @@
 <template>
   <section class="container">
-    <Home />
+    <Sponsor />
   </section>
 </template>
-
 <script>
-import Home from '@/components/Home.vue'
-
+import Sponsor from '@/components/Sponsor.vue'
+// import Sponsors from '@/components/Logo.vue'
 export default {
   components: {
-    Home
+    Sponsor
   }
 }
 </script>

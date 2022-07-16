@@ -16,10 +16,10 @@ import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
 // import Account from '@/components/Account.vue'
 import Adopter from '@/components/Adopter.vue'
 
-import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
+// import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 
 export default {
-  mixins: [Expiration, GraphMixin],
+  mixins: [Expiration],
   components: {
     Adopter
   },

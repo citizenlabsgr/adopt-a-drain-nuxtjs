@@ -6,13 +6,30 @@
   </div>
 </template>
 <script>
+// [.Home]:
+// |not(/home)|: [*],[*]
+// |/home|:
+
 import DrainAdoption from '@/components/Adoption.vue'
 /* istanbul ignore next */ 
 export default {
   components: {
     DrainAdoption
-  }
-}
+  },
+  data () {
+    return {
+      name: "Home"
+    }
+  }    
+} 
+// [Show]: /home
+// |not(/home)|: Show, [*]
+
+// [*Show]:
+// [[Start]]:
+// [[Map]]: map, adopt, orphan, name
+// [[End]]:
+// [End]:
 </script>
 
 <style scoped>

@@ -9,7 +9,7 @@ class ResponseTOU extends ResponseRest {
   }
 
   ///////////////
-  // ResponseAdoptees
+  // Response
   /////////
 
   postHandler () {
@@ -26,9 +26,6 @@ class ResponseTOU extends ResponseRest {
     // /adopter/owner/id
     let status = this.getStatus(this.response);// gthis.response.data.status;
 
-
-
-    
     return status;
   }
   // ResponseAdoptees

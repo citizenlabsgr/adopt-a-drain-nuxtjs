@@ -1,38 +1,19 @@
 <template>
   <nav>
     <ul>
-    <li>
-      <nuxt-link to="/tou">
-        Terms of Use
-      </nuxt-link>
-    </li>
-      <li>
-        Opportunities
-        <!-- nuxt-link to="/opportunities">
-          Opportunities
-        </nuxt-link -->
-      </li>
-      <li>
-        Sponsors
-        <!-- nuxt-link to="/sponsors">
-          Sponsors
-        </nuxt-link -->
-      </li>
-      <li>
-        Stats
-        <!-- nuxt-link to="/stats">
-          Stats
-        </nuxt-link -->
-      </li>
-      <li>
+      <li v-for="item in getRouteList()" :key="item.id">
         
-        <nuxt-link to="/about">
-          About
+        <nuxt-link v-if="item.active" :to="`/${item.route}`">
+          {{ item.title }}
         </nuxt-link>
+        <div v-else-if="!item.active">
+          {{ item.title }}
+        </div>
+
       </li>
     </ul>
     <ul>
-      <li v-for="item in footer.list" :key="item.id">
+      <li v-for="item in getFooterList()" :key="item.id">
         <a :href="item.href" target="_blank">
           {{ item.title }}
         </a>
@@ -41,19 +22,92 @@
   </nav>
 </template>
 <script>
+
+// [.Footer]:
+// [Start]:
+// |/*|:
+// #[Start]:
+
 /* istanbul ignore next */
 export default {
   data () {
     return {
       footer: {
-        list: [
-          { id: 1, title: 'Github', href: 'https://github.com/citizenlabsgr' },
-          { id: 2, title: 'Slack', href: 'https://slack.com' }
+        routes:[
+          // [TOU]: /tou
+          {
+            "id": 1,
+            "title": "Terms of Use",
+            "label": "TOU",
+            "route": "tou",
+            "active": true 
+          },
+          // [Opportunities]: /opportunities
+          {
+            "id": 2,
+            "title": "Opportunities",
+            "label": "Opportunities",
+            "route": "opportunities",
+            "active": true 
+          },
+          // [Sponsor]: /sponsor
+          {
+            "id": 3,
+            "title": "Sponsor",
+            "label": "Sponsor",
+            "route": "sponsor",
+            "active": true
+          },
+          // [Stats]: /stats
+          {
+            "id": 4,
+            "title": "Stats",
+            "label": "Stats",
+            "route": "stats",
+            "active": true
+          },
+          // [About]: /about
+          {
+            "id": 5,
+            "title": "About",
+            "label": "About",
+            "route": "about",
+            "active": true 
+          }
+        ],
+        footerList: [
+          // [Github]: 
+          // |github.com/citizenlabsgr|:
+          { 
+            "id": 1, 
+            "title": "Github", 
+            "href": "https://github.com/citizenlabsgr" 
+          },
+          // [Slack]: 
+          // |/slack.com|:
+          { 
+            "id": 2, 
+            "title": "Slack", 
+            "href": "https://slack.com" 
+          }
         ]
       }
+      // #[End]:
     }
-  }
+  },
+  methods: {
+    getRouteList() {
+      return this.footer.routes;
+    },
+    getFooterList() {
+      return this.footer.footerList;
+    }
+  }  
 }
+ 
+          
+
+// [End]:
 </script>
 
 <style scoped>

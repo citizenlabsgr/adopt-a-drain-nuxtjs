@@ -2,14 +2,15 @@
   <div class="inner-div">
     <br/>
     <h1 class="title">
-      {{ getTitle }}
+      {{ getTitle() }}
     </h1>
     <h2 class="subtitle">
-      {{ getSubTitle }}
+      {{ getSubTitle() }}
     </h2>
     <!-- HeaderSmall :title="this.getSubTitle" :subtitle="this.getSubTitle"/ -->
 
     <!-- HeaderSmall :title="isAuthenticated ? 'Update' :'Sign Up'" subtitle="{{ page.subtitle }}"/ -->
+    
     <!-- ------------ -->
     <!-- Display username -->
     <!-- ------------ -->
@@ -34,12 +35,12 @@
       </div>
 
     </div>
-
     <!-- ------------ -->
     <!-- User Name -->
     <!-- ------------ -->
     <div>
         <div class="prompt" ><label for="username">
+          
           {{meta.username.prompt}}</label>
         </div>
         <div class="input"><input id="username" v-model="form.username" placeholder="your email"></div>
@@ -66,8 +67,8 @@
     <p>&nbsp;</p>
 
     <!-- Feedback -->
-    <h3>
-      {{ this.page.feedback }}
+    <h3 v-if="(typeof this.feedback !== 'undefined')">
+      {{ this.getFeedback() }}
     </h3>
 
     <!-- ------------ -->
@@ -85,71 +86,116 @@
 </template>
 
 <script>
-// import atob from 'atob'
-import config from '@/components/config/adopter.json';
+
+// [.Adopter]:
+// |not(/adopter)|: [*],[*]
+// |/adopter|: [*], Load
+// |AAD_API_TOKEN|: Env, Load
+// |CurrentUser|: AppState, Load
+
+// [Config]:
+// |(page)|: Config, Show
+
+// Data: adopter.json
+// import config from '@/components/config/adopter.json';
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
-import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
 import AdopterMixin from '@/components/mixins/adopter/AdopterMixin.js';
 
 export default {
   name: 'Adopter',
-  mixins: [Expiration,GraphMixin,AdopterMixin],
+  mixins: [Expiration,AdopterMixin],
   components: {
-    HeaderSmall,
-    // Button
+    HeaderSmall
+  
   },
+  // Data: props, next, Start
   props: {
     owner: String,
     id: String
   },
   data () {
     return {
-      name: 'Adopter',
+      name: "Adopter",
+      
       page: {
-        title: config.title,
-        subtitle: config.subtitle,
-        feedback: ''
+        title: ["Sign Up","Account"],
+        subtitle: ["Because because because", "What next?"]
       },
       form: {
-        displayname: '',
-        username: '',
-        password: ''
+        displayname: "",
+        username: "",
+        password: ""
       },
       meta: {
-        displayname : {
-          prompt:config.displayname.prompt,
-          status: config.displayname.status,
+        displayname: {
+          prompt: "Display Name",
+          status: ["Ok","Required"],
           regexp: Constants.display_name()
         },
-        username :{
-          prompt:config.username.prompt,
-          status:config.username.status,
+        username:{
+          prompt:"Email",
+          status:["Ok","Required"],
           regexp: Constants.email()
         },
         password: {
-          prompt:config.password.prompt,
-          status:config.password.status,
-          regexp: Constants.password(),
-          errors: []
+          prompt:"Password",
+          status:["Ok","A password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark."],
+          regexp: Constants.password()
+          
         }
       }
     }
   },
-computed: {
-    getTitle() {
+  mounted() {
+
+    // this.addMount(this.name); // graph
+    // #|authenticated|: Config, Load
+
+    // [Load]: 
+    // |(get service.adopterGetRequest.response)|: Load, Show 
+   
+    // [*Load]:
+
+    // [[Start]]:
+    // ||not(authenticated)||: [*], [*]
+    // ||authenticated||: [*], AdopterGetRequest
+    
+    this.$nextTick(function () {
+      
       if (this.isAuthenticated) {
-        return this.page.title[1]
-      }
-      return this.page.title[0]
-    },
-    getSubTitle() {
-      if (this.isAuthenticated) {
-        return this.page.subtitle[1]
-      }
-      return this.page.subtitle[0]
-    },
+        
+        const owner = this.payload.key;
+        const id = this.payload.user;
+        
+        // ||(get service.adopterGetRequest.request)||: AppState, AdopterGetRequest
+        // [[AdopterGetRequest]]: 
+        // ||(get service.adopterGetRequest.response)||: 
+        this.adopterGetRequest(owner,id)
+              .then((response) => {
+                // console.log('adopterGetRequest', response);
+                // [[AdopterGetHandler]]:
+                this.adopterGetHandler(response);
+                // console.log('adopterGetHandler', response);
+
+                      // console.log('mounted 4');
+                // ||"(form)"||: 
+
+                this.adopterTransferGetData(this.form);
+              })
+              .catch((err) => {
+                  console.error('Something unexpected happened (%s)!'.replace('%s', err))
+              })   
+              // [[End]]:
+
+      } // auth        
+      
+    }) // nexttick
+
+  }, // mounted
+  computed: {
+    
     isDisabled () {
       let rc = false;
       if (this.isAuthenticated) {
@@ -180,17 +226,45 @@ computed: {
     },
   }, // end of computed
   methods: {
-    setFeedback(msg) {
-      this.page.feedback = msg;
+    // [Show]:
+
+    // [*Show]: /adopter
+    // [[Start]]:
+    // ||form||: [*], Title
+
+    getTitle() {
+      // [[Title]]:
+      if (this.isAuthenticated) {
+        return this.page.title[1]
+      }
+      return this.page.title[0]
     },
+    
+    getSubTitle() {
+      // [[Subtitle]]:
+
+      if (this.isAuthenticated) {
+        return this.page.subtitle[1]
+      }
+      return this.page.subtitle[0]
+    },
+   
+    // [[Displayname]]: edit
+    // [[Username]]: edit
+    // ||authenticated||: Username, [*]
+    // ||not(authenticated)||: Username, Password
+    // [[Password]]: edit
+
+    setFeedback(msg) {
+      this.feedback = msg;
+    },
+    // [[End]]:
 
     onSubmit (e) {
-      this.clearGraph();
-      this.addStart('onSubmit');
 
-
-      // [onSubmit]
+      // onSubmit
       const original_id = this.payload;
+      // console.log('onSubmit original_id', this.payload);
       if (!this.isValidForm()) {
         // this.setFeedback('Missing Info!')
         return undefined
@@ -199,17 +273,21 @@ computed: {
       const claims = this.payload;
       const owner = claims.key;
       //  (upsert, owner, id, form) -->
-
-      this.addSpace();
-      this.addGlyph(' [ Collect ] .', ` (${this.formatOutput(this.form)}) `);
-      this.addSpace();
-      // this.addGlyph(this.down,' [ E mit upsert ] ');
-      // this.addSpace();
-
-      this.upsert(this.owner, this.id, form);
-      // this.$e mit('upsert', this.owner, this.id, form);
-
-      // console.log(this.getGraph());
+      if(this.payload.key === "0") {
+        // console.log('Post');
+        this.adopterPostRequest (form) 
+        .then((response) => {
+          this.adopterPostHandler(response);
+        });
+      } else {
+        // console.log('PUt');
+        let id = original_id.user ; // email
+        this.adopterPutRequest (owner, id, form) 
+        .then((response) => {
+          this.adopterPutHandler(response);
+        });
+      }
+      
     },
     isValidForm () {
       if (this.form.displayname.length ===0 ) {
@@ -217,71 +295,8 @@ computed: {
       }
       return true;
     },
-
-
-
   }, // methods
-  mounted() {
-
-    this.addMount(this.name); // graph
-
-    this.$nextTick(function () {
-        this.form.displayname = '';
-        this.form.username = '';
-        this.form.password = '';
-        // run when logged in
-        if (this.isAuthenticated) {
-            this.loadAdopter();
-        }
-
-        /*
-        if (this.isAuthenticated) {
-
-          const owner = this.payload.key;
-          const id = this.payload.user;
-          const aadUrl = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`;
-
-          const aadHeader = {
-             "Accept":"application/json",
-             'Authorization': `Bearer ${this.current_token}`,
-             'Content-Type': 'application/json'
-          };
-
-          this.addGlyph(` [ Mount ${this.name} ] `,this.start);
-          this.addSpace();
-
-          new RequestAdopter.Get(owner,id)
-            .then((response) => {
-              if (response.status === 200) {
-                switch(response.data.status) {
-                  case '200':
-                    this.form.displayname = response.data.selection[0].form.displayname;
-                    this.form.username = response.data.selection[0].form.username;
-                    this.form.password = '';
-                    this.addSpace();
-                    this.addGlyph(this.down,'  (displayname,username,password)');
-
-                    break;
-                  default:
-                    console.error('Not sure what just happened');
-                    // console.error('response', response.data);
-                }
-                console.log(this.getGraph());
-              } else {
-
-                console.error('Whoa, I did not see that comming (%s)!'.replace('%s', response.status))
-              }
-            })
-            .catch((err) => {
-
-              console.error('Something unexpected happened (%s)!'.replace('%s', err))
-            })
-
-      }
-      */
-    }) // nexttick
-
-  } // mounted
+  // [End]:
 
 }
 </script>

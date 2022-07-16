@@ -1,192 +1,160 @@
-<template>
+<template>  
   <div class="document">
-    <br/>
+    <!--span v-html="config.body"></span-->
 
-  <div class="document"><span v-html="config.body"></span></div>
-    <!-- Feedback -->
     <h3>
-      {{ this.feedback }}
+      {{ getFeedback() }}
     </h3>
-  </div>
+    
+    <div v-for="item in getTouList()" :key="item.id">
+        <h1 v-if="item.paragraph.startsWith('# ')" class="title">
+          {{ item.paragraph.replace('# ','') }}
+        </h1>
+        <h1 v-else-if="item.paragraph.startsWith('## ')" class="subtitle">
+          {{ item.paragraph.replace('## ','') }}
+        </h1>   
+        <h1 v-else-if="item.paragraph.startsWith('### ')">
+          {{ item.paragraph.replace('### ','') }}
+        </h1>   
+        <h1 v-else-if="item.paragraph.startsWith('#### ')">
+          {{ item.paragraph.replace('#### ','') }}
+        </h1>           
+        <h1 v-else-if="item.paragraph.startsWith('##### ')">
+          {{ item.paragraph.replace('##### ','') }}
+        </h1> 
+        <h1 v-else-if="item.paragraph.startsWith('###### ')">
+          {{ item.paragraph.replace('###### ','') }}
+        </h1>      
+        <li v-else-if="item.paragraph.startsWith('* ')">
+          {{ item.paragraph.replace('* ','') }}
+        </li>    
+        <div v-else-if="item.paragraph.includes('[[communities]]')">
+            <li v-for="comm in getCommunityList()" :key="item.name"> 
+            {{ comm.name }} 
+            </li>
+            <br/>
+        </div>   
+        <h1 v-else class="description">
+          {{ item.paragraph }}
+        </h1>
+    </div> 
+  </div>   
 </template>
 <script>
+// [.Tou]:
+// |not(/tou)|: [*],[*]
+// |/tou|: [*], Config 
+// |AAD_API_TOKEN|: Env, Load
 
-import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
-import DataWorld from '@/components/mixins/DataWorldMixin.js'
-import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
+// [Config]:
+
+import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
+// import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
 import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
 import TOUMixin from '@/components/mixins/tou/TOUMixin.js';
-
-import GraphMixin from '@/components/mixins/graph/GraphMixin.js';
-import { RequestTOU } from '@/components/mixins/tou/RequestTOU.js';
-import { ResponseTOU } from '@/components/mixins/tou/ResponseTOU.js';
-import config from '@/components/config/tou.json';
-
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, GraphMixin, DataWorld, GoogleMapMixin, CommunityMixin, TOUMixin],
+  mixins: [Expiration, CommunityMixin, TOUMixin],
 
   data () {
     return {
       name: 'Terms of Use',
-      config: {
-        title: config.title,
-        subtitle: config.subtitle,
-        body: ''
-      },
-      renderedHtml: '',
-      stack: [],
-      feedback:''
-      /*
-      markdown: [
-      '# Terms of Use',
-      '### Adopt a Drain Grand River',
-      'Website Terms of Use Agreement',
-      '### 1. Acceptance of Terms of Use',
-      'Grand Valley Metro Council (GVMC) and the sponsoring jurisdictions of ',
-      '[[communities]]',
-      'provides the Adopt-a-Drain program ("AAD") to you subject to the following Terms of Use Agreement ("Agreement") which may be updated by us from time to time without notice to you. By accessing and using AAD, you accept and agree to be bound by the terms and provision of this Agreement.',
-
-      ]
-      */
+      page: {
+        title: "Terms of Use Not used",
+        subtitle: "Adopt a Drain Grand River Not Used",
+        feedback: ''
+      }
     }
   },
-  /*
-  watch: {
-    communities: function () {
-      // Objective: Wait for document to load
-      // Strategy: load communities and document using rest in mount() then wait for data to show.
-      this.render();
-      this.replace();
-    }
-  },
-  */
   mounted () {
-      this.addMount(this.name);
-      this.communityGetRequest ()
+    // [Load]:
+    // |"((communityList), (touList))"|: Load, Show  
+
+    // [*Load]:
+    // [[Start]]:
+    // ||/tou||: [*], CommunityGetRequest
+
+    // ||AAD_API_TOKEN||: Env, CommunityGetRequest
+    // ||AAD_API_TOKEN||: Env, TouGetRequest
+
+    // [[CommunityGetRequest]]:
+    // ||(get service.community.response)||:
+
+        this.communityGetRequest ()
           .then((response) => {
+
+              // [[CommunityGetHandler]]:
+              // ||(get service.community.output.communityList)||:
               this.communityGetHandler (response);
 
-              ////////////
               const owner = '0';
               const id = 'tou.md';
+            
+              // [[TouGetRequest]]: 
+              // ||(get service.tou.response)||:
 
-              new RequestTOU(this).Get(owner,id)
+              this.touGetRequest(owner,id)
                 .then((response) => {
 
-                  const responseRest = new ResponseTOU(this);
-
-                  let s = responseRest.handler(response);
-
-                  switch (s) {
-                    case '200':
-                      this.formatParagraphs(response);
-                      this.render();
-                      this.replace();
-                      // this.setFeedback('Ok');
-                      break;
-                    case '400':
-                      this.setFeedback('Bad Request');
-                      break;
-                    case '404':
-                      this.setFeedback('Not Found');
-                      break;
-                    default:
-                      // console.log('Unhandled response status ');
-                      this.addError(`Unhandled response status ${s}`);
-                  }
-
-                  this.addSpace();
-                  this.addEnd();
-                  this.showGraph();
+                  // [[TouGetHandler]]:
+                  // ||(get service.tou.output.touList)||:
+                  
+                  this.touGetHandler(response);
                   
                 })
                 .catch((err) => {
 
-                  console.error('Something unexpected happened (%s)!'.replace('%s', err))
+                  console.error('A Something unexpected happened (%s)!'.replace('%s', err))
                 });
-
-              ////////////
               
           })
           .catch((err) => {
-              console.error('Something unexpected happened (%s)!'.replace('%s', err));
+              console.error('B Something unexpected happened (%s)!'.replace('%s', err));
           });
-      
+    // [[End]]:  
       
   },
   methods: {
+    // [Show]: /tou
+    // |not(/tou)|: Show, [*]
+
+    // [*Show]: /tou
+
+    // [[Start]]:
+    // [[TouDocument]]: touList, communityList
+
+    getFeedback() {
+      return this.page.feedback;
+    },
     setFeedback(msg) {
-      this.feedback = msg;
-    },
-    replace() {
-      this.config.body = this.config.body.replace('[[communities]]', this.renderCommunity());
-    },
-    renderCommunity() {
-      let rc = '<ul>';
-      let lst = this.getCommunityList();
-
-      for (let i in lst) {
-        rc += `<li class="list-item-bullet"><i>${lst[i].name}</i></li>`;
-      }
-      rc += '</ul>';
-      rc += '<br/>';
-
-      return rc;
-    },
-    
-    render() {
-      let ex = '';
-      let ln = '';
-      let renderedHtml = '';
-      for (let i in this.getMarkdown()){
-        
-        ln = this.getMarkdown(i);
-
-        if (this.stack.length > 0) {
-          if (!ln.startsWith('* ')) {
-            ex = this.stack.pop();
-          }
-        }
-
-        if (ln.startsWith('# ')) {
-           renderedHtml += `<h1 class="title">${ln.replace('#','')}</h1>`;
-        }
-        else if (ln.startsWith('## ')) {
-          renderedHtml +=  `<h2 class="subtitle">${ln.replace('##','')}</h2>`;
-        }
-        else if (ln.startsWith('### ')) {
-          renderedHtml +=  `<h3>${ln.replace('###','')}</h3>`;
-        }
-        else if (ln.startsWith('#### ')) {
-          renderedHtml +=  `<h4>${ln.replace('####','')}</h4>`;
-        }
-        else if (ln.startsWith('##### ')) {
-          renderedHtml +=  `<h5>${ln.replace('#####','')}</h5>`;
-        }
-        else if (ln.startsWith('###### ')) {
-          renderedHtml +=  `<h6>${ln.replace('######','')}</h6>`;
-        }
-        else if (ln.startsWith('* ')) {
-          if (this.stack.length === 0) {
-            this.stack.push('</ul>')
-            this.renderedHtml += '<ul>'
-          }
-          renderedHtml += `<li class="list-item-bullet"><i>${ln.replace('*','')}</i></li>`;
-        }
-        else {
-          renderedHtml += `<p class="description">${ln}</p>`;
-        }
-
-      } // for
-      this.config.body = renderedHtml;
+      this.page.feedback = msg;
     }
+    // [[End]]:
   }
 }
+// [End]:
 </script>
 <style scoped>
-  ul.nobullets {
+  /*ul.nobullets {
     list-style-type: none;
+  }*/
+  .subtitle {
+  font-weight: 300;
+  font-size: 21px;
+  color: #526488;
+  word-spacing: 5px;
+  padding-left: 0px;
+  padding-right: 15px;
+  padding-bottom: 15px;
+}
+/*
+  ul {
+    list-style: none;
+    padding: 10px;
+  }
+ */
+ li {
+    padding-left: 20px;
   }
   .document {
     font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,

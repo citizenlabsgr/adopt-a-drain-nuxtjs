@@ -4,10 +4,14 @@ class ResponseAdoptees extends ResponseRest {
   // consistant interface with AAD API Web Services
   // dont be tempted to put process code here. put in calling component
 
+  constructor () {
+    super('Adoptees');
+  }
+  /*
   constructor (component) {
     super(component,'Adoptees');
   }
-
+  */
   ///////////////
   // ResponseAdoptees
   /////////

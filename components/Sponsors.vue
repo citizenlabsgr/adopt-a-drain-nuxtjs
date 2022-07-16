@@ -1,4 +1,6 @@
+
 <template>
+<!-- Deprecated -->
   <div class="band">
     <h1 class="title">
       {{ title }}
@@ -26,7 +28,7 @@ export default {
 </script>
 
 <style scoped>
-<style scoped>
+
 .band {
   width: 100%;
   background-color: #ffffff;

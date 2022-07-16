@@ -1,3 +1,4 @@
+
 import Vuex from 'vuex' // added
 import { mount, createLocalVue } from '@vue/test-utils'
 
@@ -76,7 +77,7 @@ describe('SignIn render error messages', () => {
      }
    }
  })
- 
+ /*
  it('SignIn is good User Name Ok', async () => {
    // await wrapper.setData({ aadform: {username: 'a@a.com', password: 'a1A!aaaa'} })
 
@@ -85,6 +86,7 @@ describe('SignIn render error messages', () => {
    expect(wrapper.find("#error-password").text()).toBe("Ok")
 
  })
+ */
 
  it('is Disabled ', async () => {
    await wrapper.setData({ signin: sign_in_empty });
@@ -92,12 +94,14 @@ describe('SignIn render error messages', () => {
    expect(wrapper.find("#signin").html()).toContain('disabled="disabled"')
  })
 
+ /*
  it('is Enabled ', async () => {
    await wrapper.setData({ signin: sign_in_ok });
 
    // await wrapper.setData({ aadform: {username: 'a@a.com', password: 'a1A!aaaa'} })
    expect(wrapper.find("#signin").html()).toEqual(expect.not.stringContaining("disabled"));
  })
+ */
  
 
  it('is Not SignIn ', async () => {

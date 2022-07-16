@@ -4,17 +4,28 @@ import { MapHelper } from '@/components/mixins/map/MapHelper.js'
 export default {
   data () {
     return {
-      name: 'GoogleMapMixin',
+      name: "GoogleMapMixin",
       map: false,
+      service: {
+        map: {
+          get: {
+            response: {
+              "mapObject":"mapObject"
+            },
+            output: {
+              "mapObject":"mapObject"
+            }
+          }
+        }
+      },
       settings: {
-        drains: {},
         delay: 20,
         options: {
-          randy: 'X',
-          title: 'Adoption',
-          subtitle: 'Find a drain near you and adopt it.',
-          map_type_id: 'terrain',
-          center: { lat: 42.9634, lng: -85.6681 },
+          randy: "X",
+          title: "Adoption",
+          subtitle: "Find a drain near you and adopt it.",
+          map_type_id: "terrain",
+          center: { "lat": 42.9634, "lng": -85.6681 },
           zoom: 16,
           zoomMax: 10,
           zoomMin: 20,
@@ -27,13 +38,13 @@ export default {
           streetViewControl: true,
           zoomControl: true
         },
-        max_center_box_area: 0.00005,
-        center_box: {},
-        drain_buffer: [], // a cache of drain data, defined before showing on map
+        maxCenterBoxArea: 0.00005,
+        centerBox: {"west": -84.3, "east": -84.0, "north": 42.3, "south": 42.0},
+        drainBuffer: [], 
         markers: [],
-        view_box: {}
+        viewBox: {"west": -84.3, "east": -84.0, "north": 42.3, "south": 42.0}
       }
-    };
+    }
   },
   computed: {
     /*
@@ -42,47 +53,50 @@ export default {
       return new MapHelper( this );
     },
     */
-  }, // computed
+  }, 
+
   methods: {
     getMap() {
       return this.map;
     },
+    
     setMap(map){
-      if (this.graph) {
-        this.addGlyph(this.down,' [ Set Map ] ');
-        this.addSpace();
-      }
+      // if (this.graph) {
+      //   this.addGlyph(this.down,' [ Set Map ] ');
+      //   this.addSpace();
+      // }
       this.map = map;
     },
+
     panTo(lon, lat) {
-      if (this.graph) {
-        this.addGlyph(this.down, ' [ Pan Map ] ');
-      }
+      // if (this.graph) {
+      //   this.addGlyph(this.down, ' [ Pan Map ] ');
+      // }
+      
       let latLng = new this.google.maps.LatLng(lat, lon); //Makes a latlng
   
       this.getMap().panTo(latLng);
 
     },
 
-    //// request
     async googleMapGetRequest(){
-      if (this.graph) {
-        this.addRequestService('GET', 'Map', 'location');
-        // this.addSpace();
-      }
+      // if (this.graph) {
+      //   this.addRequestService('GET', 'Map', 'location');
+      //  // this.addSpace();
+      // }
 
       return await this.$refs.mapRef.$mapPromise;
-    }, // GET
-    //// response
+    }, 
+    
     googleMapGetHandler(responseMap, location) {
-      if (this.graph) {
-        this.addResponseService('GET', 'Map', 'map');
-        this.addPassFail('Map','not found');
+      // if (this.graph) {
+      //  this.addResponseService('GET', 'Map', 'map');
+      //  this.addPassFail('Map','not found');
 
-      }
-      /////////////////
+      // }
+      // console.log(responseMap);
       // center the map on user location when browser supports
-      ////////////
+
       // console.log('responseMap ',responseMap);
       if (location) {
         let pos = {
@@ -97,44 +111,44 @@ export default {
       const form_init_handler = this.form_init_handler;
       // set up a listener and wait for the DOM to load
       // info Helper attaches forms for the infowindow
-      if (this.graph) {
-        this.addGlyph(this.down,     ' [ Setup map click listeners ] ');
-        this.addSpace();
-      }
-      // [ Set Map Listener ]
+      // if (this.graph) {
+      //   this.addGlyph(this.down,     ' [ Setup map click listeners ] ');
+      //   this.addSpace();
+      // }
+      // Set Map Listener 
       google.maps.event.addListener(
         this.info_window,
         'domready',
         this.form_init_handler
       );
-      /////////////
+
       // load markers
-      /////////////
+
       this.setMap(responseMap);
 
       const mapHelper = new MapHelper( this );
       // mounted() sets the center use geolocation if possible
       // prepare seach boundary for query
       // graph.addSpace();
-      this.addGlyph(this.down, ' [ Get Map Center ] ');
-      this.addSpace();
+      // this.addGlyph(this.down, ' [ Get Map Center ] ');
+      // this.addSpace();
 
-      // [ Get User Location ]
+      // Get User Location
       const center = mapHelper.map.get('center');
 
-      if (this.graph) {
-        this.addGlyph(this.down, `  (lat, lgn) `);
-        this.addSpace();
-      }
+      // if (this.graph) {
+      //   this.addGlyph(this.down, `  (lat, lgn) `);
+      //   this.addSpace();
+      // }
 
       let cBox = mapHelper.map.getBounds();
 
-      if (!cBox) { // patch up center_box
+      if (!cBox) { // patch up centerBox
         cBox = this.boxify( center );
       }
       this.setViewBox(cBox);
 
-    }, // googleMapGetHandler
+    }, 
 
     getCenter() {
       return $refs.mapRef.$mapObject.getCenter();
@@ -148,8 +162,9 @@ export default {
       // let cBox = mapHelper.map.getBounds();
       let cBox = this.getBounds();
 
-      if (!cBox) { // patch up center_box
-        cBox = this.boxify( center );
+      if (!cBox) { // patch up centerBox
+        // console.log('center', this.settings.options.center);
+        cBox = this.boxify( this.settings.options.center );
       }
 
       this.setViewBox(cBox);
@@ -170,7 +185,7 @@ export default {
         south: pnt.lat() - (dy / 2.0)
       }
       return centerBox
-    }, // boxify
+    }, 
 
     markerImage ( type ) {
       if (!this.google) {
@@ -206,7 +221,7 @@ export default {
       }
 
       return image
-    }, // markerImage
+    }, 
 
     getBounds() {
       // return this.map.getBounds()
@@ -217,7 +232,7 @@ export default {
       return this.$refs.mapRef.$mapObject.getCenter();
     },
     getViewBox() {
-      return this.view_box;
+      return this.viewBox;
     },
 
     setViewBox ( box ) {
@@ -252,7 +267,7 @@ export default {
         box.east += bumpX
         area_ = (box.north - box.south) * (Math.abs(box.west) - Math.abs(box.east))
       }
-      this.view_box = box;
+      this.viewBox = box;
       return this;
     },
     marker( form ) {
@@ -260,7 +275,7 @@ export default {
       return new google.maps.Marker(form)
     },
     getMaxArea(){
-      return this.settings.max_center_box_area
+      return this.settings.maxCenterBoxArea
     }
-  } // Methods
+  } 
 }

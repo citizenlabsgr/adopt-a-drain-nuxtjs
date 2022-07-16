@@ -4,11 +4,11 @@ export default {
   data () {
     return {
       interval_monitor_expiration: null
-    };
+    }
   },
   methods: {
     setCurrentToken(token, graph=false) {
-      if (graph) {
+      // if (graph) {
         // graph.addPassFail('Authorize');
         /*
         graph.addGlyph('    | ','    | ');
@@ -17,11 +17,11 @@ export default {
         graph.addGlyph('    | ','  (success) ');
         graph.addGlyph('    | ','    | ');
         */
-        graph.addGlyph(' [ Authorize ] ',' [ Set Current Token State ] ');
-        graph.addSpace();
+        // graph.addGlyph(' [ Authorize ] ',' [ Set Current Token State ] ');
+        // graph.addSpace();
         // graph.addGlyph(graph.down,graph.down);
 
-      }
+      // }
       /* console.log(`
              (token)
                 |

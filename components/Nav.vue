@@ -47,6 +47,22 @@
 
 </template>
 <script>
+// [.Nav]:
+// [Start]:
+// |/*|:  
+// [Adoptions]: /
+
+// [Communities]: isModalVisible
+// |not(authenticated)|: Communities, Signup
+// |authenticated|: Communities, MyAdoptees
+
+// [Signup]: /adopter
+// [Signin]: isModalVisible
+// |not(authenticated)|: Signin, [*] 
+
+// [MyAdoptees]: isModalVisible
+// [SignOut]: isModalVisible
+// [End]:
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
 import MyAdoptees from '@/components/MyAdoptees'
@@ -64,9 +80,8 @@ export default {
   },
   data () {
     return {
-
-      title: 'Sponsors',
-      subtitle: 'We can\'t do this alone.'
+      title: "Sponsors",
+      subtitle: "We can't do this alone."
     }
   }
 }

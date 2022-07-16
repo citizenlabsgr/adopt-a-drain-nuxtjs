@@ -1,20 +1,61 @@
+import { ResponseHelper } from '@/components/mixins/ResponseHelper.js';
 
 export default {
   data () {
     return {
-      name: 'CommunityMixin',
-      communityList: []
+      name: "CommunityMixin",
+      service: {
+        community: {
+          response: [
+            {
+              "dr_jurisdiction": "name",
+              "count": "count",
+              "lat": "lat",
+              "lon": "lon"
+            }
+          ],
+          mapping: {
+            "name": "dr_jurisdiction",
+            "count": "count",
+            "lat": "lat",
+            "lon": "lon"
+          },
+          output: {
+            communityList: [
+              {
+                "name": "name",
+                "count": 0,
+                "lat": 0.0,
+                "lon": 0.0
+              }
+            ]
+          }
+        }
+      }
     }
-  }, // data
+  }, 
+  
   methods: {
     getCommunityList() {
-      return this.communityList;
+      return this.service.community.output.communityList;
     },
-    async communityGetRequest () {
+    getCommunityMapping() {
+      return this.service.community.mapping;
+    },
+    // getCommunityMappingKey() {
+    //  return this.service.community.mapping;
+    // },
+    // resetCommunityList() {
+    resetCommunityList() {
+      this.service.community.output.communityList.length = 0;  
+    },
+    setCommunityDatum(datum) {
+      this.service.community.output.communityList.push(datum)
+    },
 
-          if (this.graph) {
-            this.addRequestService('GET', 'Community');
-          }
+    async communityGetRequest () {
+      // console.log('communityGetRequest 1');
+
           const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
                             .replace('%x', process.env.DW_TABLE);
           const dwToken = process.env.DW_AUTH_TOKEN;
@@ -34,25 +75,13 @@ export default {
     },
 
     communityGetHandler (response) {
-
-          if (this.graph) {
-            this.addResponseService('GET', 'Community', this.formatOutput(response.data));
-            this.addPassFail('Community','400','404');
-          }
-          for (let i in response.data) {
-            let jur = response.data[i].dr_jurisdiction;
-            let cnt = response.data[i].count;
-            let lat = response.data[i].lat;
-            let lon = response.data[i].lon;
-
-            this.communityList.push({name: jur, count: cnt, lat: lat, lon:lon});
-
-          } // end for
-          if (this.graph) {
-            this.addSpace();
-            this.addGlyph(this.down,this.down, ` [ Processed ${this.communityList.length} ${this.name} ] `);
-          }
+          // console.log('communityGetHandler 1 ', response);
+          let handler = new ResponseHelper(response);
+          
+          handler.resetOutput(this.getCommunityList());
+          
+          handler.transfer(this.getCommunityMapping(), this.getCommunityList());
     }
-
+    
   } // methods
 }

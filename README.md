@@ -36,9 +36,9 @@
 #### Strategies   
 | Strategy | Goal IDs
 | :------ | --------
-| Replace Ruby with Nuxtjs (nodejs) | G1, G2         
-| Decouple app from data using Hapi APIs | G1, G2 |
-| Replace the current application's user interface with a Single page design | G3,G4 |
+| Replace Ruby with Nuxt (Node.js) | G1, G2         
+| Decouple app from data using hapi APIs | G1, G2 |
+| Replace the current application's user interface with a single-page design | G3, G4 |
 | Establish Test Driven Development | G2 |
 
 #### Project Guides:

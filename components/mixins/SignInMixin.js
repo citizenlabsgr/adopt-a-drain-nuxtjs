@@ -1,5 +1,4 @@
-import atob from 'atob';
-// import { DWHandlers } from '@/components/mixins/DWHandlers.js'
+
 import { ResponseHelper } from '@/components/mixins/ResponseHelper.js';
 
 export default {

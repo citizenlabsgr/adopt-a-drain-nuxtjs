@@ -9,7 +9,7 @@
       <template v-slot:sub-title>{{page.subtitle}}</template>
       <template v-slot:body>
         <ul>
-          <li v-for="item in getCommunityList()"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}} ({{item.count}})</a></li>
+          <li v-for="item in getCommunityList()"  :key="item.name"><a @click="onClickGoPoint(item.lon,item.lat)">{{item.name}} ({{item.count}})</a></li>
         </ul>
       </template>
       <template v-slot:footer>

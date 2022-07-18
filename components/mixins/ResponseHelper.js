@@ -152,7 +152,9 @@ class ResponseHelper {
         //     output.length = 0; // reset list
         // }    
         for (let i =0; i < this.data().length; i++) {
+
             // console.log('i ', i, ' ', this.data()[i]);
+            
             let datum = {}; 
             let values = this.data()[i];
             for (let key of Object.keys(mapping)) {
@@ -167,13 +169,15 @@ class ResponseHelper {
             if (inArray && outArray) { // list to list, [] -> []
                 // assume first item is 
                 // append
-                // console.log('inn && out push ', datum);
+                // console.log('A inn && out push ', datum);
                 // make independent copy 
                 output.push(JSON.parse(JSON.stringify(datum)));
             } else if(inArray && !outArray) { // list to dictionary [] -> {}
                 // assign last in array  
                 // at this point, datum has same keys as mapping 
                 // trans last row of data
+                // console.log('B inn && not out ', datum);
+
                 for (let key of Object.keys(datum)) {
                     output[key] = datum[key]
                 }
@@ -185,6 +189,7 @@ class ResponseHelper {
                 // leaves output keys not in datum
                 // adds datum items not defined in output
                 // copy datum obects via copy 
+
                 for (let key of Object.keys(datum)) {
                     if (typeof datum[key] === "object") {
                         output[key] = JSON.parse(JSON.stringify(datum[key]));

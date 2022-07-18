@@ -60,7 +60,7 @@ import Expiration from  '@/components/mixins/expiration/ExpirationMixin.js';
 
 import { InfoHelper } from '@/components/mixins/map/InfoHelper.js';
 // fix me
-import { MapHelper } from '@/components/mixins/MapHelper.js';
+import { MapHelper } from '@/components/mixins/map/MapHelper.js';
 
 import { Utils } from '@/components/mixins/Utils.js';
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';

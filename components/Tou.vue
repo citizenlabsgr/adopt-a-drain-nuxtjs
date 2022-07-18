@@ -79,10 +79,10 @@ export default {
 
     // [[CommunityGetRequest]]:
     // ||(get service.community.response)||:
-
+        // console.log('TOU mounted 1');
         this.communityGetRequest ()
           .then((response) => {
-
+              // console.log('TOU comm response ', response);
               // [[CommunityGetHandler]]:
               // ||(get service.community.output.communityList)||:
               this.communityGetHandler (response);
@@ -95,12 +95,10 @@ export default {
 
               this.touGetRequest(owner,id)
                 .then((response) => {
-
                   // [[TouGetHandler]]:
                   // ||(get service.tou.output.touList)||:
-                  
+                  // console.log('TOU response ', response);
                   this.touGetHandler(response);
-                  
                 })
                 .catch((err) => {
 

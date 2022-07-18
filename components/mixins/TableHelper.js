@@ -1,3 +1,4 @@
+/*
 class TableHelper {
   constructor (table_key, component) {
     // component is the nuxt component
@@ -19,3 +20,4 @@ class TableHelper {
 }
 
 export { TableHelper }
+*/

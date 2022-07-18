@@ -58,15 +58,18 @@ export default {
 
           const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
                             .replace('%x', process.env.DW_TABLE);
+                            
           const dwToken = process.env.DW_AUTH_TOKEN;
-
+          
           const dwURL = process.env.DW_DRAIN_URL;
+                    
           const dwData = { query: queryStr, includeTableSchema: false }
+
           const dwHeaders = {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer %s'.replace('%s', dwToken)
           }
-
+          // post insted of guest
           return await this.$axios({
                 url: dwURL,
                 method: 'post',

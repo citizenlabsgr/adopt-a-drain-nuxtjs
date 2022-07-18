@@ -56,10 +56,12 @@ import { gmapApi } from '@/node_modules/vue2-google-maps/src/main';
 import Expiration from  '@/components/mixins/expiration/ExpirationMixin.js';
 // import AdptMixin from '@/components/mixins/AdopteeMixin.js';
 // classes
-import { DWHandlers } from '@/components/mixins/DWHandlers.js';
+// import { DWHandlers } from '@/components/mixins/DWHandlers.js';
 
 import { InfoHelper } from '@/components/mixins/map/InfoHelper.js';
-import { MapHelper } from '@/components/mixins/MapHelper.js';
+// fix me
+import { MapHelper } from '@/components/mixins/map/MapHelper.js';
+
 import { Utils } from '@/components/mixins/Utils.js';
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
 import GraphMixin from '@/components/mixins/graph/GraphMixin.js';
@@ -67,10 +69,9 @@ import LocationMixin from '@/components/mixins/location/LocationMixin.js';
 import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js';
 
 import DatumDictionaryMixin from '@/components/mixins/datum/DatumDictionaryMixin.js';
-import { YoursDatum } from '@/components/mixins/datum/DatumYours.js';
-
-import { AdopteeDatum } from '@/components/mixins/datum/DatumAdoptee.js';
-import { OrphanDatum } from '@/components/mixins/datum/DatumOrphan.js';
+import { YoursDatum }       from '@/components/mixins/datum/DatumYours.js';
+import { AdopteeDatum }     from '@/components/mixins/datum/DatumAdoptee.js';
+import { OrphanDatum }      from '@/components/mixins/datum/DatumOrphan.js';
 
 import DrainMixin from '@/components/mixins/drain/DrainMixin.js';
 
@@ -105,11 +106,13 @@ export default {
   },
   computed: {
     google: gmapApi,
+    /*
     dwHandlers () {
       // Objective: Separate UI and data
       // Strategy: use class to encapsulate restful call to data.world
       return new DWHandlers(this)
     },
+    */
     dwGuestHeader () {
       // Objective: Separate UI and data
       // Strategy: use open restful call to data.world
@@ -526,7 +529,7 @@ export default {
 
             // let datum = this.getDataAdpt()[i];
             let datum = this.getDatumDictionary()[i];
-
+            
             let id = datum.getId();
             let data = datum.getDataCopy();
             let owner = datum.getKey();
@@ -560,7 +563,6 @@ export default {
                         this.addDatum(new AdopteeDatum(id, data, owner, this));
                         break;
                 }
-
             }
         }
     },

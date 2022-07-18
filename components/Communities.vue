@@ -89,7 +89,7 @@ export default {
     // [[CommunityLinks]]: communityList, moveMap
     // [[End]]:
     onClickGoPoint(lon, lat) {
-  
+      // console.log('onClickGoPoint 1');
       // this.addEmit('click-go-point');
       this.$nuxt.$emit('click-go-point',lon, lat);
     },

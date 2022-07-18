@@ -145,7 +145,7 @@ export default {
     created() {
     // adds the event listener function that will handle the event
     this.$nuxt.$on('userLoggedIn', () => {
-      console.log('User logged in!')
+      // console.log('User logged in!')
       // do something...
       this.loggedIn = true
     })
@@ -354,7 +354,7 @@ export default {
             this.adopteePostHandler(response);
           })
           .catch((err) => {
-            console.log('Adoption', err);
+            console.error('Adoption', err);
           });
 
       this.info_window.close();
@@ -434,10 +434,7 @@ export default {
     },
 
     onSignOut() {
-       console.log(`
-       [onSignOut]
-          |
-       `);
+
        this.signOut();
        this.closeModal();
     },

@@ -149,9 +149,7 @@ export default {
     }
   },
   mounted() {
-
-    // this.addMount(this.name); // graph
-    // #|authenticated|: Config, Load
+    // console.log('adopterGetRequest mounted 1');
 
     // [Load]: 
     // |(get service.adopterGetRequest.response)|: Load, Show 
@@ -163,26 +161,33 @@ export default {
     // ||authenticated||: [*], AdopterGetRequest
     
     this.$nextTick(function () {
+        // console.log('adopterGetRequest mounted 2');
       
       if (this.isAuthenticated) {
-        
+        // console.log('adopterGetRequest mounted 3');
+
         const owner = this.payload.key;
         const id = this.payload.user;
         
         // ||(get service.adopterGetRequest.request)||: AppState, AdopterGetRequest
         // [[AdopterGetRequest]]: 
         // ||(get service.adopterGetRequest.response)||: 
+
         this.adopterGetRequest(owner,id)
               .then((response) => {
-                // console.log('adopterGetRequest', response);
+                // console.log('adopterGetRequest mounted 4');
+
                 // [[AdopterGetHandler]]:
                 this.adopterGetHandler(response);
-                // console.log('adopterGetHandler', response);
+        
+                // console.log('adopterGetRequest mounted 5');
 
-                      // console.log('mounted 4');
+                // console.log('mounted 4');
                 // ||"(form)"||: 
 
                 this.adopterTransferGetData(this.form);
+                // console.log('adopterGetRequest mounted 6 ');
+
               })
               .catch((err) => {
                   console.error('Something unexpected happened (%s)!'.replace('%s', err))
@@ -261,30 +266,38 @@ export default {
     // [[End]]:
 
     onSubmit (e) {
-
+      // console.log('Adopter onSubmit 1');
       // onSubmit
       const original_id = this.payload;
-      // console.log('onSubmit original_id', this.payload);
       if (!this.isValidForm()) {
         // this.setFeedback('Missing Info!')
         return undefined
       }
+      
+      // console.log('Adopter onSubmit 2');
+
       const form = JSON.parse(JSON.stringify(this.form)) // copy
       const claims = this.payload;
       const owner = claims.key;
       //  (upsert, owner, id, form) -->
       if(this.payload.key === "0") {
-        // console.log('Post');
+        // console.log('Adopter onSubmit 3 post');
         this.adopterPostRequest (form) 
         .then((response) => {
+          
+          // console.log('Adopter onSubmit 3.1 post ', response);
           this.adopterPostHandler(response);
+        
         });
       } else {
-        // console.log('PUt');
+        // console.log('Adopter onSubmit 4 put');
         let id = original_id.user ; // email
         this.adopterPutRequest (owner, id, form) 
         .then((response) => {
+          
+          // console.log('Adopter onSubmit 4.1 put ', response);
           this.adopterPutHandler(response);
+
         });
       }
       

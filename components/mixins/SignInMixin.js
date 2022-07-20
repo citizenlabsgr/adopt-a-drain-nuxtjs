@@ -11,7 +11,7 @@ export default {
       service: {
         "signInPostRequest": {
           "request": {
-            "username": "j@citizenlabs.org", 
+            "username": "j@citizenlabs.org",
             "password": "a1A!aaaa"
           },
           "response":{
@@ -22,7 +22,7 @@ export default {
     }
   },
   methods: {
-    
+
     async signInPostRequest(form) {
       // aka signin, or login
       const aadUrl = `${process.env.AAD_API_URL}/signin`;
@@ -36,14 +36,14 @@ export default {
             url: aadUrl,
             method: 'post',
             headers: aadHeaders,
-            data: aadData 
+            data: aadData
       });
     },
 
     signInPostHandler(response) {
         // this.statusSignIn = response.data.status;
         // this.msgSignIn = response.data.msg;
-        
+
         const helper = new ResponseHelper(response);
         let status = helper.status(); // this.response.data.status;
         let msg = helper.msg();
@@ -71,8 +71,7 @@ export default {
            this.msgSignin = "Not sure what just happened!";
            console.error(`signInPostHandler Not sure what just happened! ${status} ${msg}`);
         }
-
-
+        // console.log('signInPostHandler out');
     }
   },
 }

@@ -14,7 +14,7 @@ class ResponseHelper {
         if (this.response.status === 200) {
             rc = "200";
             if (this.response.data) {
-                if (this.response.data.status) { 
+                if (this.response.data.status) {
                     rc = this.response.data.status;
                 }
             }
@@ -34,9 +34,9 @@ class ResponseHelper {
         }
         return rc;
     }
-    
+
     data() {
-        // handle get, post, put, delete 
+        // handle get, post, put, delete
         // expect contents below data.selection, data.insertion, data.deletion, data.updation
         // service interfaces are inconsistant
         // console.log('    ResponseHelper data 1');
@@ -57,7 +57,7 @@ class ResponseHelper {
                         if (this.response.data) {
                             // adjust for inconsistant the source services
                             // be better!
-                            if (this.response.data.insertion) {    
+                            if (this.response.data.insertion) {
                                 rc = this.response.data.insertion;
                             } else if (this.response.data.selection) {
                                 rc = this.response.data.selection;
@@ -65,7 +65,7 @@ class ResponseHelper {
                                 rc = this.response.data;
                             }
                         }
-                    } 
+                    }
                 }  else if (this.status() === '409') {
                     // console.log('        helper data 4.1.3');
 
@@ -97,6 +97,7 @@ class ResponseHelper {
         // given data: [{name: "JTW"}]
         // arrays are refed like "data.0.name"
         let rc = '';
+        // console.log('getValue keys ', keys);
         let path = keys.split('.');
         // console.log('valueObject ', valueObject);
         // console.log('path ', path);
@@ -111,6 +112,7 @@ class ResponseHelper {
                 rc = valueObject[path[0]][path[1]][path[2]];
             break;
             case 4:
+              console.log('path ', path);
                 rc = valueObject[path[0]][path[1]][path[2]][path[3]];
                 break;
             case 5:
@@ -118,7 +120,7 @@ class ResponseHelper {
                 break;
             case 6:
                 rc = valueObject[path[0]][path[1]][path[2]][path[3]][path[4]][path[5]];
-                break;    
+                break;
             default:
                 throw new Error(`Unknown path ${keys}`);
         }
@@ -127,54 +129,54 @@ class ResponseHelper {
     resetOutput(output) {
          // reset output array when needed
          if (Array.isArray(output)) { // list to list
-            // stash first 
+            // stash first
             output.length = 0; // reset list
-        } 
+        }
     }
     transfer(mapping, output) {
         // console.log('transfer 1');
         // rrmo is {request, response, mapping, output}
 
         // console.log('transfer mapping ', mapping);
-        
-        // console.log('transfer data() ', this.data());        
+
+        // console.log('transfer data() ', this.data());
         // console.log('transfer data type ', typeof this.data());
         // console.log('transfer data isArray ', Array.isArray(this.data()));
 
         // console.log('transfer output type ', typeof output);
         // console.log('transfer output isArray ', Array.isArray(output));
-        
+
         let inArray = Array.isArray(this.data());
         let outArray = Array.isArray(output);
         // reset output array when needed
         // if (outArray) { // list to list
-        //     // stash first 
+        //     // stash first
         //     output.length = 0; // reset list
-        // }    
+        // }
         for (let i =0; i < this.data().length; i++) {
 
             // console.log('i ', i, ' ', this.data()[i]);
-            
-            let datum = {}; 
+
+            let datum = {};
             let values = this.data()[i];
             for (let key of Object.keys(mapping)) {
                 // get from key
                 let frKey = mapping[key];
-                // get from value 
-                let frVal = this.getValue(frKey, values);    
+                // get from value
+                let frVal = this.getValue(frKey, values);
                 // assign data to output
-                datum[key] = frVal; 
-            }    
+                datum[key] = frVal;
+            }
             // console.log('datum ', datum);
             if (inArray && outArray) { // list to list, [] -> []
-                // assume first item is 
+                // assume first item is
                 // append
                 // console.log('A inn && out push ', datum);
-                // make independent copy 
+                // make independent copy
                 output.push(JSON.parse(JSON.stringify(datum)));
             } else if(inArray && !outArray) { // list to dictionary [] -> {}
-                // assign last in array  
-                // at this point, datum has same keys as mapping 
+                // assign last in array
+                // at this point, datum has same keys as mapping
                 // trans last row of data
                 // console.log('B inn && not out ', datum);
 
@@ -188,7 +190,7 @@ class ResponseHelper {
                 // merge datum into output
                 // leaves output keys not in datum
                 // adds datum items not defined in output
-                // copy datum obects via copy 
+                // copy datum obects via copy
 
                 for (let key of Object.keys(datum)) {
                     if (typeof datum[key] === "object") {
@@ -200,7 +202,7 @@ class ResponseHelper {
             }
         }
         // console.log('output', output);
-        // dont use return output, output gets changed on return 
+        // dont use return output, output gets changed on return
         // return output;
     }
 }

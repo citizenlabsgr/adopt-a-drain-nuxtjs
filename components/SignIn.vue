@@ -32,7 +32,7 @@
           SignIn
         </button>
       </template>
-      
+
       <template v-slot:footer>
         SignIn
       </template>
@@ -67,7 +67,7 @@ export default {
     return {
       name: "SignIn",
       isModalVisible:false,
-      
+
       page: {
           "title": "Sign In",
           "subtitle": "Because",
@@ -88,12 +88,12 @@ export default {
             "regexp": Constants.password(),
             "warnings": [
               {
-                "test_exp":Constants.lowercase(), 
+                "test_exp":Constants.lowercase(),
                 "warning":"Lowercase",
                 "show":true
               },
               {
-                "test_exp":Constants.uppercase(), 
+                "test_exp":Constants.uppercase(),
                 "warning":"Uppercase",
                 "show":true
               },
@@ -103,11 +103,11 @@ export default {
                 "show":true
               },
               {
-                "test_exp":Constants.symbol(), 
+                "test_exp":Constants.symbol(),
                 "warning":"Symbols","show":true
               },
               {
-                "test_exp":Constants.eight_char(), 
+                "test_exp":Constants.eight_char(),
                 "warning":"Length greater than 8",
                 "show":true
               }
@@ -117,7 +117,7 @@ export default {
       }
     }
   },
-  
+
   methods: {
     // [Show]: isModalVisible, not(authenticated)
     // |isModalVisible=false|: Show, [*]
@@ -126,10 +126,10 @@ export default {
     // [*Show]: isModalVisible, not(authenticated)
     // [[Start]]:
     // ||(page)||:
-    // [[Title]]: 
-    // [[Subtitle]]: 
+    // [[Title]]:
+    // [[Subtitle]]:
     // [[Username]]: not(username)
-    // [[Password]]: not(password) 
+    // [[Password]]: not(password)
     // [[Feedback]]:
     // [[End]]:
 
@@ -143,7 +143,7 @@ export default {
       return !(this.is_password() && this.is_username())
     },
     is_password () { // true when not compliant, expects an email
-        
+
         for (let i in this.signin.form.password.warnings) {
           this.signin.form.password.warnings[i].show = !this.signin.form.password.warnings[i].test_exp.test(this.signin.form.password.value.trim());
         }
@@ -168,10 +168,10 @@ export default {
 
     closeModal() {
       // set all dialog to closed/false
-      
+
       this.isModalVisible = false;
     },
-    
+
     assembleForm() {
       return {
           username: this.signin.form.username.value,
@@ -180,16 +180,19 @@ export default {
     },
 
     onSignIn () {
+      // console.log('onSignIn 1');
       const form = this.assembleForm();
       // console.log('onSignIn signInPostRequest form ', form);
 
       this.signInPostRequest(form)
         .then((response) => {
-          // console.log('signInPostRequest', response);
+          // console.log('onSignIn 2', response);
           this.signInPostHandler(response);
+          // console.log('onSignIn 3');
         });
+      // console.log('onSignIn out');
     },
-    
+
     detoken () {
       // #|Detoken|:
       this.$store.commit('detoken')
@@ -197,9 +200,9 @@ export default {
   }
 }
 // #[SignIn-Handler]:
-// #[[Store-Authentication]]:     
+// #[[Store-Authentication]]:
 // #[[Goto-Map]]:
-// #[[Close-Modal]]:   
+// #[[Close-Modal]]:
 // #[State]:
 // [End]:
 

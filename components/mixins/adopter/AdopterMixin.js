@@ -1,5 +1,5 @@
-import { RequestAdopter } from '@/components/mixins/adopter/RequestAdopter.js';
-import { ResponseAdopter } from '@/components/mixins/adopter/ResponseAdopter.js';
+// import { RequestAdopter } from '@/components/mixins/adopter/RequestAdopter.js';
+// import { ResponseAdopter } from '@/components/mixins/adopter/ResponseAdopter.js';
 import { ResponseHelper } from '@/components/mixins/ResponseHelper.js';
 
 
@@ -13,7 +13,7 @@ export default {
         username:"",
         password:""
       },
-      
+
       feedback: "",
       service: {
         adopterGetRequest: {
@@ -49,8 +49,8 @@ export default {
         },
         adopterPutRequest: {
           request: {
-            "owner": "", 
-            "id": "", 
+            "owner": "",
+            "id": "",
             "form": {
               "displayname":"",
               "username":""
@@ -60,8 +60,8 @@ export default {
             "active": true,
             "created": "2022-07-12T18:48:51.485386",
             "form": {
-              "scope": "api_user", 
-              "username": "j@citizenlabs.org", 
+              "scope": "api_user",
+              "username": "j@citizenlabs.org",
               "displayname": "aax"
             },
             "owner": "44effb7e-0946-4bde-a00d-74d669b1d1e8",
@@ -83,8 +83,8 @@ export default {
             "active": true,
             "created": "2022-07-12T20:00:22.234527",
             "form": {
-              "scope": "api_user", 
-              "username": "c@citizenlabs.org", 
+              "scope": "api_user",
+              "username": "c@citizenlabs.org",
               "displayname": "a"
             },
             "owner": "92529cc6-e687-4326-9c6c-c59583ceeece",
@@ -133,47 +133,49 @@ export default {
     setFeedback(msg) {
       this.feedback = msg;
     },
-    
+
     // getAdopterWarning() {
     //   return this.mxWarning;
     // },
-    
+
     adopterTransferGetData(to) {
       to.displayname = this.mxForm.displayname;
       to.username = this.mxForm.username;
       to.password = this.mxForm.password;
     },
     /*
-            _             _             _____      _   
-           | |           | |           / ____|    | |  
-   __ _  __| | ___  _ __ | |_ ___ _ __| |  __  ___| |_ 
+            _             _             _____      _
+           | |           | |           / ____|    | |
+   __ _  __| | ___  _ __ | |_ ___ _ __| |  __  ___| |_
   / _` |/ _` |/ _ \| '_ \| __/ _ \ '__| | |_ |/ _ \ __|
- | (_| | (_| | (_) | |_) | ||  __/ |  | |__| |  __/ |_ 
+ | (_| | (_| | (_) | |_) | ||  __/ |  | |__| |  __/ |_
   \__,_|\__,_|\___/| .__/ \__\___|_|   \_____|\___|\__|
-                   | |                                 
-                   |_|                                 
+                   | |
+                   |_|
     */
 
-    async adopterGetRequest(owner, id) { // replaces loadAdopter  
+    async adopterGetRequest(owner, id) { // replaces loadAdopter
+      console.log('');
       const url = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`;
-      const headers = this.aadHeaderUser;      
+      const headers = this.aadHeaderUser;
       return await this.$axios({
         url: url,
         method: 'get',
         headers: headers});
     },
-    
+
     adopterGetHandler(response) {
       // console.log('adopterGetHandler 1', response);
-      
+      console.log('');
+
       const helper = new ResponseHelper(response);
       let status = helper.status(); // this.response.data.status;
       let msg = helper.msg();
       // console.log('adopterGetHandler 2 status ', status);
-     
+
       switch (status) {
             case '200':
-                
+
                 this.mxForm.displayname = response.data.selection[0].form.displayname;
                 this.mxForm.username = response.data.selection[0].form.username;
                 this.mxForm.password = '';
@@ -181,25 +183,25 @@ export default {
                 this.setFeedback(`Status: ${msg}`);
 
               break;
-            
-            default:          
+
+            default:
                 console.error(`adopterGetHandler Status: ${status} ${msg}`);
                 this.setFeedback(`Status: ${msg}`);
                 // this.mxWarning=`Unhandled response status ${status}`;
           }
     },
     /*
-            _             _            _____          _   
-           | |           | |          |  __ \        | |  
-   __ _  __| | ___  _ __ | |_ ___ _ __| |__) |__  ___| |_ 
+            _             _            _____          _
+           | |           | |          |  __ \        | |
+   __ _  __| | ___  _ __ | |_ ___ _ __| |__) |__  ___| |_
   / _` |/ _` |/ _ \| '_ \| __/ _ \ '__|  ___/ _ \/ __| __|
- | (_| | (_| | (_) | |_) | ||  __/ |  | |  | (_) \__ \ |_ 
+ | (_| | (_| | (_) | |_) | ||  __/ |  | |  | (_) \__ \ |_
   \__,_|\__,_|\___/| .__/ \__\___|_|  |_|   \___/|___/\__|
-                   | |                                    
-                   |_|                                                                    
+                   | |
+                   |_|
     */
     async adopterPostRequest (form) { // aka SignUp
-      // console.log('adopterPostRequest 1');
+      console.log('adopterPostRequest 1');
       const url = `${process.env.AAD_API_URL}/signup`;
       const headers = this.aadHeaderGuest;
       const data = form;
@@ -210,12 +212,12 @@ export default {
         url: url,
         method: 'post',
         headers: headers,
-        data: data  
+        data: data
       });
     },
-   
+
     adopterPostHandler(response) {
-      // console.error('adopterPostHandler 1');
+      console.error('adopterPostHandler 1');
       // console.log('response', response);
       const helper = new ResponseHelper(response);
       let status = helper.status(); // this.response.data.status;
@@ -223,50 +225,53 @@ export default {
       // console.log('adopterPostHandler data ', helper.data());
       switch (status) {
         case '200':
-            // console.log(helper.data()); 
+            // console.log(helper.data());
             this.setFeedback(`Status: ${msg}`);
           break;
-        
-        default:          
+
+        default:
             console.error(`adopterPostHandler Status: ${status} ${msg}`);
             this.setFeedback(`Status: ${msg}`);
             // this.mxWarning=`Unhandled response status ${status}`;
       }
     },
-    
+
    /*
-            _             _            _____       _   
-           | |           | |          |  __ \     | |  
-   __ _  __| | ___  _ __ | |_ ___ _ __| |__) |   _| |_ 
+            _             _            _____       _
+           | |           | |          |  __ \     | |
+   __ _  __| | ___  _ __ | |_ ___ _ __| |__) |   _| |_
   / _` |/ _` |/ _ \| '_ \| __/ _ \ '__|  ___/ | | | __|
- | (_| | (_| | (_) | |_) | ||  __/ |  | |   | |_| | |_ 
+ | (_| | (_| | (_) | |_) | ||  __/ |  | |   | |_| | |_
   \__,_|\__,_|\___/| .__/ \__\___|_|  |_|    \__,_|\__|
-                   | |                                 
-                   |_|                                 
+                   | |
+                   |_|
    */
     async adopterPutRequest (owner, id, form) {
-      // owner is the owner 
+      // owner is the owner
       // id is user email
-      // do not send password 
+      // do not send password
       // |(owner, id, form(displayname,scope,username))|:
       // [adopterPutRequest]:
       // |(active,created,form(displayname,scope,username),owner,pk,tk,updated)|:
+      console.log('adopterPutRequest 1');
 
 
       const url = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`;
       const headers = this.aadHeaderUser;
       const data = form;
       delete data['password'];
-      
+
       return await this.$axios({
         url: url,
         method: 'put',
         headers: headers,
-        data: data 
+        data: data
       });
     },
 
     adopterPutHandler(response) {
+      console.log('adopterPutHandler 1');
+
       const helper = new ResponseHelper(response);
       let status = helper.status(); // this.response.data.status;
       let msg = helper.msg();
@@ -275,23 +280,23 @@ export default {
         case '200':
             this.setFeedback(`Status: ${msg}`);
           break;
-        
-        default:          
+
+        default:
             console.error(`adopterPutHandler Status: ${status} ${msg}`);
             this.setFeedback(`Status: ${msg}`);
             // this.mxWarning=`Unhandled response status ${status}`;
       }
     },
-    
+
    /*
-            _             _            _____       _      _       
-           | |           | |          |  __ \     | |    | |      
-   __ _  __| | ___  _ __ | |_ ___ _ __| |  | | ___| | ___| |_ ___ 
+            _             _            _____       _      _
+           | |           | |          |  __ \     | |    | |
+   __ _  __| | ___  _ __ | |_ ___ _ __| |  | | ___| | ___| |_ ___
   / _` |/ _` |/ _ \| '_ \| __/ _ \ '__| |  | |/ _ \ |/ _ \ __/ _ \
  | (_| | (_| | (_) | |_) | ||  __/ |  | |__| |  __/ |  __/ ||  __/
   \__,_|\__,_|\___/| .__/ \__\___|_|  |_____/ \___|_|\___|\__\___|
-                   | |                                            
-                   |_|                                            
+                   | |
+                   |_|
    */
 
   }

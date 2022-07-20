@@ -185,7 +185,7 @@ export default {
       // # |datumDictionary|: Load, Show
       // #|(get service.output.datumDictionary)|: Load, Show
       // #|(get service.adopteeMBR.get.output.adopteeList)|: Load, Show
-        
+
       /*
       Objective: Initialize a map of drains
       Strategy: Use vuejs's mounted to initialize
@@ -206,9 +206,9 @@ export default {
       let defaultMapCenter = this.settings.center;
       this.locationGetRequest(defaultMapCenter) // REQUEST
         .then((response) => {
-          // [[LocationGetHandler]]: 
+          // [[LocationGetHandler]]:
           // ||(get service.location.get.output.location)||:
-                                
+
           this.locationGetHandler(response); // HANDLER
 
           // [[GoogleMapGetRequest]]:
@@ -221,7 +221,7 @@ export default {
               this.setMap(responseMap);
               this.googleMapGetHandler(responseMap, this.location); // HANDLER
               this.info_window.close(); // close open infowindow
-              
+
               // [[LoadDrains]]:
               // ||(get service.datumDictionary.output.datumDictionary)||:
 
@@ -229,7 +229,7 @@ export default {
 
               this.loadData();
               // ADOPTEES
-           
+
 
             }) // Ma p
             .catch((err) => {
@@ -239,7 +239,7 @@ export default {
         .catch((err) => {
           console.error('Unexpected issue locating you! ', err);
         })
-        // [[End]]:    
+        // [[End]]:
     },
 
   methods: {
@@ -247,9 +247,9 @@ export default {
       // Objective: Keep from downloading all the drains at one time
       // Strategy:
       // * Limit the number of drains to those that fall within a rectangle in middle of map screen
-      
+
       // #[LoadDrains]:
-      
+
       // [*LoadDrain]:
       // [[Start]]:
       // ||(get service.adopteeGetMBRRequest.request)||: [*], AdopteeGetMBRRequest
@@ -265,21 +265,21 @@ export default {
       // console.log('adopteeGetMBRRequest mbr ', mbr)
       this.adopteeGetMBRRequest(mbr)    // ADOPTEE
         .then((response) => {
-                
+
           // console.log('adopteeGetMBRHandler response ', response)
 
           // [[AdopteeGetMBRHandler]]:
           // ||(get service.datumDictionary.output.datumDictionary)||:
-          
+
           this.adopteeGetMBRHandler(response,mbr);
           // DRAINS
-              
+
           // [[DrainGetRequest]]:
           // ||(get service.drain.get.response)||:
           // console.log('drainGetRequest');
           this.drainGetRequest(mbr) // DRAIN
             .then((response) => {
-              
+
               // [[DrainGetHandler]]:
               // ||datumDictionary||: DrainGetHandler, [*]
 
@@ -312,12 +312,12 @@ export default {
                       // ||authenticated||: Adoptees, YourAdoptees
                       // ||not(authenticated)||:Adoptees, [*]
                       // [[YourAdoptees]]: adopt, orphan, rename
-                      
+
                       // [[End]]:
-                      
+
     updateKey() {
       this.keyy++;
-    },                
+    },
 
     // [*YourAdoptees]:
     // [[Start]]:
@@ -325,7 +325,7 @@ export default {
     // ||adopt||:  [*], AdopteePostRequest
     // ||rename||: [*], AdopteePutRequest
     // ||orphan||: [*], AdopteeDeleteRequest
-    
+
     onAdopt(datumId) {
 
       if (!this.datumDictionary) {
@@ -360,9 +360,9 @@ export default {
       this.info_window.close();
 
       this.$nuxt.$emit('load-my-adoptee-list');
-      
+
     },
-    
+
     onSave(datumId) {
       // [[AdopteePutRequest]]:
       if (!this.datumDictionary) {
@@ -393,7 +393,7 @@ export default {
         } );
 
       this.info_window.close();
-      
+
       this.$nuxt.$emit('load-my-adoptee-list');
 
     },
@@ -407,7 +407,7 @@ export default {
       const owner = this.payload.key;
       let drainObj = this.getDatum(datumId);
 
-      this.adopteeDelete(owner, datumId)
+      this.adopteeDeleteRequest(owner, datumId)
           .then((response) => {
             // [[AdopteeDeleteHandler]]:
             // ||"Delete Status"||: AdopteeDeleteHandler, LoadMyAdoptees
@@ -418,7 +418,7 @@ export default {
             console.error('onDelete err ', err);
           });
       this.info_window.close();
-      
+
       this.$nuxt.$emit('load-my-adoptee-list');
     },
     // [[LoadMyAdoptees]]:
@@ -526,7 +526,7 @@ export default {
 
             // let datum = this.getDataAdpt()[i];
             let datum = this.getDatumDictionary()[i];
-            
+
             let id = datum.getId();
             let data = datum.getDataCopy();
             let owner = datum.getKey();
@@ -588,7 +588,7 @@ export default {
           console.error('showSymbols ', err);
         }
     },
-  
+
   }
 }
 

@@ -143,56 +143,26 @@ export default {
         }
       }
     },
+
     computed: {
-    aadHeaderGuest () {
-      return {
-        "Accept":"application/json",
-        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
-        'Content-Type': 'application/json'
-      };
-    },
-    aadHeaderUser() {
-      return {
-        "Accept":"application/json",
-        'Authorization': `Bearer ${this.current_token}`,
-        'Content-Type': 'application/json'
+      aadHeaderGuest () {
+        return {
+          "Accept":"application/json",
+          'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+          'Content-Type': 'application/json'
+        };
+      },
+      aadHeaderUser() {
+        return {
+          "Accept":"application/json",
+          'Authorization': `Bearer ${this.current_token}`,
+          'Content-Type': 'application/json'
+        }
       }
-    }
-  },
+    },
+
   methods: {
-    getMapping(service) {
-      // console.log('mapping 1');
-      // comfigure the this.defaultService
 
-
-      if (this.service) {
-        if (this.service[service]){
-          if (this.service[service].mapping) {
-            // console.log('getMapping ', service);
-            return this.service[service].mapping;
-          }
-        }
-      }
-      // default
-      // console.log('default mapping');
-      return this.service[this.defaultService].mapping;
-    },
-
-    getOutput(service) {
-      // console.log('getOutput 1 ', service);
-      // console.log('getOutput 2 ', this.service[service].output);
-      // console.log('getOutput ', service);
-      if (this.service) {
-        if (this.service[service]){
-          if (this.service[service].output) {
-            // console.log('getMapping ', service);
-            return this.service[service].output;
-          }
-        }
-      }
-      // default
-      return this.service[this.defaultService].output;
-    },
     /*
             _             _             _____      _    ____
            | |           | |           / ____|    | |  / __ \
@@ -226,9 +196,9 @@ export default {
       // console.log('adopteeGetOwnerHandler 1');
       let handler = new ResponseHelper(response);
 
-      handler.resetOutput(this.getOutput("adopteeGetOwner"));
-      handler.transfer(this.getMapping("adopteeDefault"),
-                       this.getOutput("adopteeGetOwner"));
+      handler.resetOutput(this.getServiceList("adopteeGetOwner"));
+      handler.transfer(this.getServiceMapping("adopteeDefault"),
+                       this.getServiceList("adopteeGetOwner"));
 
       // const status = handler.status();
 

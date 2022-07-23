@@ -26,14 +26,15 @@
 // |/opportunities|: [*], Config
 // |AAD_API_TOKEN|: Env, Load
 
-// [Config]: 
+// [Config]:
 // |(page)|:
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
+import ServiceMixin from '@/components/mixins/service/ServiceMixin.js';
 import OpportunityMixin from '@/components/mixins/opportunity/OpportunityMixin.js';
 
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 export default {
-  mixins: [Expiration,OpportunityMixin],
+  mixins: [Expiration, ServiceMixin, OpportunityMixin],
 
   data () {
     return {
@@ -45,9 +46,10 @@ export default {
       }
     }
   },
+
   mounted () {
-    
-      // [Load]: 
+
+      // [Load]:
       // |"(page), (opportunityList)"|:
 
       // [*Load]:
@@ -57,17 +59,19 @@ export default {
 
       // [[OpportunityGet]]:
       // ||(get service.opportunity.response)||:
+      // console.log('mounted opportunityGetRequest ');
 
       this.opportunityGetRequest()
         .then((response) => {
           // [[OpportunityGetHandler]]:
+          // console.log('opportunityGetRequest response ', response);
           this.opportunityGetHandler(response);
           // ||(get service.opportunity.opportunityList)||:
         })
         .catch((err) => {
           console.error('opportunityGetRequest ', err);
         });
-      // [[End]]:  
+      // [[End]]:
   },
   methods: {
     // [Show]: /opportunities
@@ -75,8 +79,8 @@ export default {
 
     // [*Show]: /opportunities
     // [[Start]]:
-    // [[Title]]: 
-    // [[Subtitle]]: 
+    // [[Title]]:
+    // [[Subtitle]]:
     // [[Description]]:
     // [[OpportunityTitle]]:
     // [[Opportunities]]: opportunityList

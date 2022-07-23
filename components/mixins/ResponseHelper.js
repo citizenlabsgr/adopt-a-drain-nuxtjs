@@ -135,9 +135,8 @@ class ResponseHelper {
     }
     transfer(mapping, output) {
         // console.log('transfer 1');
-        // rrmo is {request, response, mapping, output}
-
         // console.log('transfer mapping ', mapping);
+        // console.log('transfer output ', output);
 
         // console.log('transfer data() ', this.data());
         // console.log('transfer data type ', typeof this.data());
@@ -149,12 +148,9 @@ class ResponseHelper {
         let inArray = Array.isArray(this.data());
         let outArray = Array.isArray(output);
         // reset output array when needed
-        // if (outArray) { // list to list
-        //     // stash first
-        //     output.length = 0; // reset list
-        // }
-        for (let i =0; i < this.data().length; i++) {
 
+        // console.log('transfer 2');
+        for (let i =0; i < this.data().length; i++) {
             // console.log('i ', i, ' ', this.data()[i]);
 
             let datum = {};
@@ -167,24 +163,32 @@ class ResponseHelper {
                 // assign data to output
                 datum[key] = frVal;
             }
-            // console.log('datum ', datum);
+
+
+          // console.log('datum ', datum);
             if (inArray && outArray) { // list to list, [] -> []
+              // console.log('transfer 3');
                 // assume first item is
                 // append
                 // console.log('A inn && out push ', datum);
                 // make independent copy
                 output.push(JSON.parse(JSON.stringify(datum)));
+              // console.log('transfer 3.1');
             } else if(inArray && !outArray) { // list to dictionary [] -> {}
                 // assign last in array
                 // at this point, datum has same keys as mapping
                 // trans last row of data
                 // console.log('B inn && not out ', datum);
+              // console.log('transfer 4');
 
                 for (let key of Object.keys(datum)) {
+                  // console.log('transfer 4.1');
+
                     output[key] = datum[key]
                 }
 
             } else if (!inArray && !outArray) { // dictionary to dictionary, {} -> {}
+              // console.log('transfer 5');
                 // assign
                 // console.log('!inn && !out assign');
                 // merge datum into output
@@ -201,6 +205,7 @@ class ResponseHelper {
                 }
             }
         }
+      // console.log('transfer out');
         // console.log('output', output);
         // dont use return output, output gets changed on return
         // return output;

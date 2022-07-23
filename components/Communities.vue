@@ -25,21 +25,22 @@
 // |isModalVisible|: [*], Config
 // |AAD_API_TOKEN|: Env, Load
 
-// [Config]: 
+// [Config]:
 // |(page)|: Config, Load
 
 // import config from '@/components/config/community.json';
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
+import ServiceMixin from '@/components/mixins/service/ServiceMixin.js'
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
 import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
 // import GraphMixin from '@/components/mixins/graph/GraphMixin.js';
-// import MermaidMixin from '@/components/mixins/mermaid/MermaidMixin.js'; 
+// import MermaidMixin from '@/components/mixins/mermaid/MermaidMixin.js';
 // Modals
 import ModalCommunities from '@/components/Modal.vue';
 /* istanbul ignore next */
 export default {
-  
-  mixins: [Expiration,GoogleMapMixin,ModalCommunities,CommunityMixin],
+
+  mixins: [Expiration, ServiceMixin, GoogleMapMixin,ModalCommunities,CommunityMixin],
   components: {
     ModalCommunities,
   },
@@ -52,40 +53,42 @@ export default {
         subtitle: "Together"
       },
       isModalVisible:false
-    }  
+    }
   },
+
   mounted () {
-      // [Load]: 
+      // [Load]:
       // |"((page), (communityList))"|:
-      
-      // [*Load]: 
+
+      // [*Load]:
       // [[Start]]:
       // ||isModalVisible||: [*], CommunityGet
       // ||AAD_API_TOKEN||: Env, CommunityGet
       // [[CommunityGet]]:
       // ||(get service.community.response)||:
-      
+
       this.communityGetRequest()
         .then((response) => {
           // [[CommunityGetHandler]]:
           this.communityGetHandler(response);
           // ||(get service.community.output.communityList)||:
-          
+
           // [[End]]:
         })
         .catch((err) => {
           console.error('communityGetRequest ', err);
-        });  
+        });
   },
+
   methods: {
-    // [Show]: 
+    // [Show]:
     // |not(isModalVisible)|:
 
     // [*Show]: isModalVisible
     // [[Start]]:
-    // [[Title]]: 
-    // [[Subtitle]]: 
-    
+    // [[Title]]:
+    // [[Subtitle]]:
+
     // [[CommunityLinks]]: communityList, moveMap
     // [[End]]:
     onClickGoPoint(lon, lat) {
@@ -99,7 +102,7 @@ export default {
     closeModal() {
       // set all dialog to closed/false
       this.isModalVisible = false;
-    },
+    }
   }
 }
 // [End]:

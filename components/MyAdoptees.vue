@@ -37,6 +37,7 @@
 // import config from '@/components/config/my_adoptees.json';
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
+import ServicesMixin from '@/components/mixins/service/ServiceMixin.js';
 import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js'
 import AdopteeMixin from '@/components/mixins/adoptee/AdopteeMixin.js'
 // import GraphMixin from '@/components/mixins/graph/GraphMixin.js'
@@ -49,7 +50,7 @@ import { ResponseHelper } from '@/components/mixins/ResponseHelper.js'
 import ModalMyAdoptees from '@/components/Modal.vue'
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration,GoogleMapMixin,AdopteeMixin,ModalMyAdoptees],
+  mixins: [Expiration, ServicesMixin, GoogleMapMixin,AdopteeMixin,ModalMyAdoptees],
 
   components: {
     ModalMyAdoptees,
@@ -106,7 +107,7 @@ export default {
       //return this.myAdopteeList;
       // this.getList('adopteeGetOwnerRequest', 'myAdopteeList')
       // return this.getOutput('adopteeGetOwnerRequest');
-      return this.getOutput('adopteeGetOwner');
+      return this.getServiceList('adopteeGetOwner');
 
     },
     // [[End]]:

@@ -19,7 +19,7 @@
       </li>
     </ul>
   </div>
-  
+
 </template>
 
 <script>
@@ -32,10 +32,11 @@
 // |(page)|:
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
+import ServiceMixin from '@/components/mixins/service/ServiceMixin.js';
 import AboutMixin from '@/components/mixins/about/AboutMixin.js';
 
 export default {
-  mixins: [Expiration,AboutMixin],
+  mixins: [Expiration, ServiceMixin, AboutMixin],
 
   data () {
     return {
@@ -48,11 +49,12 @@ export default {
       }
     }
   },
+
   mounted () {
-    // [Load]: 
+    // [Load]:
     // |"((page), (aboutList))"|:
 
-    // [*Load]: 
+    // [*Load]:
       // [[Start]]:
       // ||/about||: [*], AboutGet
       // ||AAD_API_TOKEN||: Env, AboutGet
@@ -69,20 +71,22 @@ export default {
           console.error('aboutGetRequest ', err);
         });
         // [[End]]:
-        
+
   },
+
   methods: {
     // [Show]: /about
     // |not(/about)|:
 
     // [*Show]: /about
     // [[Start]]:
-    // [[Title]]: 
-    // [[Subtitle]]: 
+    // [[Title]]:
+    // [[Subtitle]]:
     // [[Description]]:
     // [[AboutTitle]]:
-    // [[About]]: aboutList 
+    // [[About]]: aboutList
     // [[End]]:
+
   }
 }
 

@@ -19,18 +19,19 @@
 <script>
 // [.Stats]:
 // |not(/stats)|: [*],[*]
-// |/stats|: [*], Config 
+// |/stats|: [*], Config
 // |AAD_API_TOKEN|: Env, Load
 
 // [Config]:
 // |(page)|: Config, Load
 
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
+import ServiceMixin from '@/components/mixins/service/ServiceMixin.js';
 import StatsMixin from '@/components/mixins/stats/StatsMixin.js';
 
 export default {
-  mixins: [Expiration,StatsMixin],
+  mixins: [Expiration,ServiceMixin, StatsMixin],
 
   data () {
     return {
@@ -41,7 +42,7 @@ export default {
     }
   },
    mounted () {
-      // [Load]: 
+      // [Load]:
       // |"((page), (statsList))"|:
 
       // [*Load]:
@@ -59,16 +60,16 @@ export default {
           console.error('statsGetRequest ', err);
         });
         // [[End]]:
-    },  
+    },
     methods: {
     // [Show]: /stats
     // |not(/stats)|:
 
     // [*Show]: /stats
     // [[Start]]:
-    
+
     getTitle() {
-      // [[Title]]: 
+      // [[Title]]:
       return this.page.title;
     },
     getSubtitle() {

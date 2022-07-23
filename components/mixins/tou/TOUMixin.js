@@ -6,8 +6,45 @@ export default {
   data () {
     return {
       name: "TOU",
+      defaultService: "touDefault",
       service: {
-        tou: {
+        touDefault: {
+          mapping: {
+            "pk": "pk",
+            "sk": "sk",
+            "tk": "tk",
+            "form": "form",
+            "owner": "owner",
+            "active": "active",
+            "created": "created",
+            "updated": "updated"
+          },
+          response: [
+            {
+              "active": true,
+              "created": "2022-06-14T10:28:58.30262",
+              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "owner": "api_admin",
+              "pk": "doc_id#tou.md",
+              "sk": "i#00000",
+              "tk": "w#tou.md",
+              "updated": "2022-06-14T10:28:58.30262"
+            }
+          ],
+          output: [
+            {
+              "active": true,
+              "created": "2022-06-14T10:28:58.30262",
+              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "owner": "api_admin",
+              "pk": "doc_id#tou.md",
+              "sk": "i#00000",
+              "tk": "w#tou.md",
+              "updated": "2022-06-14T10:28:58.30262"
+            }
+          ]
+        },
+        touParagraphGet: {
           status: 900,
           response: [
             {
@@ -21,18 +58,13 @@ export default {
               "updated": "2022-06-14T10:28:58.30262"
             }
           ],
-          depmapping: {
-            "form": {"i": "00000", "p": 0, "w": "tou.md", "doc_id": "tou.md"}
-          },
-          output: {
-            "touList": [
-              {
-                "id": "",
-                "paragraph": ""
-              }
-            ]
-          }
-        }  
+          output: [
+            {
+              "id": "",
+              "paragraph": ""
+            }
+          ]
+        }
       }
     }
   },
@@ -43,54 +75,92 @@ export default {
         'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
         'Content-Type': 'application/json'
       };
+    },
+    aadHeaderUser() {
+      return {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${this.current_token}`,
+        'Content-Type': 'application/json'
+      }
     }
   },
   methods: {
-    getTouMapping() {
-      return this.service.tou.mapping;
-    },
-    getTouList() {
-      return this.service.tou.output.touList;
-    },
-    resetTouList() {
-      this.service.tou.output.touList.length = 0;  
-    },
-    addTouDatum(datum) {
-      // console.log('datum ', datum);
-      this.service.tou.output.touList.push(datum);
-    },
-    setTouStatus(statusCode) {
-      this.service.tou.statusCode = statusCode;
-    },
-    getTouStatus() {
-      return this.service.tou.statusCode;
-    },
     /*
-    async touGetRequest (owner, id) {
-      return new RequestTOU(this).Get(owner,id)
+    setService(service) {
+      this.defaultService = service;
+    },
+    getMapping(service) {
+      // service is found in the services mixin
+
+      // console.log('mapping 1');
+      // comfigure the this.defaultService
+
+      if (this.service) {
+        if (this.service[service]){
+          if (this.service[service].mapping) {
+            return this.service[service].mapping;
+          }
+        }
+      }
+      // default
+      // console.log('default mapping');
+      return this.service[this.defaultService].mapping;
+    },
+
+    getOutput(service=null) {
+      // service is found in the services mixin
+
+      // final list of data
+
+      if (this.service) {
+        if (this.service[service]){
+          if (this.service[service].output) {
+            return this.service[service].output;
+          }
+        }
+      }
+      // default
+      return this.service[this.defaultService].output;
+    },
+
+    addOutput(service, datum ) {
+      // service is found in the services mixin
+      // assume Output is an array
+
+      if (this.service) {
+        if (this.service[service]){
+          if (this.service[service].output) {
+            return this.service[service].output;
+          }
+        }
+      }
+
+      this.service[this.defaultService].output.push(datum);
+
     },
     */
-    async touGetRequest(owner, id) { // replaces loadAdopter  
+    async touGetRequest(owner, id) { // replaces loadAdopter
       // console.log('touGetRequest 1');
       const url = `${process.env.AAD_API_URL}/document/${owner}/${id}`;
-      const headers = this.aadHeaderGuest;    
-      // console.log('url ', url);
-      // console.log('headers ', headers);  
+      const headers = this.aadHeaderGuest;
+
       return await this.$axios({
         url: url,
         method: 'get',
         headers: headers});
     },
-    
-    touGetHandler (response) {
+    touParagraphGetHandler (response) {
       // documents are stored as one word per row
       // this handler reassembles words into paragraphs {id, paragraph}
       // the calling component handles the display of the document
-
-      let handler = new ResponseHelper(response); 
+      // console.log('touGetHandler 1');
+      if (!this.services) {
+        throw Error('Services mixin has not been imported!');
+      }
+      let handler = new ResponseHelper(response);
 
       // Stop if service calls when not successful
-      
+
       let statusCode = handler.status();
 
       if (statusCode !== '200') {
@@ -104,11 +174,12 @@ export default {
       let w = ''; // d[i]['form']['w'];
 
       // combine words into paragraphs
-      
+
       for (let i in d) {
         if (lastP != d[i]['form']['p']) {
             // console.log('para',{"id":lastP, "paragraph": w} );
-            this.addTouDatum({"id":lastP, "paragraph": w});
+            // this.service['touParagraphGet'].output.push({"id":lastP, "paragraph": w});
+            this.addServiceDatum('touParagraphGet',{"id":lastP, "paragraph": w});
             w = d[i]['form']['w'];
         } else {
           if (w.length > 0){
@@ -117,12 +188,14 @@ export default {
           w += d[i]['form']['w'];
         }
         lastP = d[i]['form']['p'];
-      } 
+      }
 
-      // finish off the last paragraph 
-      
+      // finish off the last paragraph
+
       if (w.length > 0) {
-        this.addTouDatum({"id":lastP, "paragraph": w});
+        this.addServiceDatum('touParagraphGet',{"id":lastP, "paragraph": w});
+
+        // this.service['touParagraphGet'].output.push({"id":lastP, "paragraph": w});
         w=null;
       }
 

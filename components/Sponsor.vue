@@ -21,15 +21,16 @@
 <script>
 // [.Sponsor]:
 // |not(/sponsor)|: [*],[*]
-// |/sponsor|: [*], Config 
+// |/sponsor|: [*], Config
 // |AAD_API_TOKEN|: Env, Load
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
 import SponsorMixin from '@/components/mixins/sponsor/SponsorMixin.js';
+import ServiceMixin from "~/components/mixins/service/ServiceMixin";
 
 export default {
-    mixins: [Expiration,SponsorMixin],
+    mixins: [Expiration, ServiceMixin, SponsorMixin],
 // [Config]:
 // |(page)|: Config, Load
   data () {
@@ -41,7 +42,7 @@ export default {
     }
   },
   mounted () {
-    // [Load]: 
+    // [Load]:
     // |(get service.sponsor.output.sponsorList)|:
 
     // [*Load]:
@@ -62,16 +63,16 @@ export default {
         console.error('sponsorGetRequest ', err);
       });
       // [[End]]:
-  },  
+  },
   methods: {
     // [Show]: /sponsor
     // |not(/sponsor)|: Show, [*]
 
     // [*Show]: /sponsor
     // [[Start]]:
-   
+
     getTitle() {
-      // [[Title]]: 
+      // [[Title]]:
       return this.page.title;
     },
     getSubtitle() {

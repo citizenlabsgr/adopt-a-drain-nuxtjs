@@ -10,7 +10,7 @@
     <!-- HeaderSmall :title="this.getSubTitle" :subtitle="this.getSubTitle"/ -->
 
     <!-- HeaderSmall :title="isAuthenticated ? 'Update' :'Sign Up'" subtitle="{{ page.subtitle }}"/ -->
-    
+
     <!-- ------------ -->
     <!-- Display username -->
     <!-- ------------ -->
@@ -40,7 +40,7 @@
     <!-- ------------ -->
     <div>
         <div class="prompt" ><label for="username">
-          
+
           {{meta.username.prompt}}</label>
         </div>
         <div class="input"><input id="username" v-model="form.username" placeholder="your email"></div>
@@ -59,7 +59,7 @@
 
       <div id="error-password" :class="[is_password ? 'input_ok' : 'input_error']">
         {{status_password}}
-        
+
       </div>
 
     </div>
@@ -99,16 +99,17 @@
 // Data: adopter.json
 // import config from '@/components/config/adopter.json';
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js'
+import ServicesMixin from '@/components/mixins/service/ServiceMixin.js';
 import { Constants } from '@/components/mixins/Constants.js'
 import HeaderSmall from '@/components/HeaderSmall.vue'
 import AdopterMixin from '@/components/mixins/adopter/AdopterMixin.js';
 
 export default {
   name: 'Adopter',
-  mixins: [Expiration,AdopterMixin],
+  mixins: [Expiration, ServicesMixin, AdopterMixin],
   components: {
     HeaderSmall
-  
+
   },
   // Data: props, next, Start
   props: {
@@ -118,7 +119,7 @@ export default {
   data () {
     return {
       name: "Adopter",
-      
+
       page: {
         title: ["Sign Up","Account"],
         subtitle: ["Because because because", "What next?"]
@@ -143,7 +144,7 @@ export default {
           prompt:"Password",
           status:["Ok","A password must be at least 8 characters long and contain at least one of each of the following: a capital letter, a lowercase letter, a digit, and a punctuation Mark."],
           regexp: Constants.password()
-          
+
         }
       }
     }
@@ -151,27 +152,27 @@ export default {
   mounted() {
     // console.log('adopterGetRequest mounted 1');
 
-    // [Load]: 
-    // |(get service.adopterGetRequest.response)|: Load, Show 
-   
+    // [Load]:
+    // |(get service.adopterGetRequest.response)|: Load, Show
+
     // [*Load]:
 
     // [[Start]]:
     // ||not(authenticated)||: [*], [*]
     // ||authenticated||: [*], AdopterGetRequest
-    
+
     this.$nextTick(function () {
         // console.log('adopterGetRequest mounted 2');
-      
+
       if (this.isAuthenticated) {
         // console.log('adopterGetRequest mounted 3');
 
         const owner = this.payload.key;
         const id = this.payload.user;
-        
+
         // ||(get service.adopterGetRequest.request)||: AppState, AdopterGetRequest
-        // [[AdopterGetRequest]]: 
-        // ||(get service.adopterGetRequest.response)||: 
+        // [[AdopterGetRequest]]:
+        // ||(get service.adopterGetRequest.response)||:
 
         this.adopterGetRequest(owner,id)
               .then((response) => {
@@ -179,11 +180,11 @@ export default {
 
                 // [[AdopterGetHandler]]:
                 this.adopterGetHandler(response);
-        
+
                 // console.log('adopterGetRequest mounted 5');
 
                 // console.log('mounted 4');
-                // ||"(form)"||: 
+                // ||"(form)"||:
 
                 this.adopterTransferGetData(this.form);
                 // console.log('adopterGetRequest mounted 6 ');
@@ -191,16 +192,16 @@ export default {
               })
               .catch((err) => {
                   console.error('Something unexpected happened (%s)!'.replace('%s', err))
-              })   
+              })
               // [[End]]:
 
-      } // auth        
-      
+      } // auth
+
     }) // nexttick
 
   }, // mounted
   computed: {
-    
+
     isDisabled () {
       let rc = false;
       if (this.isAuthenticated) {
@@ -244,7 +245,7 @@ export default {
       }
       return this.page.title[0]
     },
-    
+
     getSubTitle() {
       // [[Subtitle]]:
 
@@ -253,7 +254,7 @@ export default {
       }
       return this.page.subtitle[0]
     },
-   
+
     // [[Displayname]]: edit
     // [[Username]]: edit
     // ||authenticated||: Username, [*]
@@ -273,7 +274,7 @@ export default {
         // this.setFeedback('Missing Info!')
         return undefined
       }
-      
+
       // console.log('Adopter onSubmit 2');
 
       const form = JSON.parse(JSON.stringify(this.form)) // copy
@@ -282,25 +283,25 @@ export default {
       //  (upsert, owner, id, form) -->
       if(this.payload.key === "0") {
         // console.log('Adopter onSubmit 3 post');
-        this.adopterPostRequest (form) 
+        this.adopterPostRequest (form)
         .then((response) => {
-          
+
           // console.log('Adopter onSubmit 3.1 post ', response);
           this.adopterPostHandler(response);
-        
+
         });
       } else {
         // console.log('Adopter onSubmit 4 put');
         let id = original_id.user ; // email
-        this.adopterPutRequest (owner, id, form) 
+        this.adopterPutRequest (owner, id, form)
         .then((response) => {
-          
+
           // console.log('Adopter onSubmit 4.1 put ', response);
           this.adopterPutHandler(response);
 
         });
       }
-      
+
     },
     isValidForm () {
       if (this.form.displayname.length ===0 ) {

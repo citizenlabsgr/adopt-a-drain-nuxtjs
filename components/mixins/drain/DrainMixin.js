@@ -11,35 +11,33 @@ export default {
         drain: {
           get: {
             response: {
-                "data": [
-                  {
-                    "dr_asset_id": "CGR_2009",
-                    "dr_lat": 42.9606970372,
-                    "dr_lon": -85.6654215022,
-                    "etal":"etal"
-                  } 
-                ], 
-                status: 200, 
-                statusText: ""
-              },
-              mapping: {
-                "type": "orphan",
-                "lat": ["data", 0, "dr_lat"],
-                "lon": ["data", 0, "dr_lon"],
-                "drain_id": ["data", 0, "dr_asset_id"],
-                "name": "name me"
-              },
-              output: {
-                drainList: [
-                  {
-                    "type": 'orphan', 
-                    "lat": 42.96423911300001, 
-                    "lon": -85.6668874744, 
-                    "drain_id": 'CGR_2549058', 
-                    "name": 'name me'
-                  }
-                ]
+              "data": [
+                {
+                  "dr_asset_id": "CGR_2009",
+                  "dr_lat": 42.9606970372,
+                  "dr_lon": -85.6654215022,
+                  "etal":"etal"
+                }
+              ],
+              status: 200,
+              statusText: ""
+            },
+            mapping: {
+              "type": "orphan",
+              "lat": ["data", 0, "dr_lat"],
+              "lon": ["data", 0, "dr_lon"],
+              "drain_id": ["data", 0, "dr_asset_id"],
+              "name": "name me"
+            },
+            output: [
+              {
+                "type": 'orphan',
+                "lat": 42.96423911300001,
+                "lon": -85.6668874744,
+                "drain_id": 'CGR_2549058',
+                "name": 'name me'
               }
+            ]
           }
         }
       }
@@ -47,16 +45,19 @@ export default {
   },
   methods: {
     getDrainList() {
-      return this.service.drain.output.drainList;
+      return this.service.drain.output;
+      // return this.service.drain.output.drainList;
     },
     getDrainMapping() {
       return this.service.drain.mapping;
     },
     resetDrainList() {
-      this.service.drain.output.drainList.length = 0;  
+      this.service.drain.output.length = 0;
+      // this.service.drain.output.drainList.length = 0;
     },
     setDrainDatum(datum) {
-      this.service.drain.output.drainList.push(datum)
+      this.service.drain.output.push(datum);
+      // this.service.drain.output.drainList.push(datum);
     },
     async drainGetRequest(mbr) {
 
@@ -66,7 +67,7 @@ export default {
         .replace('%e', mbr.east)
         .replace('%n', mbr.north)
         .replace('%s', mbr.south);
-        
+
       const dwUrl = process.env.DW_DRAIN_URL;
       const dwBody = { query: queryStr, includeTableSchema: false }
       const dwHeader = {
@@ -89,7 +90,7 @@ export default {
 
       // console.log('2 drainGetHandler ', response);
       // console.log('3 drainGetHandler status ', handler.status());
-      
+
       switch(handler.status()) {
         case '200':
               // console.log('4 drainGetHandler ');
@@ -103,7 +104,7 @@ export default {
 
                   // turn on or add to drains
                   // turn on markers where map is null
-                  
+
                   let dr = handler.data()[i]; // response.data[i];
                   let id = dr['dr_asset_id'];
                   let _drain = false;
@@ -124,7 +125,7 @@ export default {
                         // console.log(data);
 
                         let datum = new OrphanDatum(id, data, this);
-                        // 
+                        //
                         this.addDatum(datum);
                     }
                   // }

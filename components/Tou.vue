@@ -1,60 +1,61 @@
-<template>  
+<template>
   <div class="document">
     <!--span v-html="config.body"></span-->
 
     <h3>
       {{ getFeedback() }}
     </h3>
-    
-    <div v-for="item in getTouList()" :key="item.id">
+
+    <div v-for="item in getServiceList('touParagraphGet')" :key="item.id">
         <h1 v-if="item.paragraph.startsWith('# ')" class="title">
           {{ item.paragraph.replace('# ','') }}
         </h1>
         <h1 v-else-if="item.paragraph.startsWith('## ')" class="subtitle">
           {{ item.paragraph.replace('## ','') }}
-        </h1>   
+        </h1>
         <h1 v-else-if="item.paragraph.startsWith('### ')">
           {{ item.paragraph.replace('### ','') }}
-        </h1>   
+        </h1>
         <h1 v-else-if="item.paragraph.startsWith('#### ')">
           {{ item.paragraph.replace('#### ','') }}
-        </h1>           
+        </h1>
         <h1 v-else-if="item.paragraph.startsWith('##### ')">
           {{ item.paragraph.replace('##### ','') }}
-        </h1> 
+        </h1>
         <h1 v-else-if="item.paragraph.startsWith('###### ')">
           {{ item.paragraph.replace('###### ','') }}
-        </h1>      
+        </h1>
         <li v-else-if="item.paragraph.startsWith('* ')">
           {{ item.paragraph.replace('* ','') }}
-        </li>    
+        </li>
         <div v-else-if="item.paragraph.includes('[[communities]]')">
-            <li v-for="comm in getCommunityList()" :key="item.name"> 
-            {{ comm.name }} 
+            <li v-for="comm in getCommunityList()" :key="item.name">
+            {{ comm.name }}
             </li>
             <br/>
-        </div>   
+        </div>
         <h1 v-else class="description">
           {{ item.paragraph }}
         </h1>
-    </div> 
-  </div>   
+    </div>
+  </div>
 </template>
 <script>
 // [.Tou]:
 // |not(/tou)|: [*],[*]
-// |/tou|: [*], Config 
+// |/tou|: [*], Config
 // |AAD_API_TOKEN|: Env, Load
 
 // [Config]:
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
 // import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
+import ServicesMixin from '@/components/mixins/service/ServiceMixin.js';
 import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
 import TOUMixin from '@/components/mixins/tou/TOUMixin.js';
 /* istanbul ignore next */
 export default {
-  mixins: [Expiration, CommunityMixin, TOUMixin],
+  mixins: [Expiration, ServicesMixin, CommunityMixin, TOUMixin],
 
   data () {
     return {
@@ -68,7 +69,7 @@ export default {
   },
   mounted () {
     // [Load]:
-    // |"((communityList), (touList))"|: Load, Show  
+    // |"((communityList), (touList))"|: Load, Show
 
     // [*Load]:
     // [[Start]]:
@@ -89,8 +90,8 @@ export default {
 
               const owner = '0';
               const id = 'tou.md';
-            
-              // [[TouGetRequest]]: 
+
+              // [[TouGetRequest]]:
               // ||(get service.tou.response)||:
 
               this.touGetRequest(owner,id)
@@ -98,19 +99,19 @@ export default {
                   // [[TouGetHandler]]:
                   // ||(get service.tou.output.touList)||:
                   // console.log('TOU response ', response);
-                  this.touGetHandler(response);
+                  this.touParagraphGetHandler(response);
                 })
                 .catch((err) => {
 
                   console.error('A Something unexpected happened (%s)!'.replace('%s', err))
                 });
-              
+
           })
           .catch((err) => {
               console.error('B Something unexpected happened (%s)!'.replace('%s', err));
           });
-    // [[End]]:  
-      
+    // [[End]]:
+
   },
   methods: {
     // [Show]: /tou
@@ -122,10 +123,10 @@ export default {
     // [[TouDocument]]: touList, communityList
 
     getFeedback() {
-      return this.page.feedback;
+      return this.communityService.feedback;
     },
     setFeedback(msg) {
-      this.page.feedback = msg;
+      this.communityService.feedback = msg;
     }
     // [[End]]:
   }

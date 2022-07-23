@@ -4,6 +4,7 @@ export default {
   data () {
     return {
       name: "SponsorMixin",
+      sponsorService: "sponsor",
       service: {
         sponsor: {
           response: [
@@ -14,81 +15,77 @@ export default {
             }
           ],
           mapping : {
-            "id": "id", 
-            "title": "title", 
+            "id": "id",
+            "title": "title",
             "description": "description"
           },
-          output: {
-            sponsorList: [
-              {
-                "id": "id", 
-                "title": "title", 
-                "description": "description",
-                "website":"website",
-                "source":"source",
-                "icon": "~assets/logos/LGrow.png"
-              }
-            ]
-          }
+          output: [
+            {
+              "id": "id",
+              "title": "title",
+              "description": "description",
+              "website":"website",
+              "source":"source",
+              "icon": "~assets/logos/LGrow.png"
+            }
+          ]
         }
       }
     }
-  }, 
+  },
+  computed: {
+    aadHeaderGuest () {
+      return {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${process.env.AAD_API_TOKEN}`,
+        'Content-Type': 'application/json'
+      };
+    },
+    aadHeaderUser() {
+      return {
+        "Accept":"application/json",
+        'Authorization': `Bearer ${this.current_token}`,
+        'Content-Type': 'application/json'
+      }
+    }
+  },
   methods: {
-    getSponsorMapping() {
-      return this.service.sponsor.mapping;
-    },
+
     getSponsorList() {
-      return this.service.sponsor.output.sponsorList;
+      return this.getServiceList(this.sponsorService);
     },
+
     resetSponsorList() {
-      this.service.sponsor.output.sponsorList.length = 0;  
+      this.resetServiceList(this.sponsorService).length = 0;
     },
+
     addSponsorDatum(datum) {
-      this.service.sponsor.output.sponsorList.push(datum)
+      this.addServiceDatum(this.sponsorService, datum);
     },
+
     async sponsorGetRequest () {
-          /*
-          example code only
-          const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
-                            .replace('%x', process.env.DW_TABLE);
-          const dwToken = process.env.DW_AUTH_TOKEN;
+      /*
+        const aadUrl = `${process.env.AAD_API_URL}/page/${this.sponsorService}`;
 
-          const dwURL = process.env.DW_DRAIN_URL;
-          const dwData = { query: queryStr, includeTableSchema: false }
-          const dwHeaders = {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer %s'.replace('%s', dwToken)
-          }
+        const aadHeader = this.aadHeaderUser;
 
-          return await this.$axios({
-                url: dwURL,
-                method: 'post',
-                headers: dwHeaders,
-                data: dwData });
-        */      
+        // return await this.get(url, headers);
+        return await this.$axios({
+          url: aadUrl,
+          method: 'get',
+          headers: aadHeader});
+    */
        return await this.tempResponse()
     },
-    
+
     sponsorGetHandler (response) {
         // clear list for reload
-        let handler = new ResponseHelper(response);
-        
-        handler.resetOutput(this.getSponsorList());
-        
-        handler.transfer(this.getSponsorMapping(), this.getSponsorList());          
-    
-          /*
-          this.resetSponsorList();
-          
-          for (let i in response.data) {
-            let id = response.data[i].id;
-            let title = response.data[i].title;
-            let description = response.data[i].description;
-            this.addSponsorDatum({id: id, title:title, description:description});
+      let handler = new ResponseHelper(response);
 
-          } 
-      */   
+      handler.resetOutput(this.getServiceList(this.sponsorService));
+      handler.transfer(this.getServiceMapping(this.sponsorService),
+        this.getServiceList(this.sponsorService));
+
     },
     tempResponse() {
       return {
@@ -99,8 +96,8 @@ export default {
               "msg": "OK",
               "selection": [
                 {
-                  "id": "lgrow", 
-                  "title": "LGROW", 
+                  "id": "lgrow",
+                  "title": "LGROW",
                   "description": "Lower Grand River Organization of Watersheds",
                   "website":"https://www.lgrow.org",
                   "source": "~assets/logos/LGrow.png",
@@ -108,8 +105,8 @@ export default {
 
                 },
                 {
-                  "id": "citizenlabs", 
-                  "title": "CitizenLabs", 
+                  "id": "citizenlabs",
+                  "title": "CitizenLabs",
                   "description": "CitizenLabs",
                   "website":"https://citizenlabs.org",
                   "source": "~assets/logos/citizenlabs.png",
@@ -124,5 +121,5 @@ export default {
           statusText: "OK"
         }
      }
-  } 
+  }
 }

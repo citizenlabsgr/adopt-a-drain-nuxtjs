@@ -106,6 +106,7 @@ export default {
       }
     }
   },
+
   computed: {
     aadHeaderGuest () {
       return {
@@ -125,6 +126,8 @@ export default {
       return rc;
     },
   },
+
+
   methods: {
     getFeedback() {
       return this.feedback;
@@ -166,7 +169,6 @@ export default {
 
     adopterGetHandler(response) {
       // console.log('adopterGetHandler 1', response);
-      console.log('');
 
       const helper = new ResponseHelper(response);
       let status = helper.status(); // this.response.data.status;
@@ -201,7 +203,7 @@ export default {
                    |_|
     */
     async adopterPostRequest (form) { // aka SignUp
-      console.log('adopterPostRequest 1');
+      // console.log('adopterPostRequest 1');
       const url = `${process.env.AAD_API_URL}/signup`;
       const headers = this.aadHeaderGuest;
       const data = form;
@@ -217,7 +219,7 @@ export default {
     },
 
     adopterPostHandler(response) {
-      console.error('adopterPostHandler 1');
+      // console.log('adopterPostHandler 1');
       // console.log('response', response);
       const helper = new ResponseHelper(response);
       let status = helper.status(); // this.response.data.status;
@@ -253,7 +255,7 @@ export default {
       // |(owner, id, form(displayname,scope,username))|:
       // [adopterPutRequest]:
       // |(active,created,form(displayname,scope,username),owner,pk,tk,updated)|:
-      console.log('adopterPutRequest 1');
+      // console.log('adopterPutRequest 1');
 
 
       const url = `${process.env.AAD_API_URL}/adopter/${owner}/${id}`;
@@ -270,7 +272,7 @@ export default {
     },
 
     adopterPutHandler(response) {
-      console.log('adopterPutHandler 1');
+      // console.log('adopterPutHandler 1');
 
       const helper = new ResponseHelper(response);
       let status = helper.status(); // this.response.data.status;

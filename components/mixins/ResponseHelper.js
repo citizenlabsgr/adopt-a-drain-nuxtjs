@@ -1,4 +1,12 @@
+/*
+response :{
+  method: "GET" |"POST" | "DELETE" | "PUT",
+  status: 'OK'
+  config :{ method: "GET"},
+  data: {status: "" insertion: [] | selection: [] | deletion: [] || updation: []}
+}
 
+ */
 class ResponseHelper {
 
     constructor(response) {
@@ -88,6 +96,7 @@ class ResponseHelper {
                 rc = this.response.data.deletion;
                 break;
         }
+        // console.log('ResponseHelper rc ',rc);
         // console.log('ResponseHelper out');
         return rc;
     } // end data
@@ -112,7 +121,7 @@ class ResponseHelper {
                 rc = valueObject[path[0]][path[1]][path[2]];
             break;
             case 4:
-              console.log('path ', path);
+              // console.log('path ', path);
                 rc = valueObject[path[0]][path[1]][path[2]][path[3]];
                 break;
             case 5:
@@ -136,6 +145,7 @@ class ResponseHelper {
     transfer(mapping, output) {
         // console.log('transfer 1');
         // console.log('transfer mapping ', mapping);
+        // console.log('transfer x');
         // console.log('transfer output ', output);
 
         // console.log('transfer data() ', this.data());
@@ -144,42 +154,51 @@ class ResponseHelper {
 
         // console.log('transfer output type ', typeof output);
         // console.log('transfer output isArray ', Array.isArray(output));
+        // console.log('transfer 1.1 ', this.data());
 
         let inArray = Array.isArray(this.data());
+        // console.log('transfer 1.2 ', output);
+
         let outArray = Array.isArray(output);
         // reset output array when needed
 
-        // console.log('transfer 2');
+         // console.log('transfer 2');
         for (let i =0; i < this.data().length; i++) {
-            // console.log('i ', i, ' ', this.data()[i]);
+          // console.log('i ', i);
+
+          // console.log('i ', i, ' ', this.data()[i]);
 
             let datum = {};
             let values = this.data()[i];
             for (let key of Object.keys(mapping)) {
+                // console.log('  key ', key);
                 // get from key
                 let frKey = mapping[key];
                 // get from value
                 let frVal = this.getValue(frKey, values);
+                // console.log('  key ', key , ' frKey ', frKey, ' frVal ', frVal);
                 // assign data to output
                 datum[key] = frVal;
             }
 
-
-          // console.log('datum ', datum);
+            // console.log('transfer datum ', datum);
             if (inArray && outArray) { // list to list, [] -> []
-              // console.log('transfer 3');
+               // console.log('transfer 3');
                 // assume first item is
                 // append
-                // console.log('A inn && out push ', datum);
+                // console.log('transfer A inn && out push ', datum);
                 // make independent copy
                 output.push(JSON.parse(JSON.stringify(datum)));
+
+                // console.log('transfer output ',output[output.length-1]);
+
               // console.log('transfer 3.1');
             } else if(inArray && !outArray) { // list to dictionary [] -> {}
                 // assign last in array
                 // at this point, datum has same keys as mapping
                 // trans last row of data
                 // console.log('B inn && not out ', datum);
-              // console.log('transfer 4');
+                // console.log('transfer 4');
 
                 for (let key of Object.keys(datum)) {
                   // console.log('transfer 4.1');
@@ -188,7 +207,7 @@ class ResponseHelper {
                 }
 
             } else if (!inArray && !outArray) { // dictionary to dictionary, {} -> {}
-              // console.log('transfer 5');
+               // console.log('transfer 5');
                 // assign
                 // console.log('!inn && !out assign');
                 // merge datum into output
@@ -205,7 +224,7 @@ class ResponseHelper {
                 }
             }
         }
-      // console.log('transfer out');
+        // console.log('transfer out');
         // console.log('output', output);
         // dont use return output, output gets changed on return
         // return output;

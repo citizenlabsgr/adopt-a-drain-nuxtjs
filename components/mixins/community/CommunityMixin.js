@@ -22,12 +22,6 @@ export default {
             "lon": "lon"
           },
           output: [
-            {
-              "name": "name",
-              "count": 0,
-              "lat": 0.0,
-              "lon": 0.0
-            }
           ]
         }
       }
@@ -64,12 +58,14 @@ export default {
       // clear the output[] list
       return this.getServiceList(this.communityService)
     },
+
     addCommunityDatum(datum) {
       // add a single datum to output[]
       this.addServiceDatum(this.communityService, datum);
     },
+
     async communityGetRequest () {
-      // console.log('communityGetRequest 1');
+      //console.log('communityGetRequest 1');
           const queryStr = 'select dr_jurisdiction, count(*), avg(dr_lat) lat,avg(dr_lon) lon from %x group by dr_jurisdiction order by dr_jurisdiction'
                             .replace('%x', process.env.DW_TABLE);
           const dwToken = process.env.DW_AUTH_TOKEN;
@@ -80,19 +76,37 @@ export default {
             'Authorization': 'Bearer %s'.replace('%s', dwToken)
           }
           // post insted of guest
-          return await this.$axios({
-                url: dwURL,
-                method: 'post',
-                headers: dwHeaders,
-                data: dwData });
+          try {
+            return await this.$axios({
+              url: dwURL,
+              method: 'post',
+              headers: dwHeaders,
+              data: dwData
+            });
+          } catch(err) {
+            console.log('Community API call failed... providing defaults.');
+
+            const Defaults = require('./defaults.json');
+            return Defaults.GET;
+          }
     },
 
     communityGetHandler (response) {
+      // console.log('communityGetHandler 1');
       let handler = new ResponseHelper(response);
+      // console.log('communityGetHandler 2');
 
+      // console.log('communityGetHandler response ', response);
       handler.resetOutput(this.getServiceList(this.communityService));
+      // console.log('communityGetHandler 3');
+      // console.log('communityGetHandler 3 this.communityService ',this.communityService);
+      // console.log('communityGetHandler 3 this.communityService getServiceMapping ',this.getServiceMapping(this.communityService));
+      // console.log('communityGetHandler 3 this.communityService getServiceList    ',this.getServiceList(this.communityService));
+
       handler.transfer(this.getServiceMapping(this.communityService),
         this.getServiceList(this.communityService));
+      // console.log('communityGetHandler out');
+
     }
   } // methods
 }

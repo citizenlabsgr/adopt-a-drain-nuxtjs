@@ -1,0 +1,21 @@
+{
+  "GET":{
+    "config":{
+      "method": "get"
+    },
+    "data": {
+      "msg": "OK",
+      "selection": [
+        {"pk":"page#about", "sk":"name#title", "tk":"default-about", "form": {"id":"about", "name":"title", "value": "Default-About"}},
+        {"pk":"page#about", "sk":"name#subtitle", "tk":"default-We-are-concerned-citizens.", "form": {"id":"about", "name":"subtitle", "value": "default-We-are-concerned-citizens."}},
+        {"pk":"page#about", "sk":"name#list0", "tk":"default-lgrow", "form":{"id":"about", "name":"list0", "value": "default-LGROW."}},
+        {"pk":"page#about", "sk":"name#list1", "tk":"default-Citizen-Labs.", "form":{"id":"about", "name":"list1", "value": "default-Citizen-Labs."}}
+      ],
+      "status": "200"
+    },
+    "headers": {},
+    "request": {},
+    "status": 200,
+    "statusText": "OK"
+  }
+}

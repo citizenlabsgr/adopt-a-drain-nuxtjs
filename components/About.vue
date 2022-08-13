@@ -1,23 +1,33 @@
 <template>
   <div class="band">
-    <h1 class="title">
-      {{ page.title }}
-    </h1>
-    <h2 class="subtitle">
-      {{ page.subtitle }}
-    </h2>
-        <!-- custom stuff -->
-    <div class="description">
-      {{ page.description }}
+    <br/>
+    <div>
+      <div v-for="item in getAboutList()" :key="item.name">
+
+          <h1 v-if="item.name==='title'" class="title">
+            {{ item.value }}
+          </h1>
+
+          <h2 v-if="item.name==='subtitle'" class="subtitle">
+            {{ item.value }}
+          </h2>
+
+          <h3 v-if="item.name==='description'" class="description">
+            {{ item.value }}
+          </h3>
+
+      </div>
     </div>
-    <div class="subtitle">
-      {{ page.aboutTitle }}
+    <br/>
+    <div>
+      <ul v-for="item in getAboutList()" :key="item.name">
+
+          <li v-if="item.name.startsWith('item')" >
+            {{ item.value }}
+          </li>
+
+      </ul>
     </div>
-    <ul>
-      <li v-for="item in getAboutList()" :key="item.id">
-        {{ item.description }}
-      </li>
-    </ul>
   </div>
 
 </template>
@@ -41,6 +51,7 @@ export default {
   data () {
     return {
       name: "About",
+
       page: {
         title:"About",
         subtitle:"We are concerned citizens.",
@@ -63,6 +74,7 @@ export default {
       // ||(get service.about.response)||:
       this.aboutGetRequest()
         .then((response) => {
+          // console.log('aboutGetRequest ', response);
           // [[AboutGetHandler]]:
           this.aboutGetHandler(response);
           // ||(get service.about.output.aboutList)||:
@@ -100,6 +112,20 @@ export default {
   background-color: #ffffff;
 }
 ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-flow:row wrap;
+  justify-content: center;
+  align-items: center;
+}
+li {
+  padding-left: 20px;
+  font-variant: petite-caps;
+}
+/*
+ul {
   list-style:inside;
   padding: 0;
   margin: 0px;
@@ -112,4 +138,5 @@ ul {
 li {
   margin: 20px 20px;
 }
+*/
 </style>

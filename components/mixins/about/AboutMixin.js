@@ -11,21 +11,16 @@ export default {
           response: [
             {
               "id": "id",
-              "title": "title",
-              "description": "description"
+              "name": "name",
+              "value": "value"
             }
           ],
           mapping : {
-            "id": "id",
-            "title": "title",
-            "description": "description"
+            "id": "form.id",
+            "name": "form.name",
+            "value": "form.value"
           },
           output: [
-            {
-              "id": "A",
-              "title": "LGROW",
-              "description": "Lower Grand River Organization Watersheds"
-            }
           ]
         }
       }
@@ -50,6 +45,17 @@ export default {
   },
 
   methods: {
+    getAbout(key) {
+      let rc = '*';
+      for (let i of this.getAboutList()){
+        // console.log('i for ', i);
+        if (i.name === key) {
+          rc = i.value; //this.getAboutList()[i]['value'];
+          break;
+        }
+      }
+      return rc;
+    },
     getAboutList() {
       return this.getServiceList(this.aboutService);
     },
@@ -64,29 +70,53 @@ export default {
     },
 
     async aboutGetRequest () {
-      /*
-      const aadUrl = `${process.env.AAD_API_URL}/page/${this.aboutService}`;
-
-      const aadHeader = this.aadHeaderUser;
-
-      // return await this.get(url, headers);
-      return await this.$axios({
-        url: aadUrl,
-        method: 'get',
-        headers: aadHeader});
-        */
-       return await this.tempResponse()
+      const owner = '0'; // this.payload.key;
+      const aadUrl = `${process.env.AAD_API_URL}/page/${owner}/PK/${this.aboutService}`;
+      const aadHeader = this.aadHeaderGuest;
+      // console.log('aadUrl ', aadUrl);
+      try {
+        return await this.$axios({
+          url: aadUrl,
+          method: 'get',
+          headers: aadHeader
+        });
+      } catch(err) {
+        console.error(`aboutGetRequest err ${err}`);
+        console.log('About API call failed... providing defaults.');
+        // return this.service.about.defaults;
+        const DEFAULTS = require('./defaults.json');
+        return DEFAULTS.GET;
+      }
     },
 
     aboutGetHandler (response) {
       // console.log('aboutGetHandler response ', response);
-          let handler = new ResponseHelper(response);
 
+      let handler = new ResponseHelper(response);
+
+      // console.log('aboutGetRequest ', handler.status());
+      // console.log('aboutGetRequest ', handler.data());
+
+      switch (handler.status()) {
+        case '200':
+          // clear the list
           handler.resetOutput(this.getServiceList(this.aboutService));
-          handler.transfer(this.getServiceMapping(this.aboutService),
-                           this.getServiceList(this.aboutService));
-    },
 
+          // add data to list
+          handler.transfer(this.getServiceMapping(this.aboutService),
+            this.getServiceList(this.aboutService));
+
+        break;
+        case '404':
+          console.warn('About page not found.');
+          // console.log('404 aboutGetRequest ', this.getAboutList())
+        break
+      }
+      // else {
+      //   console.log('aboutGetRequest ', this.getAboutList())
+      // }
+    }
+    /*
     tempResponse() {
       return {
           config:{
@@ -114,5 +144,6 @@ export default {
           statusText: "OK"
         }
     }
+    */
   }
 }

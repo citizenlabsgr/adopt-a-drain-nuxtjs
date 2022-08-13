@@ -1,0 +1,23 @@
+{
+  "GET": {
+    "method": "GET",
+
+    "config": {"method": "GET"},
+    "data": {
+      "status": "200",
+      "msg": "OK",
+      "selection":  [
+        {
+          "count": 1242,
+          "dr_jurisdiction": "City of East Grand Rapids",
+          "lat": 42.94312153364917,
+          "lon": -85.61036322779752
+        }
+      ]
+    },
+    "headers": {},
+    "request": {},
+    "status": 200,
+    "statusText": "OK"
+  }
+}

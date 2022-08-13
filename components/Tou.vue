@@ -93,19 +93,20 @@ export default {
 
               // [[TouGetRequest]]:
               // ||(get service.tou.response)||:
-
+              /*
               this.touGetRequest(owner,id)
                 .then((response) => {
                   // [[TouGetHandler]]:
                   // ||(get service.tou.output.touList)||:
                   // console.log('TOU response ', response);
                   this.touParagraphGetHandler(response);
+
                 })
                 .catch((err) => {
 
                   console.error('A Something unexpected happened (%s)!'.replace('%s', err))
                 });
-
+                */
           })
           .catch((err) => {
               console.error('B Something unexpected happened (%s)!'.replace('%s', err));

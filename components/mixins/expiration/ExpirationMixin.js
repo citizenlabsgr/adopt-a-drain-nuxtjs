@@ -54,6 +54,7 @@ export default {
     payload () {
       try {
         if (!this.current_token || this.adopter === '') {
+
           return JSON.parse(atob(process.env.AAD_API_TOKEN.split('.')[1]));
         }
         return JSON.parse(atob(this.current_token.split('.')[1]));

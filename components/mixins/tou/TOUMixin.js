@@ -59,11 +59,19 @@ export default {
             }
           ],
           output: [
+          ],
+          default: [
             {
-              "id": "",
-              "paragraph": ""
+              "active": true,
+              "created": "2022-06-14T10:28:58.30262",
+              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "owner": "api_admin",
+              "pk": "doc_id#tou.md",
+              "sk": "i#00000",
+              "tk": "w#tou.md",
+              "updated": "2022-06-14T10:28:58.30262"
             }
-          ]
+          ],
         }
       }
     }
@@ -143,11 +151,15 @@ export default {
       // console.log('touGetRequest 1');
       const url = `${process.env.AAD_API_URL}/document/${owner}/${id}`;
       const headers = this.aadHeaderGuest;
-
-      return await this.$axios({
-        url: url,
-        method: 'get',
-        headers: headers});
+      try {
+        return await this.$axios({
+          url: url,
+          method: 'get',
+          headers: headers
+        });
+      } catch(err) {
+        return this.service.touParagraphGet.defaults;
+      }
     },
     touParagraphGetHandler (response) {
       // documents are stored as one word per row

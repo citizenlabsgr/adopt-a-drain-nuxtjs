@@ -1,29 +1,41 @@
 <template>
+
   <div class="band">
-    <h1 class="title">
-      {{ page.title }}
-    </h1>
-    <h2 class="subtitle">
-      {{ page.subtitle }}
-    </h2>
-    <!-- custom stuff -->
-    <div class="description">
-      {{ page.description }}
+    <br/>
+    <div>
+      <div v-for="item in getOpportunityList()" :key="item.name">
+
+        <h1 v-if="item.name==='title'" class="title">
+          {{ item.value }}
+        </h1>
+
+        <h2 v-if="item.name==='subtitle'" class="subtitle">
+          {{ item.value }}
+        </h2>
+
+        <h3 v-if="item.name==='description'" class="description">
+          {{ item.value }}
+        </h3>
+
+      </div>
     </div>
-    <div class="subtitle">
-      {{ page.oppTitle }}
+    <br/>
+    <div>
+      <ul v-for="item in getOpportunityList()" :key="item.name">
+
+        <li v-if="item.name && item.name.startsWith('item')" >
+          {{ item.value }}
+        </li>
+
+      </ul>
     </div>
-    <ul>
-      <li v-for="item in getOpportunityList()" :key="item.id">
-        {{ item.description }}
-      </li>
-    </ul>
   </div>
+
 </template>
 <script>
-// [.Opportunities]:
-// |not(/opportunities)|: [*], [*]
-// |/opportunities|: [*], Config
+// [.Opportunity]:
+// |not(/opportunity)|: [*], [*]
+// |/opportunity|: [*], Config
 // |AAD_API_TOKEN|: Env, Load
 
 // [Config]:
@@ -39,7 +51,7 @@ export default {
   data () {
     return {
       page: {
-        "title": "Opportunities",
+        "title": "Opportunity",
         "subtitle": "We care about what you want to do.",
         "description": "Are you a programmer with Nuxtjs experience who wants to help improve and maintain the Adopt a Drain application? Dont be shy! We are always seeking assistance with the code! Get involved and follow our GitHub page.",
         "opportunityTitle": "Always looking for:"
@@ -54,7 +66,7 @@ export default {
 
       // [*Load]:
       // [[Start]]:
-      // ||/opportunities||: [*], OpportunityGet
+      // ||/opportunity||: [*], OpportunityGet
       // ||AAD_API_TOKEN||: Env, OpportunityGet
 
       // [[OpportunityGet]]:
@@ -64,26 +76,27 @@ export default {
       this.opportunityGetRequest()
         .then((response) => {
           // [[OpportunityGetHandler]]:
-          // console.log('opportunityGetRequest response ', response);
+          console.log('opportunityGetRequest response ', response);
           this.opportunityGetHandler(response);
           // ||(get service.opportunity.opportunityList)||:
         })
         .catch((err) => {
           console.error('opportunityGetRequest ', err);
         });
+
       // [[End]]:
   },
   methods: {
-    // [Show]: /opportunities
-    // |not(/opportunities)|:
+    // [Show]: /opportunity
+    // |not(/opportunity)|:
 
-    // [*Show]: /opportunities
+    // [*Show]: /opportunity
     // [[Start]]:
     // [[Title]]:
     // [[Subtitle]]:
     // [[Description]]:
     // [[OpportunityTitle]]:
-    // [[Opportunities]]: opportunityList
+    // [[Opportunity]]: opportunityList
     // [[End]]:
   }
 }

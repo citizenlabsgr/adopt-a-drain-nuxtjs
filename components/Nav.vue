@@ -11,7 +11,7 @@
         <li v-if="isAuthenticated">
           <u><MyAdoptees /></u>
         </li>
-        
+
         <li>
 
             <u><Communities /></u>
@@ -49,7 +49,7 @@
 <script>
 // [.Nav]:
 // [Start]:
-// |/*|:  
+// |/*|:
 // [Adoptions]: /
 
 // [Communities]: isModalVisible
@@ -58,7 +58,7 @@
 
 // [Signup]: /adopter
 // [Signin]: isModalVisible
-// |not(authenticated)|: Signin, [*] 
+// |not(authenticated)|: Signin, [*]
 
 // [MyAdoptees]: isModalVisible
 // [SignOut]: isModalVisible
@@ -80,7 +80,7 @@ export default {
   },
   data () {
     return {
-      title: "Sponsors",
+      title: "Sponsor",
       subtitle: "We can't do this alone."
     }
   }

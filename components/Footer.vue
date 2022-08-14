@@ -2,7 +2,7 @@
   <nav>
     <ul>
       <li v-for="item in getRouteList()" :key="item.id">
-        
+
         <nuxt-link v-if="item.active" :to="`/${item.route}`">
           {{ item.title }}
         </nuxt-link>
@@ -40,15 +40,15 @@ export default {
             "title": "Terms of Use",
             "label": "TOU",
             "route": "tou",
-            "active": true 
+            "active": true
           },
-          // [Opportunities]: /opportunities
+          // [Opportunity]: /opportunity
           {
             "id": 2,
-            "title": "Opportunities",
-            "label": "Opportunities",
-            "route": "opportunities",
-            "active": true 
+            "title": "Opportunity",
+            "label": "Opportunity",
+            "route": "opportunity",
+            "active": true
           },
           // [Sponsor]: /sponsor
           {
@@ -72,23 +72,23 @@ export default {
             "title": "About",
             "label": "About",
             "route": "about",
-            "active": true 
+            "active": true
           }
         ],
         footerList: [
-          // [Github]: 
+          // [Github]:
           // |github.com/citizenlabsgr|:
-          { 
-            "id": 1, 
-            "title": "Github", 
-            "href": "https://github.com/citizenlabsgr" 
+          {
+            "id": 1,
+            "title": "Github",
+            "href": "https://github.com/citizenlabsgr"
           },
-          // [Slack]: 
+          // [Slack]:
           // |/slack.com|:
-          { 
-            "id": 2, 
-            "title": "Slack", 
-            "href": "https://slack.com" 
+          {
+            "id": 2,
+            "title": "Slack",
+            "href": "https://slack.com"
           }
         ]
       }
@@ -102,10 +102,10 @@ export default {
     getFooterList() {
       return this.footer.footerList;
     }
-  }  
+  }
 }
- 
-          
+
+
 
 // [End]:
 </script>

@@ -40,7 +40,7 @@
                 adoptee.sub-title
                 adoptee.body {{ /adoptee/owner }}
 
-        Opportunities
+        Opportunity
                 Header
                 opportunity.title
                 opportunity.subtitle
@@ -65,12 +65,12 @@
                 signout.footer
                 Footer
 
-        Sponsors
+        Sponsor
                 Header
                 sponsor.title
                 sponsor.subtitle
                 owners:[{name:'',url:'',logo_url:''}]
-                sponsors:[{name:'',url:'',logo_url:''}]
+                sponsor:[{name:'',url:'',logo_url:''}]
                 Footer
 
         Stats

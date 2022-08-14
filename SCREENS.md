@@ -37,8 +37,8 @@ Layout
   |               |<---- [(AccountUpd)]
   |                        
   |<---- (Footer)    
-          |<---- [(Opportunities)]
-          |<---- [(Sponsors)]     
+          |<---- [(Opportunity)]
+          |<---- [(Sponsor)]     
           |<---- [(Stats)]
           |<---- [(About)]  
           |<---- [@Github]  

@@ -61,13 +61,13 @@ BEGIN
 
 
 
-	raise notice '---- Opportunities ';
+	raise notice '---- Opportunity ';
 
 	    -- Title
-	    page_id := 'opportunities'::TEXT;
+	    page_id := 'opportunity'::TEXT;
 
 	    name := 'title'::TEXT;
-	    value := 'Opportunities'::TEXT;
+	    value := 'Opportunity'::TEXT;
 	    form := format('{"page_id": "%s", "name": "%s", "value": "%s"}',page_id,name,value)::JSONB;
 	    raise notice '% %', page_id, api_0_0_1.page(admin_token, owner::OWNER_ID, form::JSONB);
 
@@ -174,13 +174,13 @@ BEGIN
 
 
 
-	raise notice '---- Sponsors ';
+	raise notice '---- Sponsor ';
 
 	    -- Title
 	    page_id := 'sponsor'::TEXT;
 
 	    name := 'title'::TEXT;
-	    value := 'Sponsors'::TEXT;
+	    value := 'Sponsor'::TEXT;
 	    form := format('{"page_id": "%s", "name": "%s", "value": "%s"}',page_id,name,value)::JSONB;
 	    raise notice '% %', page_id, api_0_0_1.page(admin_token, owner::OWNER_ID, form::JSONB);
 

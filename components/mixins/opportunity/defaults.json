@@ -1,0 +1,23 @@
+{
+  "GET":{
+    "config":{
+      "method": "get"
+    },
+    "data": {
+      "msg": "OK",
+      "selection": [
+        {"pk":"page#opportunity", "sk":"name#title", "tk":"default-opportunity", "form": {"id":"opportunity", "name":"title", "value": "Default-Opportunity"}},
+        {"pk":"page#opportunity", "sk":"name#subtitle", "tk":"default-We-are-concerned-citizens.", "form": {"id":"opportunity", "name":"subtitle", "value": "default-We care about what you want to do."}},
+        {"pk":"page#opportunity", "sk":"name#description", "tk":"default-Are-you-a-programmer-with", "form": {"id":"opportunity", "name":"description", "value": "default-Are-you-a-programmer-with-Nuxtjs-experience-who-wants-to-help-improve-and-maintain-the-Adopt-a-Drain-application?-Dont-be-shy!-We-are-always-seeking-assistance-with-the-code!-Get-involved-and-follow-our-GitHub-page."}},
+
+       {"pk":"page#opportunity", "sk":"name#list0", "tk":"default-coders", "form":{"id":"opportunity", "name":"list0", "value": "default-coders."}},
+        {"pk":"page#opportunity", "sk":"name#list1", "tk":"default-domain-experts.", "form":{"id":"opportunity", "name":"list1", "value": "default-Domain-Experts."}}
+      ],
+      "status": "200"
+    },
+    "headers": {},
+    "request": {},
+    "status": 200,
+    "statusText": "OK"
+  }
+}

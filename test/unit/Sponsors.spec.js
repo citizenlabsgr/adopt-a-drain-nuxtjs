@@ -1,19 +1,19 @@
 
 import { mount } from '@vue/test-utils'
-import Sponsors from '@/components/Sponsors.vue'
+import Sponsor from '@/components/Sponsor.vue'
 import axios from "axios";
 
-describe('Sponsors', () => {
+describe('Sponsor', () => {
   /*
   test('is a Vue instance', () => {
-    const wrapper = mount(Sponsors)
+    const wrapper = mount(Sponsor)
     expect(wrapper.vm).toBeTruthy()
   })
   */
   test('is a Vue instance', () => {
     // expect(true).toBeTruthy()
 
-    const wrapper = mount(Sponsors, {
+    const wrapper = mount(Sponsor, {
       mocks: {
         $store: {
           state: {token: process.env.AAD_API_TOKEN}

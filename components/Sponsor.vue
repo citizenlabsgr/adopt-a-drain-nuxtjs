@@ -36,7 +36,7 @@ export default {
   data () {
     return {
       page: {
-        "title": "Sponsors",
+        "title": "Sponsor",
         "subtitle": "We can't do this alone."
       }
     }
@@ -81,7 +81,7 @@ export default {
       return this.page.subtitle;
     }
 
-    // [[Sponsors]]: sponsorList
+    // [[Sponsor]]: sponsorList
     // [[End]]:
   }
 }

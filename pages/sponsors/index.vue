@@ -4,11 +4,11 @@
   </section>
 </template>
 <script>
-import Sponsors from '@/components/Sponsors.vue'
-// import Sponsors from '@/components/Logo.vue'
+import Sponsor from '@/components/Sponsor.vue'
+// import Sponsor from '@/components/Logo.vue'
 export default {
   components: {
-    Sponsors
+    Sponsor
   }
 }
 </script>

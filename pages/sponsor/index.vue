@@ -5,7 +5,7 @@
 </template>
 <script>
 import Sponsor from '@/components/Sponsor.vue'
-// import Sponsors from '@/components/Logo.vue'
+// import Sponsor from '@/components/Logo.vue'
 export default {
   components: {
     Sponsor

@@ -16,11 +16,11 @@
 </template>
 
 <script>
-/* istanbul ignore next */ 
+/* istanbul ignore next */
 export default {
   data () {
     return {
-      title: 'Sponsors',
+      title: 'Sponsor',
       subtitle: 'We can\'t do this alone.'
     }
   }

@@ -184,11 +184,15 @@ class ResponseHelper {
             // console.log('transfer datum ', datum);
             if (inArray && outArray) { // list to list, [] -> []
                // console.log('transfer 3');
-                // assume first item is
-                // append
-                // console.log('transfer A inn && out push ', datum);
-                // make independent copy
+                // assume first item is pushable
+
+              // console.log('transfer A datum ', typeof JSON.parse(JSON.stringify(datum)));
+              // console.log('transfer A inn && out push ', JSON.parse(JSON.stringify(datum)));
+
+              // make independent copy
                 output.push(JSON.parse(JSON.stringify(datum)));
+
+                // console.log('transfer A inn && out push ', output[output.length-1]);
 
                 // console.log('transfer output ',output[output.length-1]);
 
@@ -224,7 +228,7 @@ class ResponseHelper {
                 }
             }
         }
-        // console.log('transfer out');
+        // console.log('transfer out ', output);
         // console.log('output', output);
         // dont use return output, output gets changed on return
         // return output;

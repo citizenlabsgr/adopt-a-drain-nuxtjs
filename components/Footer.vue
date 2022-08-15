@@ -58,12 +58,12 @@ export default {
             "route": "sponsor",
             "active": true
           },
-          // [Stats]: /stats
+          // [Statistic]: /statistic
           {
             "id": 4,
-            "title": "Stats",
-            "label": "Stats",
-            "route": "stats",
+            "title": "Statistic",
+            "label": "Statistic",
+            "route": "statistic",
             "active": true
           },
           // [About]: /about

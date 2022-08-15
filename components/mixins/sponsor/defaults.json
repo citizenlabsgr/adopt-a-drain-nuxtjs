@@ -1,0 +1,22 @@
+{
+  "GET":{
+    "config":{
+      "method": "get"
+    },
+    "data": {
+      "msg": "OK",
+      "selection": [
+        {"pk":"page#sponsor", "sk":"name#title", "tk":"default-sponsor", "form": {"id":"sponsor", "name":"title", "value": "Default-Sponsor"}},
+        {"pk":"page#sponsor", "sk":"name#subtitle", "tk":"default-we-can't-do-this-alone.", "form": {"id":"sponsor", "name":"subtitle", "value": "default-We-can't-do-this-alone."}},
+        {"pk":"page#sponsor", "sk":"name#description", "tk":"default-thank-you.", "form": {"id":"sponsor", "name":"subtitle", "value": "default-thank-you"}},
+        {"pk":"page#sponsor", "sk":"name#list0", "tk":"default-lower-grand-river-organization-of-watersheds", "form":{"id":"sponsor", "name":"list0", "value": "default-Lower-Grand-River-Organization-of-Watersheds."}},
+        {"pk":"page#sponsor", "sk":"name#list1", "tk":"default-citizen-labs", "form":{"id":"sponsor", "name":"list1", "value": "default-Citizen-Labs"}}
+      ],
+      "status": "200"
+    },
+    "headers": {},
+    "request": {},
+    "status": 200,
+    "statusText": "OK"
+  }
+}

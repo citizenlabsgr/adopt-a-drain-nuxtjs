@@ -22,7 +22,7 @@
     <div>
       <ul v-for="item in getAboutList()" :key="item.name">
 
-          <li v-if="item.name.startsWith('item')" >
+          <li v-if="item.name && item.name.startsWith('item')" >
             {{ item.value }}
           </li>
 

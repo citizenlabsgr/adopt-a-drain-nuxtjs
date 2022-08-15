@@ -1,13 +1,13 @@
 <template>
   <section class="container">
-    <Stats />
+    <Statistic />
   </section>
 </template>
 <script>
-import Stats from '@/components/Stats.vue'
+import Statistic from '@/components/Statistic.vue'
 export default {
   components: {
-    Stats
+    Statistic
   }
 }
 </script>

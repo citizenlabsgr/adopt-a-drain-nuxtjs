@@ -1,4 +1,5 @@
 import { ResponseHelper } from '@/components/mixins/ResponseHelper.js';
+import DEFAULTS from "../opportunity/defaults.json";
 
 export default {
   data () {
@@ -15,9 +16,9 @@ export default {
             }
           ],
           mapping : {
-            "id": "id",
-            "title": "title",
-            "description": "description"
+            "id": "form.id",
+            "name": "form.name",
+            "value": "form.value"
           },
           output: [
             {
@@ -64,18 +65,22 @@ export default {
     },
 
     async sponsorGetRequest () {
-      /*
-        const aadUrl = `${process.env.AAD_API_URL}/page/${this.sponsorService}`;
-
-        const aadHeader = this.aadHeaderUser;
-
-        // return await this.get(url, headers);
+      const owner = '0'; // this.payload.key;
+      const aadUrl = `${process.env.AAD_API_URL}/page/${owner}/PK/${this.sponsorService}`;
+      const aadHeader = this.aadHeaderGuest;
+      // console.log('aadUrl ', aadUrl);
+      try {
         return await this.$axios({
           url: aadUrl,
           method: 'get',
-          headers: aadHeader});
-    */
-       return await this.tempResponse()
+          headers: aadHeader
+        });
+      } catch(err) {
+        console.error(`sponsorGetRequest err ${err}`);
+        console.log('Sponsor API call failed... providing defaults.');
+        const DEFAULTS = require('./defaults.json');
+        return DEFAULTS.GET;
+      }
     },
 
     sponsorGetHandler (response) {
@@ -86,7 +91,8 @@ export default {
       handler.transfer(this.getServiceMapping(this.sponsorService),
         this.getServiceList(this.sponsorService));
 
-    },
+    }
+    /*
     tempResponse() {
       return {
           config:{
@@ -121,5 +127,6 @@ export default {
           statusText: "OK"
         }
      }
+     */
   }
 }

@@ -212,13 +212,13 @@ BEGIN
 	    raise notice '% %', page_id, api_0_0_1.page(admin_token, owner::OWNER_ID, form::JSONB);
 
 
-	raise notice '---- Stats ';
+	raise notice '---- Statistic ';
 
 	    -- Title
-	    page_id := 'stats'::TEXT;
+	    page_id := 'statistic'::TEXT;
 
 	    name := 'title'::TEXT;
-	    value := 'Stats'::TEXT;
+	    value := 'Statistic'::TEXT;
 	    form := format('{"page_id": "%s", "name": "%s", "value": "%s"}',page_id,name,value)::JSONB;
 	    raise notice '% %', page_id, api_0_0_1.page(admin_token, owner::OWNER_ID, form::JSONB);
 

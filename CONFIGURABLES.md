@@ -73,7 +73,7 @@
                 sponsor:[{name:'',url:'',logo_url:''}]
                 Footer
 
-        Stats
+        Statistic
                 Header
                 stat.title
                 stat.subtitle

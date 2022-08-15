@@ -39,7 +39,7 @@ Layout
   |<---- (Footer)    
           |<---- [(Opportunity)]
           |<---- [(Sponsor)]     
-          |<---- [(Stats)]
+          |<---- [(Statistic)]
           |<---- [(About)]  
           |<---- [@Github]  
           |<---- [@Slack]  

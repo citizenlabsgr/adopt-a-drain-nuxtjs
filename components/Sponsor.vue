@@ -1,20 +1,34 @@
 <template>
+
   <div class="band">
-    <h1 class="title">
-      {{ getTitle() }}
-    </h1>
-    <h2 class="subtitle">
-      {{ getSubtitle() }}
-    </h2>
-    <!-- ul>
-      <li><a href="https://www.lgrow.org" target="_blank"><img src="~assets/logos/LGrow.png" class="img_sponsor"></img></a></li>
-      <li><a href="https://citizenlabs.org" target="_blank"><img src="~assets/logos/citizenlabs.png" class="img_sponsor"></img></a></li>
-    </ -->
-    <ul>
-      <li v-for="item in getSponsorList()" :key="item.id">
-        {{ item.description }}
-      </li>
-    </ul>
+    <br/>
+    <div>
+      <div v-for="item in getSponsorList()" :key="item.name">
+
+        <h1 v-if="item.name==='title'" class="title">
+          {{ item.value }}
+        </h1>
+
+        <h2 v-if="item.name==='subtitle'" class="subtitle">
+          {{ item.value }}
+        </h2>
+
+        <h3 v-if="item.name==='description'" class="description">
+          {{ item.value }}
+        </h3>
+
+      </div>
+    </div>
+    <br/>
+    <div>
+      <ul v-for="item in getSponsorList()" :key="item.name">
+
+        <li v-if="item.name && item.name.startsWith('item')" >
+          {{ item.value }}
+        </li>
+
+      </ul>
+    </div>
   </div>
 </template>
 

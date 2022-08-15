@@ -1,0 +1,129 @@
+{
+  "GET":{
+    "config":{
+      "method": "get"
+    },
+    "data": {
+      "msg": "OK",
+      "selection": [
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "id",
+            "value": "default-statistic"
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#id",
+          "tk": "value#default-Statistic",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "title",
+            "value": "default-Statistics"
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#title",
+          "tk": "value#default-Statistics",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "subtitle",
+            "value": "default-How-much-do-we-care?"
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#subtitle",
+          "tk": "value#default-How-much-do-we-care?",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "subtitle",
+            "value": "default-Thank-You"
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#description",
+          "tk": "value#default-Thank-You",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "item_0_0",
+            "value": "default-Adopters"
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#item_0_0",
+          "tk": "value#default-Adopters",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "item_0_1",
+            "value": 0
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#item_0_1",
+          "tk": "value#default-AA",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "item_1_0",
+            "value": "default-Adoptions"
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#item_1_0",
+          "tk": "value#default-Adoptions",
+          "updated": "2022-08-14T15:05:14.67596"
+        },
+        {
+          "active":true,
+          "created": "2022-08-14T15:05:14.67596",
+          "form": {
+            "id": "statistic",
+            "name": "item_1_1",
+            "value": 0
+          },
+          "owner": "api_admin",
+          "pk": "page#statistic",
+          "sk": "name#item_1_1",
+          "tk": "value#0",
+          "updated": "2022-08-14T15:05:14.67596"
+        }
+      ],
+      "status": "200"
+    },
+    "headers": {},
+    "request": {},
+    "status": 200,
+    "statusText": "OK"
+  }
+}

@@ -1,7 +1,7 @@
 <template>
   <div class="band">
     <br/>
-    <div>
+
       <div v-for="item in getStatisticList()">
 
         <h1 v-if="item.name==='title'" class="title">
@@ -17,10 +17,7 @@
         </h3>
 
       </div>
-    </div>
-    <br/>
-
-    <div style="overflow-x:auto;">
+      <br/>
       <table>
         <tr v-for="item in getStatisticRows()" :key="item.row">
           <td v-for="c in item">
@@ -28,8 +25,17 @@
           </td>
         </tr>
       </table>
-    </div>
+    <br/>
+      <table>
+        <tr v-for="item in getCommunityRows()" :key="item.row">
+          <td v-for="c in item">
+            {{ c }}
+          </td>
+        </tr>
+      </table>
+    <br/>
   </div>
+
 
 </template>
 
@@ -46,9 +52,10 @@
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
 import ServiceMixin from '@/components/mixins/service/ServiceMixin.js';
 import StatisticMixin from '@/components/mixins/statistic/StatisticMixin.js';
+import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
 
 export default {
-  mixins: [Expiration,ServiceMixin, StatisticMixin],
+  mixins: [Expiration,ServiceMixin, StatisticMixin, CommunityMixin],
 
   data () {
     return {
@@ -78,6 +85,20 @@ export default {
         .catch((err) => {
           console.error('statisticGetRequest ', err);
         });
+
+      // [[CommunityGetRequest]]:
+      this.communityGetRequest()
+       .then((response) => {
+         // [[CommunityGetHandler]]:
+         console.log('response',response);
+         this.communityGetHandler(response);
+         // console.log('getStatisticList',this.getStatisticList());
+         // ||(get service.statistic.output.statsList)||:
+       })
+       .catch((err) => {
+         console.error('statisticGetRequest ', err);
+       });
+
         // [[End]]:
     },
     methods: {
@@ -123,8 +144,10 @@ li {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%;
+  width: 50%;
   border: 1px solid #ddd;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 th, td {
@@ -133,4 +156,12 @@ th, td {
 }
 
 tr:nth-child(even){background-color: #f2f2f2}
+/*
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+ */
+
 </style>

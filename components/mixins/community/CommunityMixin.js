@@ -46,6 +46,18 @@ export default {
   },
 
   methods: {
+    getCommunityRows() {
+      let rows = [];
+      // assemble row
+      let i = 0;
+      let row = false; // {row: 0};
+
+      for (let item of this.getServiceList(this.communityService)) {
+        row = {"item_0": item.name, "item_1": item.count};
+        rows.push(row);
+      }
+      return rows;
+    },
     getCommunityList() {
       // return list of communities
       return this.getServiceList(this.communityService);

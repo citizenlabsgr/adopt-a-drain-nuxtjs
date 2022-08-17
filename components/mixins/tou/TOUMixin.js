@@ -23,11 +23,11 @@ export default {
             {
               "active": true,
               "created": "2022-06-14T10:28:58.30262",
-              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "form": {"i": '00000', "p": 0, "w": "tou.document.md", "doc_id": "tou.document.md"},
               "owner": "api_admin",
-              "pk": "doc_id#tou.md",
+              "pk": "doc_id#tou.document.md",
               "sk": "i#00000",
-              "tk": "w#tou.md",
+              "tk": "w#tou.document.md",
               "updated": "2022-06-14T10:28:58.30262"
             }
           ],
@@ -35,11 +35,11 @@ export default {
             {
               "active": true,
               "created": "2022-06-14T10:28:58.30262",
-              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "form": {"i": '00000', "p": 0, "w": "tou.document.md", "doc_id": "tou.document.md"},
               "owner": "api_admin",
-              "pk": "doc_id#tou.md",
+              "pk": "doc_id#tou.document.md",
               "sk": "i#00000",
-              "tk": "w#tou.md",
+              "tk": "w#tou.document.md",
               "updated": "2022-06-14T10:28:58.30262"
             }
           ]
@@ -50,27 +50,18 @@ export default {
             {
               "active": true,
               "created": "2022-06-14T10:28:58.30262",
-              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
+              "form": {"i": '00000', "p": 0, "w": "tou.document.md", "doc_id": "tou.document.md"},
               "owner": "api_admin",
-              "pk": "doc_id#tou.md",
+              "pk": "doc_id#tou.document.md",
               "sk": "i#00000",
-              "tk": "w#tou.md",
+              "tk": "w#tou.document.md",
               "updated": "2022-06-14T10:28:58.30262"
             }
           ],
           output: [
           ],
           default: [
-            {
-              "active": true,
-              "created": "2022-06-14T10:28:58.30262",
-              "form": {"i": '00000', "p": 0, "w": "tou.md", "doc_id": "tou.md"},
-              "owner": "api_admin",
-              "pk": "doc_id#tou.md",
-              "sk": "i#00000",
-              "tk": "w#tou.md",
-              "updated": "2022-06-14T10:28:58.30262"
-            }
+
           ],
         }
       }
@@ -151,6 +142,7 @@ export default {
       // console.log('touGetRequest 1');
       const url = `${process.env.AAD_API_URL}/document/${owner}/${id}`;
       const headers = this.aadHeaderGuest;
+      // console.log('touGetRequest url ',url );
       try {
         return await this.$axios({
           url: url,
@@ -158,17 +150,25 @@ export default {
           headers: headers
         });
       } catch(err) {
-        return this.service.touParagraphGet.defaults;
+        const DEFAULT = require('./defaults.json')
+        return DEFAULT;
+        // return this.service.touParagraphGet.defaults;
+        // console.error(`touGetRequest error: ${err}`);
       }
     },
+
     touParagraphGetHandler (response) {
       // documents are stored as one word per row
       // this handler reassembles words into paragraphs {id, paragraph}
       // the calling component handles the display of the document
       // console.log('touGetHandler 1');
+      // console.log('touGetHandler 1 response ', response);
+
       if (!this.services) {
         throw Error('Services mixin has not been imported!');
       }
+      // console.log('touGetHandler 2');
+
       let handler = new ResponseHelper(response);
 
       // Stop if service calls when not successful
@@ -177,8 +177,10 @@ export default {
 
       if (statusCode !== '200') {
         this.statusCode = statusCode;
+        console.warn(`statusCode ${this.statusCode} check database for TOU document!`);
         return;
       }
+      // console.log('touGetHandler 3');
 
       // let d = handler.getData(response);
       let d = handler.data();
@@ -186,8 +188,8 @@ export default {
       let w = ''; // d[i]['form']['w'];
 
       // combine words into paragraphs
-
       for (let i in d) {
+        // console.log('touGetHandler 3.1');
         if (lastP != d[i]['form']['p']) {
             // console.log('para',{"id":lastP, "paragraph": w} );
             // this.service['touParagraphGet'].output.push({"id":lastP, "paragraph": w});
@@ -201,6 +203,7 @@ export default {
         }
         lastP = d[i]['form']['p'];
       }
+      // console.log('touGetHandler 4');
 
       // finish off the last paragraph
 
@@ -210,6 +213,7 @@ export default {
         // this.service['touParagraphGet'].output.push({"id":lastP, "paragraph": w});
         w=null;
       }
+      // console.log('touGetHandler out');
 
     }
   }

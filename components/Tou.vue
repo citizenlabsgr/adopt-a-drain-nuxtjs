@@ -1,7 +1,6 @@
 <template>
   <div class="document">
     <!--span v-html="config.body"></span-->
-
     <h3>
       {{ getFeedback() }}
     </h3>
@@ -49,14 +48,15 @@
 // [Config]:
 
 import Expiration from '@/components/mixins/expiration/ExpirationMixin.js';
-// import GoogleMapMixin from '@/components/mixins/map/GoogleMapMixin.js';
+
 import ServicesMixin from '@/components/mixins/service/ServiceMixin.js';
 import CommunityMixin from '@/components/mixins/community/CommunityMixin.js';
 import TOUMixin from '@/components/mixins/tou/TOUMixin.js';
+
+//
 /* istanbul ignore next */
 export default {
   mixins: [Expiration, ServicesMixin, CommunityMixin, TOUMixin],
-
   data () {
     return {
       name: 'Terms of Use',
@@ -81,19 +81,19 @@ export default {
     // [[CommunityGetRequest]]:
     // ||(get service.community.response)||:
         // console.log('TOU mounted 1');
+
         this.communityGetRequest ()
           .then((response) => {
-              // console.log('TOU comm response ', response);
               // [[CommunityGetHandler]]:
               // ||(get service.community.output.communityList)||:
               this.communityGetHandler (response);
 
               const owner = '0';
-              const id = 'tou.md';
+              const id = 'tou.document.md';
 
               // [[TouGetRequest]]:
               // ||(get service.tou.response)||:
-              /*
+
               this.touGetRequest(owner,id)
                 .then((response) => {
                   // [[TouGetHandler]]:
@@ -106,11 +106,12 @@ export default {
 
                   console.error('A Something unexpected happened (%s)!'.replace('%s', err))
                 });
-                */
+
           })
           .catch((err) => {
               console.error('B Something unexpected happened (%s)!'.replace('%s', err));
           });
+
     // [[End]]:
 
   },
@@ -124,6 +125,7 @@ export default {
     // [[TouDocument]]: touList, communityList
 
     getFeedback() {
+
       return this.communityService.feedback;
     },
     setFeedback(msg) {

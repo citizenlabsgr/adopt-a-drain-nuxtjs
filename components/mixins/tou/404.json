@@ -1,0 +1,16 @@
+{
+  "GET":{
+    "config":{
+      "method": "get"
+    },
+    "data": {
+      "msg": "Not Found",
+      "selection": [],
+      "status": "404"
+    },
+    "headers": {},
+    "request": {},
+    "status": 404,
+    "statusText": "Not Found"
+  }
+}

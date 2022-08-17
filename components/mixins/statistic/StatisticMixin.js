@@ -107,7 +107,7 @@ export default {
         return DEFAULTS.GET;
       }
 
-      // const DEFAULTS = require('./defaults.json');
+      // const DEFAULTS = require('./errorUK.json');
       // return DEFAULTS.GET;
     },
 

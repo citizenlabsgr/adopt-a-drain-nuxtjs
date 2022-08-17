@@ -51,18 +51,22 @@ export default {
         if (item && item.name.startsWith('item')) {
           // Find the End (aka the beginging) of the group of items
           // the first item's name always ends with 0
-          if ( item.name.endsWith('0')) {
+          // if ( item.name.endsWith('0')) {
+          if (i % 2 === 0) {
             if (row) { // Save the first row when defined
               rows.push(row);
               row = {};
-              i++;
+              // i++;
             } else { // reset the row
               row={};
             }
           }
           // row['row']=i;
+          // item['row'] = 0;
+          // item['col'] = 1
           row[item.name] = item.value;
         }
+        i++;
       }
       // save the final item
       if (row) {

@@ -150,10 +150,10 @@ export default {
           headers: headers
         });
       } catch(err) {
+        console.error(`touGetRequest error: ${err}`);
         const DEFAULT = require('./defaults.json')
         return DEFAULT;
         // return this.service.touParagraphGet.defaults;
-        // console.error(`touGetRequest error: ${err}`);
       }
     },
 

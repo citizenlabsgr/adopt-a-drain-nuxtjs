@@ -20,15 +20,15 @@
       </div>
     </div>
     <br/>
-    <div>
-      <ul v-for="item in getOpportunityList()" :key="item.name">
 
-        <li v-if="item.name && item.name.startsWith('item')" >
-          {{ item.value }}
-        </li>
-
-      </ul>
-    </div>
+    <table>
+      <tr v-for="item in getOpportunitySingleRows()" :key="item.value">
+        <td v-for="c in item">
+          {{ c }}
+        </td>
+      </tr>
+    </table>
+    <br/>
   </div>
 
 </template>
@@ -76,7 +76,6 @@ export default {
       this.opportunityGetRequest()
         .then((response) => {
           // [[OpportunityGetHandler]]:
-          console.log('opportunityGetRequest response ', response);
           this.opportunityGetHandler(response);
           // ||(get service.opportunity.opportunityList)||:
         })
@@ -122,4 +121,22 @@ ul {
 li {
   margin: 0px 10px 0px 20px;
 }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 50%;
+  border: 1px solid #ddd;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+
 </style>

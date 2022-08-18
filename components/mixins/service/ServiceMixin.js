@@ -46,7 +46,85 @@ export default {
   },
 
   methods: {
+    getServiceSingleRows(service) {
+      /*
+      convert single list of items to a name value pair
+      [
+       {a:A},
+       {b:B},
+       {c:C},
+       {d:D}
+      ]
+      to
+      [
+        {a:A, b:B},
+        {c:C, d:D}
+      ]
+       */
+      let rows = [];
+      // assemble row
+      let i = 0;
+      let row = {}; // {row: 0};
+      let k = 0;
+      for (let item of this.getServiceList(service)) {
+        // process items that start with item... skip other items
+        // console.log('', JSON.stringify(item));
+        if (item && item.name.startsWith('item')) {
+          // Find the End (aka the beginging) of the group of items
+          // the first item's name always ends with 0
+          row = {};
+          row['value'] = item.value ;
+          rows.push(row);
+        }
+      }
+      return rows;
+    },
+    getServiceRows(service) {
+      // console.log('getServiceRows 1');
+      /*
+      convert single list of items to a name value pair
+      [
+       {a:A},
+       {b:B},
+       {c:C},
+       {d:D}
+      ]
+      to
+      [
+        {a:A, b:B},
+        {c:C, d:D}
+      ]
+       */
+      let rows = [];
+      // assemble row
+      let i = 0;
+      let row = {}; // {row: 0};
+      let k = 0;
+      // console.log('getServiceRows getServiceList ', this.getServiceList(service));
+      for (let item of this.getServiceList(service)) {
+        // process items that start with item... skip other items
+        // console.log('', JSON.stringify(item));
+        console.log('getServiceRows item', item);
+        if (item && item.name.startsWith('item')) {
+          // Find the End (aka the beginging) of the group of items
+          // the first item's name always ends with 0
 
+          switch (k) {   // name
+            case 0:
+              row = {};
+              row['name'] = item.value ;
+              k++;
+              break;
+            case 1:        // value
+              row['value'] = item.value;
+              k--;
+              rows.push(JSON.parse(JSON.stringify(row)));
+              break;
+          }
+        }
+      }
+      return rows;
+    },
     getServiceList(service) {
       if (!this.service){
         throw new Error('Services have not been defined in data');

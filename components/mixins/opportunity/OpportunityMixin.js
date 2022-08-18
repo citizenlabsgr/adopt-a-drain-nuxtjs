@@ -24,8 +24,8 @@ export default {
           output: [
             {
               "id": "id",
-              "title": "title",
-              "description": "description"
+              "name": "title",
+              "value": "description"
             }
           ]
         }
@@ -49,7 +49,11 @@ export default {
     }
   },
   methods: {
-
+    getOpportunitySingleRows() {
+      // convert items into rows
+      return this.getServiceSingleRows(this.opportunityService);
+      // return {};
+    },
     getOpportunityList() {
       return this.getServiceList(this.opportunityService);
     },
@@ -80,20 +84,14 @@ export default {
       }
     },
     opportunityGetHandler (response) {
-      // console.log('opportunityGetHandler 1');
-      // console.log('opportunityGetHandler 1 response ', response);
 
       // clear list for reload
       let handler = new ResponseHelper(response);
-      // console.log('opportunityGetHandler 2');
 
       handler.resetOutput(this.getServiceList(this.opportunityService));
-      // console.log('opportunityGetHandler 3');
 
       handler.transfer(this.getServiceMapping(this.opportunityService),
                        this.getServiceList(this.opportunityService));
-      // console.log('opportunityGetHandler out');
-
     }
 
   }

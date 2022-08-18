@@ -41,6 +41,11 @@ export default {
   },
   methods: {
     getStatisticRows() {
+      // convert items into rows
+      return this.getServiceRows(this.statisticService);
+    },
+    /*
+    getStatisticRows() {
       let rows = [];
       // assemble row
       let i = 0;
@@ -70,6 +75,8 @@ export default {
       }
       return rows;
     },
+
+     */
 
     getStatisticList() {
       return this.getServiceList(this.statisticService);

@@ -90,7 +90,7 @@ export default {
       this.communityGetRequest()
        .then((response) => {
          // [[CommunityGetHandler]]:
-         console.log('response',response);
+         // console.log('response',response);
          this.communityGetHandler(response);
          // console.log('getStatisticList',this.getStatisticList());
          // ||(get service.statistic.output.statsList)||:

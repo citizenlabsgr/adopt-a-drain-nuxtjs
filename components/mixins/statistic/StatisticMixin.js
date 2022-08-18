@@ -44,34 +44,37 @@ export default {
       let rows = [];
       // assemble row
       let i = 0;
-      let row = false; // {row: 0};
+      let row = {}; // {row: 0};
+      // let r = {};
+      let k = 0;
 
       for (let item of this.getServiceList(this.statisticService)) {
-        // process items that start with item
+        // process items that start with item... skip other items
+
         if (item && item.name.startsWith('item')) {
+          console.log('item ', item.value);
+
           // Find the End (aka the beginging) of the group of items
           // the first item's name always ends with 0
-          // if ( item.name.endsWith('0')) {
-          if (i % 2 === 0) {
-            if (row) { // Save the first row when defined
-              rows.push(row);
+
+          switch (k) {   // name
+            case 0:
               row = {};
-              // i++;
-            } else { // reset the row
-              row={};
-            }
+              row['name'] = item.value ;
+              k++;
+              // console.log('r1 ', JSON.parse(JSON.stringify(r)));
+              break;
+            case 1:        // value
+              row['value'] = item.value;
+              k--;
+              // console.log('r2 ', JSON.parse(JSON.stringify(r)));
+              rows.push(JSON.parse(JSON.stringify(row)));
+              break;
           }
-          // row['row']=i;
-          // item['row'] = 0;
-          // item['col'] = 1
-          row[item.name] = item.value;
         }
-        i++;
+        // i++;
       }
-      // save the final item
-      if (row) {
-        rows.push(row);
-      }
+
       return rows;
     },
 

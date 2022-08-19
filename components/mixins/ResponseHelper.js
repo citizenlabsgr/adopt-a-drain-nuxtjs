@@ -164,11 +164,10 @@ class ResponseHelper {
 
          // console.log('transfer 2');
         for (let i =0; i < this.data().length; i++) {
-          // console.log('i ', i);
 
           // console.log('i ', i, ' ', this.data()[i]);
 
-            let datum = {};
+            let datum = {row: i};
             let values = this.data()[i];
             for (let key of Object.keys(mapping)) {
                 // console.log('  key ', key);
@@ -227,6 +226,8 @@ class ResponseHelper {
                     }
                 }
             }
+          // console.log('i ', i, datum);
+
         }
         // console.log('transfer out ', output);
         // console.log('output', output);

@@ -92,41 +92,6 @@ export default {
         this.getServiceList(this.sponsorService));
 
     }
-    /*
-    tempResponse() {
-      return {
-          config:{
-              "method": "get"
-          },
-          data: {
-              "msg": "OK",
-              "selection": [
-                {
-                  "id": "lgrow",
-                  "title": "LGROW",
-                  "description": "Lower Grand River Organization of Watersheds",
-                  "website":"https://www.lgrow.org",
-                  "source": "~assets/logos/LGrow.png",
-                  "icon": "~assets/logos/LGrow.png"
 
-                },
-                {
-                  "id": "citizenlabs",
-                  "title": "CitizenLabs",
-                  "description": "CitizenLabs",
-                  "website":"https://citizenlabs.org",
-                  "source": "~assets/logos/citizenlabs.png",
-                  "icon": "~assets/logos/LGrow.png"
-                }
-              ],
-              "status": "200"
-          },
-          headers: {},
-          request: {},
-          status: 200,
-          statusText: "OK"
-        }
-     }
-     */
   }
 }

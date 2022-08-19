@@ -17,20 +17,26 @@
           {{ item.value }}
         </h3>
 
+        <div v-if="item && item.name==='item_title'" class="list_title">
+          {{ item.value }}
+        </div>
+        <div v-else-if="item && item.name.startsWith('item')" :class="getRowClass(item)">
+          {{ item.value }}
+        </div>
+
       </div>
     </div>
     <br/>
 
-    <table>
+    <!-- table>
       <tr v-for="item in getOpportunitySingleRows()" :key="item.value">
         <td v-for="c in item">
           {{ c }}
         </td>
       </tr>
-    </table>
+    </table -->
     <br/>
   </div>
-
 </template>
 <script>
 // [.Opportunity]:
@@ -97,6 +103,16 @@ export default {
     // [[OpportunityTitle]]:
     // [[Opportunity]]: opportunityList
     // [[End]]:
+    getRowClass(item) {
+      // assumes item.name is like "item_2"
+      let a = item.name.split('_');
+      let n = Number(a[1]);
+      let rc = "empty text";
+      if (n % 2) {
+        rc = "solid text";
+      }
+      return rc;
+    }
   }
 }
 
@@ -122,21 +138,7 @@ li {
   margin: 0px 10px 0px 20px;
 }
 
-table {
-  border-collapse: collapse;
-  border-spacing: 0;
-  width: 50%;
-  border: 1px solid #ddd;
-  margin-left: auto;
-  margin-right: auto;
-}
 
-th, td {
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even){background-color: #f2f2f2}
 
 
 </style>

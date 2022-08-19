@@ -84,15 +84,13 @@ export default {
       }
     },
     opportunityGetHandler (response) {
-
       // clear list for reload
       let handler = new ResponseHelper(response);
-
+      // clear list
       handler.resetOutput(this.getServiceList(this.opportunityService));
-
+      // transfer
       handler.transfer(this.getServiceMapping(this.opportunityService),
                        this.getServiceList(this.opportunityService));
     }
-
   }
 }

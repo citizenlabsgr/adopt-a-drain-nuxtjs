@@ -69,7 +69,7 @@ export default {
       for (let item of this.getServiceList(service)) {
         // process items that start with item... skip other items
         // console.log('', JSON.stringify(item));
-        if (item && item.name.startsWith('item')) {
+        if (item && item.name.startsWith('item') && !item.name.startsWith('item_title')) {
           // Find the End (aka the beginging) of the group of items
           // the first item's name always ends with 0
           row = {};
@@ -103,8 +103,7 @@ export default {
       // console.log('getServiceRows getServiceList ', this.getServiceList(service));
       for (let item of this.getServiceList(service)) {
         // process items that start with item... skip other items
-        // console.log('', JSON.stringify(item));
-        console.log('getServiceRows item', item);
+
         if (item && item.name.startsWith('item')) {
           // Find the End (aka the beginging) of the group of items
           // the first item's name always ends with 0

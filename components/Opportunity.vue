@@ -23,18 +23,8 @@
         <div v-else-if="item && item.name.startsWith('item')" :class="getRowClass(item)">
           {{ item.value }}
         </div>
-
       </div>
     </div>
-    <br/>
-
-    <!-- table>
-      <tr v-for="item in getOpportunitySingleRows()" :key="item.value">
-        <td v-for="c in item">
-          {{ c }}
-        </td>
-      </tr>
-    </table -->
     <br/>
   </div>
 </template>

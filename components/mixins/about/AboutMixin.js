@@ -56,6 +56,7 @@ export default {
       }
       return rc;
     },
+
     getAboutList() {
       return this.getServiceList(this.aboutService);
     },
@@ -73,7 +74,6 @@ export default {
       const owner = '0'; // this.payload.key;
       const aadUrl = `${process.env.AAD_API_URL}/page/${owner}/PK/${this.aboutService}`;
       const aadHeader = this.aadHeaderGuest;
-      // console.log('aadUrl ', aadUrl);
       try {
         return await this.$axios({
           url: aadUrl,
@@ -90,12 +90,8 @@ export default {
     },
 
     aboutGetHandler (response) {
-      // console.log('aboutGetHandler response ', response);
 
       let handler = new ResponseHelper(response);
-
-      // console.log('aboutGetRequest ', handler.status());
-      // console.log('aboutGetRequest ', handler.data());
 
       switch (handler.status()) {
         case '200':
@@ -112,38 +108,6 @@ export default {
           // console.log('404 aboutGetRequest ', this.getAboutList())
         break
       }
-      // else {
-      //   console.log('aboutGetRequest ', this.getAboutList())
-      // }
     }
-    /*
-    tempResponse() {
-      return {
-          config:{
-              "method": "get"
-          },
-          data: {
-              "msg": "OK",
-              "selection": [
-                {
-                  "id": "A",
-                  "title": "LGROW",
-                  "description": "A. This is a placeholder"
-                },
-                {
-                  "id": "B",
-                  "title": "CitizenLabs",
-                  "description": "B. This is a placeholder"
-                }
-              ],
-              "status": "200"
-          },
-          headers: {},
-          request: {},
-          status: 200,
-          statusText: "OK"
-        }
-    }
-    */
   }
 }

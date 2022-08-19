@@ -4,29 +4,29 @@
     <div>
       <div v-for="item in getAboutList()" :key="item.name">
 
-          <h1 v-if="item.name==='title'" class="title">
+          <div v-if="item.name==='title'" class="title">
             {{ item.value }}
-          </h1>
+          </div>
 
-          <h2 v-if="item.name==='subtitle'" class="subtitle">
+          <div v-if="item.name==='subtitle'" class="subtitle">
             {{ item.value }}
-          </h2>
+          </div>
 
-          <h3 v-if="item.name==='description'" class="description">
+          <div v-if="item.name==='description'" class="description">
             {{ item.value }}
-          </h3>
+          </div>
+
+          <div v-if="item && item.name.endsWith('0')" class="empty text">
+            {{ item.value }}
+          </div>
+          <div v-else-if="item && item.name.endsWith('1')" class="solid text ">
+            {{ item.value }}
+          </div>
+          <div v-else-if="item && item.name==='item_title'" class="list_title">
+            {{ item.value }}
+          </div>
 
       </div>
-    </div>
-    <br/>
-    <div>
-      <ul v-for="item in getAboutList()" :key="item.name">
-
-          <li v-if="item.name && item.name.startsWith('item')" >
-            {{ item.value }}
-          </li>
-
-      </ul>
     </div>
   </div>
 
@@ -124,19 +124,6 @@ li {
   padding-left: 20px;
   font-variant: petite-caps;
 }
-/*
-ul {
-  list-style:inside;
-  padding: 0;
-  margin: 0px;
-  display: flex;
-  flex-flow:row wrap;
-  justify-content: center;
-  align-items: center;
-}
 
-li {
-  margin: 20px 20px;
-}
-*/
+
 </style>

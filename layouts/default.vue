@@ -112,6 +112,15 @@ html {
   word-spacing: 5px;
   padding-bottom: 15px;
 }
+
+.list_title {
+  font-weight: 300;
+  font-size: 25px;
+  color: #333333;
+  word-spacing: 5px;
+  padding-bottom: 15px;
+}
+
 .feedback {
   font-weight: 300;
   font-size: 18px;
@@ -185,5 +194,45 @@ html {
   margin:0;
   padding:0px;
   margin-left: 35px;
+}
+.list_title {
+
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 50%;
+  border: 1px solid #ddd;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+th, td {
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+
+div.empty {
+  border-style: groove;
+  margin: auto;
+  width: 50%;
+  border: 0.5px solid #dddddd;
+  padding: 10px;
+
+}
+div.solid {
+  border-style: groove;
+  margin: auto;
+  width: 50%;
+  border: 0.5px solid #dfdfdf;
+  padding: 10px;
+  background-color: #eeeeee;
+}
+div.text {
+  text-align: left;
+
 }
 </style>

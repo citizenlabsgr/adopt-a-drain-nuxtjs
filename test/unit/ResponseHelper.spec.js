@@ -77,7 +77,7 @@ const GetRRMO = {
                 "tk": "H1",
                 "updated": "I1"
             }
-        ],  
+        ],
     },
     "mapping": {
         "displayname": "form.displayname",
@@ -90,8 +90,8 @@ const GetRRMO = {
 }
 describe("ResponseHelper", () => {
   const responseHelper = new ResponseHelper(respGet);
-  
-  
+
+
   test("ResponseHelper.method", () => {
     expect(typeof responseHelper.method()).toBe("string");
   });
@@ -114,29 +114,38 @@ describe("ResponseHelper", () => {
     expect(responseHelper.getValue("data.selection.1.created", respGet)).toEqual("J");
 
 
-  }); 
+  });
 
   test("ResponseHelper.transfer A List to Dictionary", () => {
 
-    let output = {
+    let output = [{
             "displayname":"",
             "scope":"",
             "username":""
-        }
+        }]
     ;
-    
+
     let mapping = {
         "displayname": "form.displayname",
         "username": "form.username"
     }
+
     let keyStr = 'scope';
-    let exp = {
+
+    let exp = [
+      {
+        "displayname":"B",
+        "row": 0,
+        "username":"D"
+      },
+      {
         "displayname":"K",
-        "scope":"",
+        "row": 1,
         "username":"M"
-    }
+      }
+    ];
     responseHelper.resetOutput(output);
-    responseHelper.transfer(mapping, output)
+    responseHelper.transfer(mapping, output);
     expect(output).toEqual(exp);
 
   });
@@ -145,16 +154,14 @@ describe("ResponseHelper", () => {
     // out list
     // scope is not preserved, because not in mapping
     let output = [
-
             {
                     "displayname":"",
                     "scope":"",
                     "username":""
             }
-            
         ]
     ;
-    
+
     let mapping = {
         "displayname": "form.displayname",
         "username": "form.username"
@@ -163,10 +170,12 @@ describe("ResponseHelper", () => {
     let exp = [
         {
             "displayname":"B",
+          "row": 0,
             "username":"D"
         },
         {
             "displayname":"K",
+          "row": 1,
             "username":"M"
         }
     ];

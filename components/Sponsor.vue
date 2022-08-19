@@ -1,34 +1,32 @@
 <template>
 
   <div class="band">
-    <br/>
-    <div>
-      <div v-for="item in getSponsorList()" :key="item.name">
 
-        <h1 v-if="item.name==='title'" class="title">
+    <div>
+      <!-- div>{{ getSponsorList() }}</div -->
+      <div v-for="item in getSponsorList()" :key="item.name">
+        <h1 v-if="item.name==='id'" class="title">
+        </h1>
+        <h1 v-else-if="item.name==='title'" class="title">
           {{ item.value }}
         </h1>
-
-        <h2 v-if="item.name==='subtitle'" class="subtitle">
+        <h2 v-else-if="item.name==='subtitle'" class="subtitle">
           {{ item.value }}
         </h2>
-
-        <h3 v-if="item.name==='description'" class="description">
+        <h3 v-else-if="item.name==='description'" class="description">
           {{ item.value }}
         </h3>
-
+        <div v-else-if="item.name==='item_title'" class="list_title">
+          {{ item.value }}
+        </div>
+        <div v-else-if="item" :class="getRowClass(item)">
+          {{ item.value }}
+        </div>
+        <div v-else></div>
       </div>
     </div>
     <br/>
-    <div>
-      <ul v-for="item in getSponsorList()" :key="item.name">
 
-        <li v-if="item.name && item.name.startsWith('item')" >
-          {{ item.value }}
-        </li>
-
-      </ul>
-    </div>
   </div>
 </template>
 
@@ -93,8 +91,18 @@ export default {
       // [[Subtitle]]:
 
       return this.page.subtitle;
+    },
+    getRowClass(item) {
+      // assumes item.name is like "item_2"
+      // let a = item.name.split('_');
+      // let n = Number(a[1]);
+      let n = item.row;
+      let rc = "empty text";
+      if (n % 2 > 0) {
+        rc = "solid text";
+      }
+      return rc;
     }
-
     // [[Sponsor]]: sponsorList
     // [[End]]:
   }

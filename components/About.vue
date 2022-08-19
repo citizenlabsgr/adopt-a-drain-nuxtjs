@@ -1,30 +1,28 @@
 <template>
   <div class="band">
-    <br/>
+
     <div>
       <div v-for="item in getAboutList()" :key="item.name">
+        <h1 v-if="item.name==='id'" class="title">
 
-          <div v-if="item.name==='title'" class="title">
-            {{ item.value }}
-          </div>
+        </h1>
+        <h1 v-else-if="item.name==='title'" class="title">
+          {{ item.value }}
+        </h1>
 
-          <div v-if="item.name==='subtitle'" class="subtitle">
-            {{ item.value }}
-          </div>
+        <h2 v-else-if="item.name==='subtitle'" class="subtitle">
+          {{ item.value }}
+        </h2>
 
-          <div v-if="item.name==='description'" class="description">
-            {{ item.value }}
-          </div>
-
-          <div v-if="item && item.name.endsWith('0')" class="empty text">
-            {{ item.value }}
-          </div>
-          <div v-else-if="item && item.name.endsWith('1')" class="solid text ">
-            {{ item.value }}
-          </div>
-          <div v-else-if="item && item.name==='item_title'" class="list_title">
-            {{ item.value }}
-          </div>
+        <h3 v-else-if="item.name==='description'" class="description">
+          {{ item.value }}
+        </h3>
+        <div v-else-if="item && item.name==='item_title'" class="list_title">
+          {{ item.value }}
+        </div>
+        <div v-else-if="item" :class="getRowClass(item)">
+          {{ item.value }}
+        </div>
 
       </div>
     </div>
@@ -98,6 +96,17 @@ export default {
     // [[AboutTitle]]:
     // [[About]]: aboutList
     // [[End]]:
+    getRowClass(item) {
+      // assumes item.name is like "item_2"
+      // let a = item.name.split('_');
+      // let n = Number(a[1]);
+      let n = item.row;
+      let rc = "empty text";
+      if (n % 2 > 0) {
+        rc = "solid text";
+      }
+      return rc;
+    }
 
   }
 }

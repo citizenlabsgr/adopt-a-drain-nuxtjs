@@ -6,23 +6,8 @@ export default {
   data () {
     return {
       name: "TOU",
-      touService: "tou",
       defaultService: "touDefault",
       service: {
-        tou: {
-          response: [],
-          mapping: {
-            "pk": "pk",
-            "sk": "sk",
-            "tk": "tk",
-            "form": "form",
-            "owner": "owner",
-            "active": "active",
-            "created": "created",
-            "updated": "updated"
-          },
-          output: [],
-        },
         touDefault: {
           mapping: {
             "pk": "pk",
@@ -38,11 +23,11 @@ export default {
             {
               "active": true,
               "created": "2022-06-14T10:28:58.30262",
-              "form": {"id": 'tou.document.id', "name":"00000.00000", "value":"#"},
+              "form": {"i": '00000', "p": 0, "w": "tou.document.md", "doc_id": "tou.document.md"},
               "owner": "api_admin",
               "pk": "doc_id#tou.document.md",
-              "sk": "name#00000.00000",
-              "tk": "value##",
+              "sk": "i#00000",
+              "tk": "w#tou.document.md",
               "updated": "2022-06-14T10:28:58.30262"
             }
           ],
@@ -50,16 +35,15 @@ export default {
             {
               "active": true,
               "created": "2022-06-14T10:28:58.30262",
-              "form": {"id":"tou.id", "name":"00000", "value":"#"},
+              "form": {"i": '00000', "p": 0, "w": "tou.document.md", "doc_id": "tou.document.md"},
               "owner": "api_admin",
-              "pk": "doc_id#tou.md",
-              "sk": "name#00000",
-              "tk": "value##",
+              "pk": "doc_id#tou.document.md",
+              "sk": "i#00000",
+              "tk": "w#tou.document.md",
               "updated": "2022-06-14T10:28:58.30262"
             }
           ]
         },
-
         touParagraphGet: {
           status: 900,
           response: [
@@ -100,15 +84,62 @@ export default {
     }
   },
   methods: {
-    getTouList() {
-      return this.getServiceList(this.touService);
+    /*
+    setService(service) {
+      this.defaultService = service;
     },
-    addTouDatum(datum) {
-      this.addServiceDatum(this.touService, datum);
-    },
-    async touGetRequest(owner, id) { // replaces loadAdopter
-      console.log('touGetRequest 1');
+    getMapping(service) {
+      // service is found in the services mixin
 
+      // console.log('mapping 1');
+      // comfigure the this.defaultService
+
+      if (this.service) {
+        if (this.service[service]){
+          if (this.service[service].mapping) {
+            return this.service[service].mapping;
+          }
+        }
+      }
+      // default
+      // console.log('default mapping');
+      return this.service[this.defaultService].mapping;
+    },
+
+    getOutput(service=null) {
+      // service is found in the services mixin
+
+      // final list of data
+
+      if (this.service) {
+        if (this.service[service]){
+          if (this.service[service].output) {
+            return this.service[service].output;
+          }
+        }
+      }
+      // default
+      return this.service[this.defaultService].output;
+    },
+
+    addOutput(service, datum ) {
+      // service is found in the services mixin
+      // assume Output is an array
+
+      if (this.service) {
+        if (this.service[service]){
+          if (this.service[service].output) {
+            return this.service[service].output;
+          }
+        }
+      }
+
+      this.service[this.defaultService].output.push(datum);
+
+    },
+    */
+    async touGetRequest(owner, id) { // replaces loadAdopter
+      // console.log('touGetRequest 1');
       const url = `${process.env.AAD_API_URL}/document/${owner}/${id}`;
       const headers = this.aadHeaderGuest;
       // console.log('touGetRequest url ',url );
@@ -124,13 +155,9 @@ export default {
         return DEFAULT;
         // return this.service.touParagraphGet.defaults;
       }
-
-      // const DEFAULT = require('./defaults.json');
-      // return DEFAULT.GET;
     },
 
-
-    touGetHandler (response) {
+    touParagraphGetHandler (response) {
       // documents are stored as one word per row
       // this handler reassembles words into paragraphs {id, paragraph}
       // the calling component handles the display of the document
@@ -157,56 +184,37 @@ export default {
 
       // let d = handler.getData(response);
       let d = handler.data();
-      // let lastP = 0;
-      // let w = ''; // d[i]['form']['w'];
-      // let lastParagraph = name.split('.')[0];
-      // let lastWord = name.split('.')[1];
-      // console.log('touGetHandler 3', );
-      let id = d[0].pk.split('#')[1];
-      let lastName = d[0].sk.split('.')[0]; //  name#00000.00000 --> name#00000
-      let paragraph = '';
+      let lastP = 0;
+      let w = ''; // d[i]['form']['w'];
+
       // combine words into paragraphs
-      for (let item of d) {
-        // console.log('A', JSON.stringify(item));
-        if (item.sk.startsWith(lastName)) {
-          // console.log('A1');
-          // console.log('item.sk ', item.tk.replace('value#',''));
-
-          if (paragraph.length > 0) {
-            paragraph += ' ';
-          }
-          // console.log('A2');
-          paragraph += item.tk.replace('value#','');
-          // console.log('A3');
+      for (let i in d) {
+        // console.log('touGetHandler 3.1');
+        if (lastP != d[i]['form']['p']) {
+            // console.log('para',{"id":lastP, "paragraph": w} );
+            // this.service['touParagraphGet'].output.push({"id":lastP, "paragraph": w});
+            this.addServiceDatum('touParagraphGet',{"id":lastP, "paragraph": w});
+            w = d[i]['form']['w'];
         } else {
-          // console.log('B');
-          // let id = item.pk.split('#')[1];
-          // console.log('paragraph ', {"id": id, "name": lastName, "value": paragraph});
-          this.addTouDatum({"id": id, "name": lastName, "value": paragraph});
-          lastName = item.sk.split('.')[0]; //  name#00000.00000 --> name#00000
-          paragraph = '';
-          paragraph += item.tk.replace('value#', '');
+          if (w.length > 0){
+            w += ' ';
+          }
+          w += d[i]['form']['w'];
         }
+        lastP = d[i]['form']['p'];
       }
-      console.log('out 1');
-      console.log('out 1',id);
-      console.log('out 1', lastName);
-      console.log('out 1', paragraph);
-
-
-
-      console.log('eparagraph ', {"id": id, "name": lastName, "value": paragraph});
-      console.log('out 2');
-      this.addTouDatum({"id": id, "name": lastName, "value": paragraph});
-
-      console.log('touGetHandler 4');
+      // console.log('touGetHandler 4');
 
       // finish off the last paragraph
-      console.log('paragraph ', paragraph);
 
-      console.log('touGetHandler out');
+      if (w.length > 0) {
+        this.addServiceDatum('touParagraphGet',{"id":lastP, "paragraph": w});
+
+        // this.service['touParagraphGet'].output.push({"id":lastP, "paragraph": w});
+        w=null;
+      }
+      // console.log('touGetHandler out');
 
     }
-
   }
 }

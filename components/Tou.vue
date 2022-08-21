@@ -4,37 +4,38 @@
     <h3>
       {{ getFeedback() }}
     </h3>
+    <br/>
 
-    <div v-for="item in getServiceList('touParagraphGet')" :key="item.id">
-        <h1 v-if="item.paragraph.startsWith('# ')" class="title">
-          {{ item.paragraph.replace('# ','') }}
+    <div v-for="item in getTouList()" :key="item.id">
+        <h1 v-if="item.value.startsWith('# ')" class="title">
+          {{ item.value.replace('# ','') }}
         </h1>
-        <h1 v-else-if="item.paragraph.startsWith('## ')" class="subtitle">
-          {{ item.paragraph.replace('## ','') }}
+        <h1 v-else-if="item.value.startsWith('## ')" class="subtitle">
+          {{ item.value.replace('## ','') }}
         </h1>
-        <h1 v-else-if="item.paragraph.startsWith('### ')">
-          {{ item.paragraph.replace('### ','') }}
+        <h1 v-else-if="item.value.startsWith('### ')">
+          {{ item.value.replace('### ','') }}
         </h1>
-        <h1 v-else-if="item.paragraph.startsWith('#### ')">
-          {{ item.paragraph.replace('#### ','') }}
+        <h1 v-else-if="item.value.startsWith('#### ')">
+          {{ item.value.replace('#### ','') }}
         </h1>
-        <h1 v-else-if="item.paragraph.startsWith('##### ')">
-          {{ item.paragraph.replace('##### ','') }}
+        <h1 v-else-if="item.value.startsWith('##### ')">
+          {{ item.value.replace('##### ','') }}
         </h1>
-        <h1 v-else-if="item.paragraph.startsWith('###### ')">
-          {{ item.paragraph.replace('###### ','') }}
+        <h1 v-else-if="item.value.startsWith('###### ')">
+          {{ item.value.replace('###### ','') }}
         </h1>
-        <li v-else-if="item.paragraph.startsWith('* ')">
-          {{ item.paragraph.replace('* ','') }}
+        <li v-else-if="item.value.startsWith('* ')">
+          {{ item.value.replace('* ','') }}
         </li>
-        <div v-else-if="item.paragraph.includes('[[communities]]')">
+        <div v-else-if="item.value.includes('[[communities]]')">
             <li v-for="comm in getCommunityList()" :key="item.name">
             {{ comm.name }}
             </li>
             <br/>
         </div>
         <h1 v-else class="description">
-          {{ item.paragraph }}
+          {{ item.value }}
         </h1>
     </div>
   </div>
@@ -80,10 +81,11 @@ export default {
 
     // [[CommunityGetRequest]]:
     // ||(get service.community.response)||:
-        // console.log('TOU mounted 1');
+        console.log('TOU mounted 1');
 
         this.communityGetRequest ()
           .then((response) => {
+              // console.log('communityGetRequest 1');
               // [[CommunityGetHandler]]:
               // ||(get service.community.output.communityList)||:
               this.communityGetHandler (response);
@@ -96,10 +98,11 @@ export default {
 
               this.touGetRequest(owner,id)
                 .then((response) => {
+                  // console.log('touGetRequest 1');
+
                   // [[TouGetHandler]]:
                   // ||(get service.tou.output.touList)||:
-                  // console.log('TOU response ', response);
-                  this.touParagraphGetHandler(response);
+                  this.touGetHandler(response);
 
                 })
                 .catch((err) => {

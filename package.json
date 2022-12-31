@@ -13,7 +13,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.6",
     "core-js": "^3.15.1",
-    "nuxt": "^2.15.7",
+    "nuxt": "^3.0.0",
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {
@@ -26,6 +26,6 @@
     "eslint": "^7.32.0",
     "eslint-plugin-nuxt": "^2.0.0",
     "jest": "^27.0.5",
-    "vue-jest": "^3.0.4"
+    "vue-jest": "^4.0.1"
   }
 }
